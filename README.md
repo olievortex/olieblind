@@ -7,7 +7,7 @@ The following software is recommended for the development environment:
 - [Visual Studio Community](https://visualstudio.microsoft.com/vs/community/)
 - [Visual Studio Code](https://code.visualstudio.com/)
 - [uv](https://github.com/astral-sh/uv) (Python package manager)
-- [DBeaver](https://dbeaver.io/) (Database management)
+- [DBeaver Community](https://dbeaver.io/) (Database management)
 - [PuTTY](https://www.chiark.greenend.org.uk/~sgtatham/putty/) (SSH client)
 - [WinSCP](https://winscp.net/eng/index.php) (Copy files between local computer and remote server)
 - [Postman](https://www.postman.com/) (API testing)
