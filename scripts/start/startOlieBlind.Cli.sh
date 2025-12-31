@@ -1,0 +1,4 @@
+#!/bin/sh
+. ~olievortex/environments/sourceOlieBlind.sh
+cd /opt/olieblind.cli
+dotnet olieblind.cli.dll $1 >> /var/log/olieblind/olieblind.cli.log 2>&1
