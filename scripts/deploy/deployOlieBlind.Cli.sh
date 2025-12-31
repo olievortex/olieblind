@@ -1,7 +1,7 @@
 #!/bin/sh
-basePath=~/source/repos/olieblind/olieblind.cli
+basePath=~/source/repos/olieblind/src/olieblind.cli
 pubPath=/opt/olieblind.cli
-sourceFile=~/environments/sourceOlieBlind.sh
+sourceFile=~/olieblind/sourceOlieBlind.sh
 logPath=/var/log/olieblind
 set -e
 

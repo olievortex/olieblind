@@ -1,7 +1,7 @@
 #!/bin/sh
-basePath=~/source/repos/olieblind/olieblind.api
+basePath=~/source/repos/olieblind/src/olieblind.api
 pubPath=/opt/olieblind.api
-sourceFile=~/environments/sourceOlieBlind.sh
+sourceFile=~/olieblind/sourceOlieBlind.sh
 logPath=/var/log/olieblind
 set -e
 
@@ -47,7 +47,7 @@ rm -rf *
 tar -xf ${basePath}/bin/Release/net10.0/publish.tar
 
 echo stop API
-~/start/stopOlieBlind.Api.sh
+~/olieblind/stopOlieBlind.Api.sh
 
 echo start API
-~/start/startOlieBlind.Api.sh
+~/olieblind/startOlieBlind.Api.sh

@@ -1,7 +1,7 @@
 #!/bin/sh
-basePath=~/source/repos/olieblind/olieblind.web
+basePath=~/source/repos/olieblind/src/olieblind.web
 pubPath=/opt/olieblind.web
-sourceFile=~/environments/sourceOlieBlind.sh
+sourceFile=~/olieblind/sourceOlieBlind.sh
 logPath=/var/log/olieblind
 set -e
 
@@ -47,7 +47,7 @@ rm -rf *
 tar -xf ${basePath}/bin/Release/net10.0/publish.tar
 
 echo stop website
-~/start/stopOlieBlind.Web.sh
+~/olieblind/stopOlieBlind.Web.sh
 
 echo start website
-~/start/startOlieBlind.Web.sh
+~/olieblind/startOlieBlind.Web.sh
