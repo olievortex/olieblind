@@ -9,13 +9,13 @@ public class MyRepository(MyContext context) : IMyRepository
 {
     #region ProductMap
 
-    public async Task ProductMapCreate(ProductMap entity, CancellationToken ct)
+    public async Task ProductMapCreate(ProductMapEntity entity, CancellationToken ct)
     {
         await context.ProductMaps.AddAsync(entity, ct);
         await context.SaveChangesAsync(ct);
     }
 
-    public async Task<ProductMap?> ProductMapGet(int id, CancellationToken ct)
+    public async Task<ProductMapEntity?> ProductMapGet(int id, CancellationToken ct)
     {
         return await context.ProductMaps
             .AsNoTracking()
@@ -23,7 +23,7 @@ public class MyRepository(MyContext context) : IMyRepository
             .SingleOrDefaultAsync(ct);
     }
 
-    public async Task<ProductMap> ProductMapGetLatest(CancellationToken ct)
+    public async Task<ProductMapEntity> ProductMapGetLatest(CancellationToken ct)
     {
         return await context.ProductMaps
             .AsNoTracking()
@@ -32,7 +32,7 @@ public class MyRepository(MyContext context) : IMyRepository
             .FirstAsync(ct);
     }
 
-    public async Task<List<ProductMap>> ProductMapList(CancellationToken ct)
+    public async Task<List<ProductMapEntity>> ProductMapList(CancellationToken ct)
     {
         return await context.ProductMaps
             .AsNoTracking()
@@ -41,7 +41,7 @@ public class MyRepository(MyContext context) : IMyRepository
             .ToListAsync(ct);
     }
 
-    public async Task ProductMapUpdate(ProductMap entity, CancellationToken ct)
+    public async Task ProductMapUpdate(ProductMapEntity entity, CancellationToken ct)
     {
         context.ProductMaps.Update(entity);
         await context.SaveChangesAsync(ct);
@@ -51,13 +51,13 @@ public class MyRepository(MyContext context) : IMyRepository
 
     #region ProductMapItem
 
-    public async Task ProductMapItemCreate(ProductMapItem entity, CancellationToken ct)
+    public async Task ProductMapItemCreate(ProductMapItemEntity entity, CancellationToken ct)
     {
         await context.ProductMapItems.AddAsync(entity, ct);
         await context.SaveChangesAsync(ct);
     }
 
-    public async Task<List<ProductMapItem>> ProductMapItemList(int productMapId, CancellationToken ct)
+    public async Task<List<ProductMapItemEntity>> ProductMapItemList(int productMapId, CancellationToken ct)
     {
         return await context.ProductMapItems
             .AsNoTracking()
@@ -67,7 +67,7 @@ public class MyRepository(MyContext context) : IMyRepository
             .ToListAsync(ct);
     }
 
-    public async Task ProductMapItemUpdate(ProductMapItem entity, CancellationToken ct)
+    public async Task ProductMapItemUpdate(ProductMapItemEntity entity, CancellationToken ct)
     {
         context.ProductMapItems.Update(entity);
         await context.SaveChangesAsync(ct);

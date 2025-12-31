@@ -19,7 +19,7 @@ public class ModelForecastBusinessTests
         var repo = new Mock<IMyRepository>();
         repo.Setup(s => s.ProductMapGetLatest(ct))
             .ReturnsAsync(
-                new ProductMap
+                new ProductMapEntity
                 {
                     Id = 123,
                     Effective = effective,
@@ -33,7 +33,7 @@ public class ModelForecastBusinessTests
         repo.Setup(s => s.ProductMapItemList(123, ct))
             .ReturnsAsync(
                 [
-                    new ProductMapItem
+                    new ProductMapItemEntity
                     {
                         Id = 1,
                         ProductMapId = 123,
@@ -76,7 +76,7 @@ public class ModelForecastBusinessTests
         var repo = new Mock<IMyRepository>();
         repo.Setup(s => s.ProductMapGet(123, ct))
             .ReturnsAsync(
-                new ProductMap
+                new ProductMapEntity
                 {
                     Id = 123,
                     Effective = effective,
@@ -90,7 +90,7 @@ public class ModelForecastBusinessTests
         repo.Setup(s => s.ProductMapItemList(123, ct))
             .ReturnsAsync(
                 [
-                    new ProductMapItem
+                    new ProductMapItemEntity
                     {
                         Id = 1,
                         ProductMapId = 123,
@@ -149,7 +149,7 @@ public class ModelForecastBusinessTests
         repo.Setup(s => s.ProductMapList(ct))
             .ReturnsAsync(
                 [
-                    new ProductMap
+                    new ProductMapEntity
                     {
                         Id = 123,
                         Effective = effective,

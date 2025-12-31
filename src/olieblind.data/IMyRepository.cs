@@ -6,27 +6,27 @@ public interface IMyRepository
 {
     #region ProductMap
 
-    Task ProductMapCreate(ProductMap entity, CancellationToken ct);
+    Task ProductMapCreate(ProductMapEntity entity, CancellationToken ct);
 
     Task ProductVideoUpdate(ProductVideoEntity entity, CancellationToken ct);
 
-    Task<ProductMap?> ProductMapGet(int id, CancellationToken ct);
+    Task<ProductMapEntity?> ProductMapGet(int id, CancellationToken ct);
 
-    Task<ProductMap> ProductMapGetLatest(CancellationToken ct);
+    Task<ProductMapEntity> ProductMapGetLatest(CancellationToken ct);
 
-    Task<List<ProductMap>> ProductMapList(CancellationToken ct);
+    Task<List<ProductMapEntity>> ProductMapList(CancellationToken ct);
 
-    Task ProductMapUpdate(ProductMap entity, CancellationToken ct);
+    Task ProductMapUpdate(ProductMapEntity entity, CancellationToken ct);
 
     #endregion
 
     #region ProductMapItem
 
-    Task ProductMapItemCreate(ProductMapItem entity, CancellationToken ct);
+    Task ProductMapItemCreate(ProductMapItemEntity entity, CancellationToken ct);
 
-    Task<List<ProductMapItem>> ProductMapItemList(int productMapId, CancellationToken ct);
+    Task<List<ProductMapItemEntity>> ProductMapItemList(int productMapId, CancellationToken ct);
 
-    Task ProductMapItemUpdate(ProductMapItem entity, CancellationToken ct);
+    Task ProductMapItemUpdate(ProductMapItemEntity entity, CancellationToken ct);
 
     #endregion
 

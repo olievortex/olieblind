@@ -51,7 +51,7 @@ public class DeleteOldContentProcess(IMyRepository repo, IOlieWebService ows, IM
         }
     }
 
-    private async Task DeleteModelForecastMaps(List<ProductMap> maps, CancellationToken ct)
+    private async Task DeleteModelForecastMaps(List<ProductMapEntity> maps, CancellationToken ct)
     {
         var query = maps
             .Where(w => w.Timestamp < DateTime.UtcNow.AddDays(-7))
