@@ -1,5 +1,5 @@
 #!/bin/sh
-basePath=~/source/repos/olieblind/olieblind.web
+basePath=~/source/repos/olieblind/src/olieblind.web
 pubPath=/opt/olieblind.web
 sourceFile=~/olieblind/sourceOlieBlind.sh
 logPath=/var/log/olieblind
