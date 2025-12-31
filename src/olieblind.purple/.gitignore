@@ -1,0 +1,6 @@
+__pycache__
+*.grb2
+*.idx
+*.png
+.vscode
+*.grib2

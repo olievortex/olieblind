@@ -1,0 +1,8 @@
+﻿{
+  "profiles": {
+    "OlievortexRed.Cli": {
+      "commandLineArgs": "dayonemaps",
+      "commandName": "Project"
+    }
+  }
+}

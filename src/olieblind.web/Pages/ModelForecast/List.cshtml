@@ -1,0 +1,43 @@
+﻿@page
+@using olieblind.web.Components
+@model olieblind.web.Pages.ModelForecast.ListModel
+@{
+    var items = Model.Forecast?.Items ?? [];
+    var header = Model.Forecast?.Header;
+    var title = header is null ? "NAM Forecast" : $"NAM {header.Effective:M/dd} {header.ForecastHour}Z Forecast ({header.Effective:HH}Z Run)";
+
+    ViewData["Title"] = title;
+}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-page="/Index">Home</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            @title Maps
+        </li>
+    </ol>
+</nav>
+
+@if (items.Count == 0)
+{
+    <div class="container">
+        There are no maps available. Please check back in a few hours.
+    </div>
+}
+else
+{
+    <div class="container">
+        <h4>Click image for full size</h4>
+        <div class="row">
+            @foreach (var model in items)
+            {
+                @await Component.InvokeAsync("ModelForecastTile", new ModelForecastTileViewComponent.ViewModel(model))
+            }
+        </div>
+    </div>
+}
+
+<div class="container">
+    <a class="btn btn-outline-info" asp-page="ProductList">Older Maps</a>
+</div>

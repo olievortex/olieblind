@@ -1,0 +1,42 @@
+﻿@page
+@model olieblind.web.Pages.ModelForecast.ProductListModel
+@{
+    var items = Model.Forecast ?? [];
+
+    ViewData["Title"] = "Older NAM Forecasts";
+}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-page="/Index">Home</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Older NAM Forecasts
+        </li>
+    </ol>
+</nav>
+
+@if (items.Count == 0)
+{
+    <div class="container">
+        There are no maps available. Please check back in a few hours.
+    </div>
+}
+else
+{
+    <div class="container">
+        <h4>Click link to see images</h4>
+        <div class="row">
+            <ul>
+                @foreach (var product in items)
+                {
+                    <li>
+                        <a href="/ModelForecast/list?id=@(product.Id)">
+                            @($"NAM {product.Effective:M/dd} {product.ForecastHour}Z Forecast ({product.Effective:HH}Z Run)")
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+}

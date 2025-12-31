@@ -1,0 +1,34 @@
+@page
+@using olieblind.web.Components
+@model List
+@{
+    ViewData["Title"] = $"{Model.Category} Videos";
+}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-page="/Index">Home</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            @Model.Category Videos
+        </li>
+    </ol>
+</nav>
+
+@if (Model.VideoListModel.Count == 0)
+{
+    <div class="container">
+        There are no videos available. Please check back in a few hours.
+    </div>
+}
+else
+{
+    <div class="container">
+        <div class="row">
+            @foreach (var video in Model.VideoListModel)
+            {
+                @await Component.InvokeAsync("VideoTile", new VideoTileViewComponent.ViewModel(Model.Category, video, false))
+            }
+        </div>
+    </div>
+}
