@@ -11,11 +11,11 @@ Make sure the font "Spicy Rice" appears in the list. This font is used in the vi
 
     # fc-list | grep Spicy
 
-### Create install/log directories
+## Create install/log directories
 
     # sudo ~/source/repos/olieblind/install/create_directories.sh
 
-### Link to the mount
+## Link to the mount
 If the mount is newly formatted, first add the videos folder.
 
      # cd /mnt/olieblind-video
@@ -28,7 +28,7 @@ Next, link the website to the mount
      # sudo ln -s /mnt/olieblind-video/videos videos
      # chcon -R -t httpd_sys_content_t /mnt/olieblind-video/videos
 
-### Google Service Account Key
+## Google Service Account Key
 We now need to create a Google Service Account key so we can call the text-to-speech API. Log into the Google Cloud, select your project, and navigate to APIs & Services -> Credentials. Click on the Serice Account you want to use. To generate a new key:
 
 - Click on the Keys tab
@@ -43,7 +43,7 @@ Using WinSCP, make a connection to your Linode.
 
 When you update the sourcing file in the next step, set the GOOGLE_APPLICATION_CREDENTIALS to the path of this file.
 
-### Create and parameterize the environment sourcing script
+## Create and parameterize the environment sourcing script
 The sourceOlieBlind_template.sh script is copied into the olieblind folder. This script is called by other scripts to load the proper environment variables.
 
     # cp ~/source/repos/olieblind/install/sourceOlieBlind_template.sh ~/olieblind
@@ -53,23 +53,49 @@ Replace the placeholder values within the file and then rename it from **sourceO
 
     # mv sourceOlieBlind_template.sh sourceOlieBlind.sh
 
-### MySQL
+## MySQL
 We will copy some MySQL scripts out of the repository and customize them.
 
     # cp ~/source/repos/olieblind/scripts/mysql/*.sh ~/olieblind
 
 Replace the asterisks with the appropriate host, port, username, and password for both scripts. Don't wrap the IPv6 adress in brackets. Run both scripts and confirm the sql dump files were created in /var/backup/mysql.
 
-### Install olieblind
+## Install olieblind
     # ~/olieblind/deployOlieBlind.sh
     # dotnet dev-certs https --trust
 
-### Validate Olieblind.Cli
+## Validate Google Cloud
+The cli has a simple test that lists text-to-speech voices. If this works, we know the credentials are configured correctly.
+
+    # cd ~/olieblind/startOlieBlind.Cli.sh listvoices
+    # cat /var/log/olieblind/olieblind.cli.log
+
+Confirm that you see a bunch of voice names and genders in the log file.
+
+## Initialize OlieBind.purple
+Ensure we are able to create a Python environment for OlieBlind.purple.
+
+    # cd /opt/olieblind.purple
+    # uv python install 3.13
+    # uv run main.py
+
+After installing a bunch of packages. you should see "Hello from olieblind-purple!"
+
+## Validate video process
 Run the SPC Day One process, confirm a video was created, and check the log for errors.
 
-    # ~/start/startOlieBlind.Cli.sh spcdayonevideo
+    # ~/olieblind/startOlieBlind.Cli.sh spcdayonevideo
     # cat /var/log/olieblind/olieblind.cli.log
-    # ll /var/www/videos -R
+    # cd /var/www/videos
+    # ls -R | grep mp4
+
+## Validate map process
+Run the SPC Day One process, confirm the maps were created, and check the log for errors.
+
+    # ~/olieblind/startOlieBlind.Cli.sh dayonemaps
+    # cat /var/log/olieblind/olieblind.cli.log
+    # cd /var/www/videos
+    # ls -R | grep png
 
 ### Validate Olieblind.Api
 The deploy script should have started an instance of Olieblind.Api. Send a request to the local server and confirm it returns a valid JSON string without any errors.
@@ -104,12 +130,6 @@ Out of the box Apache isn't allowed to relay network traffic. SELinux needs to b
     # sudo semanage port --add --proto tcp --type http_port_t 7021
     # sudo semanage port --add --proto tcp --type http_port_t 7022
     # sudo setsebool -P httpd_can_network_relay 1
-
-### Initialize Python
-
-    # cd /opt/olieblind.purple
-    # uv python install 3.13
-    # uv run main.py
 
 ### Validate startup
 Confirm that Apache and the dotnet applications automatically start at boot.
