@@ -14,7 +14,8 @@ The following software is recommended for the development environment:
 - [Azure CLI 64-bit](https://learn.microsoft.com/en-us/cli/azure/?view=azure-cli-latest) (CLI for creating Azure resources)
 
 # Installation
-1. Follow the steps in the README.md file in the infrastructure folder.
+1. Follow the steps in infrastructure/README.md
+2. Follow the steps in install/README.md
 
 # Projects
 - olieblind.api: A REST API to support the website. (ASP.NET Core)
