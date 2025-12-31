@@ -110,26 +110,28 @@ The deploy script should have started an instance of Olieblind\.Web. Send a requ
 ### Crontab
 This sets up all the scheduled jobs. Paste the lines from the olievortex.cron file into the crontab editor and save.
 
-    # cat ~/source/repos/hop/olieblind/infrastructure/linux/olievortex.cron
+    # cat ~/source/repos/olieblind/install/olievortex.cron
     # crontab -e
 
 Verify the schedule took effect. The results of this command should match the olievortex.cron file you copied from.
 
     # crontab -l
 
-### Apache SSL Site
-Configure the SSL site to proxy requests to the dotnet applications, and to the videos folder. Copy the relevant lines.
-
-    # cat ~/source/repos/hop/olieblind/infrastructure/linux/000-olieblind-2-default-le-ssl.conf
-    # sudo vi /etc/httpd/conf.d/000-olieblind-2-default-le-ssl.conf
-    # sudo systemctl restart httpd
-
 ### SELinux Settings
-Out of the box Apache isn't allowed to relay network traffic. SELinux needs to be configured to allow this.
+Out of the box Apache isn't allowed to relay network traffic. Nor can it follow a symbolic link. SELinux needs to be configured to allow this.
 
     # sudo semanage port --add --proto tcp --type http_port_t 7021
     # sudo semanage port --add --proto tcp --type http_port_t 7022
     # sudo setsebool -P httpd_can_network_relay 1
+    # #sudo chcon -h -t httpd_sys_content_t /var/www/videos (not sure if this is needed)
+    # sudo chcon -Rv --type=httpd_sys_content_t /mnt/olieblind-video/video
+
+### Apache SSL Site
+Configure the SSL site to proxy requests to the dotnet applications, and to the videos folder. Copy the relevant lines.
+
+    # cat ~/source/repos/olieblind/infrastructure/5_AkamaiLinode/000-olieblind-2-default-le-ssl.conf
+    # sudo vi /etc/httpd/conf.d/000-olieblind-2-default-le-ssl.conf
+    # sudo systemctl restart httpd
 
 ### Validate startup
 Confirm that Apache and the dotnet applications automatically start at boot.
@@ -152,16 +154,4 @@ Confirm you can navigate to a video with your browser: https://olieblind-2.oliev
 Confirm the result contains a valid web page without errors.
 
 ### Update DNS
-Add the oliebline-2 IP Addresses to the olievortex.com and www.olievortex.com DNS.
-
-=====================================================================
-
-### Conda environment
-    # conda create -n olieblind_purple python=3.13
-    # conda activate olieblind_purple
-    # conda install xarray
-    # pip install eccodes
-    # pip install cfgrib
-    # conda install -c conda-forge metpy
-    # conda install -c conda-forge azure-monitor-opentelemetry
-
+Add the oliebline-2 IP Addresses to the @.olievortex.com and www.olievortex.com DNS.
