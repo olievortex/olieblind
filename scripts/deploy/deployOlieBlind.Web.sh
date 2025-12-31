@@ -47,7 +47,7 @@ rm -rf *
 tar -xf ${basePath}/bin/Release/net10.0/publish.tar
 
 echo stop website
-~/start/stopOlieBlind.Web.sh
+~/olieblind/stopOlieBlind.Web.sh
 
 echo start website
-~/start/startOlieBlind.Web.sh
+~/olieblind/startOlieBlind.Web.sh

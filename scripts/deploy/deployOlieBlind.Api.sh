@@ -47,7 +47,7 @@ rm -rf *
 tar -xf ${basePath}/bin/Release/net10.0/publish.tar
 
 echo stop API
-~/start/stopOlieBlind.Api.sh
+~/olieblind/stopOlieBlind.Api.sh
 
 echo start API
-~/start/startOlieBlind.Api.sh
+~/olieblind/startOlieBlind.Api.sh
