@@ -28,6 +28,21 @@ Next, link the website to the mount
      # sudo ln -s /mnt/olieblind-video/videos videos
      # chcon -R -t httpd_sys_content_t /mnt/olieblind-video/videos
 
+### Google Service Account Key
+We now need to create a Google Service Account key so we can call the text-to-speech API. Log into the Google Cloud, select your project, and navigate to APIs & Services -> Credentials. Click on the Serice Account you want to use. To generate a new key:
+
+- Click on the Keys tab
+- Click on "Add key" -> "Create new key"
+- Select Key type "JSON"
+- Click "Create"
+- Your browser should automatically download the json file.
+
+Using WinSCP, make a connection to your Linode.
+
+- Copy the json file to ~/olieblind
+
+When you update the sourcing file in the next step, set the GOOGLE_APPLICATION_CREDENTIALS to the path of this file.
+
 ### Create and parameterize the environment sourcing script
 The sourceOlieBlind_template.sh script is copied into the olieblind folder. This script is called by other scripts to load the proper environment variables.
 
@@ -43,13 +58,10 @@ We will copy some MySQL scripts out of the repository and customize them.
 
     # cp ~/source/repos/olieblind/scripts/mysql/*.sh ~/olieblind
 
-Plug in the appropriate host, port, username, and password for both scripts. Don't wrap the IPv6 adress in brackets. Run both scripts and confirm the sql dump files were created in /var/backup/mysql.
-
-### Google CLI
-Copy the contents of C:\Users\oliev\AppData\Roaming\gcloud\application_default_credentials.json to ~/environments/virtualstormchasing-de884bb5018e.json
+Replace the asterisks with the appropriate host, port, username, and password for both scripts. Don't wrap the IPv6 adress in brackets. Run both scripts and confirm the sql dump files were created in /var/backup/mysql.
 
 ### Install olieblind
-    # ~/deploy/deployOlieBlind.sh
+    # ~/olieblind/deployOlieBlind.sh
     # dotnet dev-certs https --trust
 
 ### Validate Olieblind.Cli

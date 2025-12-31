@@ -8,3 +8,4 @@ An overview of the infrastructure is provided in the parent README.
 - 3_AkamaiVolume: Create a volume we can attach to a Linode.
 - 4_AkamaiFirewall: Create and configure a firewall.
 - 5_AkamaiLinode: Create and configure a virtual machine.
+- 6_GoogleCloud: Create a project and enable an API.
