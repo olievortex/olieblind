@@ -1,0 +1,33 @@
+@page
+@model Detail
+@{
+    ViewData["Title"] = Model.VideoModel.Title;
+}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-page="/Index">Home</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-page="List" asp-route-category="@Model.VideoModel.Category">@Model.VideoModel.Category Videos</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            @Model.VideoModel.Title
+        </li>
+    </ol>
+</nav>
+
+<div class="container">
+    <video width="640" height="360" poster="@Model.VideoModel.PosterUrl" preload="metadata" controls>
+        <source src="@Model.VideoModel.VideoUrl" type="video/mp4"/>
+        Your browser does not support the video tag.
+    </video>
+    @foreach (var paragraph in Model.VideoModel.Transcript.Split('\n'))
+    {
+        <p>@paragraph</p>
+    }
+</div>
+
+<div class="container">
+    <a class="btn btn-outline-info" asp-page="List" asp-route-category="@Model.VideoModel.Category">Older Videos</a>
+</div>

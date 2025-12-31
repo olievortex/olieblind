@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>07da7a87-ab66-499a-9413-bec57bca2b45</UserSecretsId>
+    <ApplicationInsightsResourceId>/subscriptions/bfc1fbca-c3f0-48a2-9263-9ebb68c8ed96/resourceGroups/rg-olievortex-public/providers/microsoft.insights/components/appi-olieblind</ApplicationInsightsResourceId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Identity" Version="1.16.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.23.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\olieblind.data\olieblind.data.csproj" />
+    <ProjectReference Include="..\olieblind.lib\olieblind.lib.csproj" />
+  </ItemGroup>
+
+</Project>

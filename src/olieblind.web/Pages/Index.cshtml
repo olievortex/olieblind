@@ -1,0 +1,18 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+    var cape = Model.ForecastIndexModel?.GetItemByParameterId(9);
+    var header = Model.ForecastIndexModel?.Header;
+}
+
+@if (cape is not null && header is not null)
+{
+    <h4>Forecast Maps:</h4>
+
+    @await Component.InvokeAsync("ModelForecastHome", Model.ForecastIndexModel)
+}
+
+<h4>Latest Narrated Videos:</h4>
+
+@await Component.InvokeAsync("VideoPageHome", Model.VideoPageModel)

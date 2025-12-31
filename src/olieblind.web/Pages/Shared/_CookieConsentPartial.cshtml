@@ -1,0 +1,74 @@
+@using olieblind.lib.CookieConsent
+@inject ICookieConsentFrontEnd CookieConsent
+@{
+    const string olieCookieConsentKey = "OlieCookieConsent";
+
+    var consentCookie = Context.Request.Cookies[olieCookieConsentKey];
+    var status = CookieConsent.GetCookieConsentStatus(consentCookie);
+    var blueUrl = CookieConsent.GetBlueApiUrl();
+    var pageName = Context.Request.Path.Value ?? string.Empty;
+    var showBanner = status == CookieConsentStatusEnum.Unknown || pageName.Split('/')[^1].Equals("CookiePolicy");
+    var mustAcceptCookies = status == CookieConsentStatusEnum.All ? "false" : "true";
+
+    if (status == CookieConsentStatusEnum.Unknown)
+    {
+        Context.Response.Cookies.Delete(olieCookieConsentKey);
+    }
+}
+
+@if (showBanner)
+{
+    <!-- End of Cookie Banner -->
+    <div id="CookieConsent" class="alert alert-info fade show border border-primary" role="alert">
+        <h4>We value your privacy</h4>
+        We use cookies to enhance your browsing experience, serve personalized content,
+        and analyze our traffic. By clicking "Accept All", you consent to our use of cookies.
+        Update your settings by clicking the Cookies link at the bottom of this page.
+        <a asp-page="/About/CookiePolicy" class="alert-link">Learn More</a>.
+        <div class="d-grid text-center">
+            <div class="row">
+                <div class="col-sm">
+                    <button id="EssentialCookieConsent" type="button" class="btn btn-outline-primary"
+                            data-bs-dismiss="alert">
+                        Essential Only
+                    </button>
+                </div>
+                <div class="col-sm">
+                    <button id="AcceptCookieConsent" type="button" class="btn btn-primary" data-bs-dismiss="alert">
+                        Accept All
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Declared globally when TrackingConsentFeature is enabled and the user has not consented.
+        // Restricts the use of non-essential cookies.
+        let mustAcceptCookies = @(mustAcceptCookies);
+
+        (function () {
+            function SpewCookieConsent(cookieValue) {
+                let xhr = new XMLHttpRequest();
+                xhr.open("POST", "@(blueUrl)/api/user/cookieConsent", true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send(JSON.stringify({ cookieValue }));
+
+                document.cookie = cookieValue;
+            }
+
+            const btnAcceptAll = document.querySelector("#AcceptCookieConsent");
+            btnAcceptAll.addEventListener("click", function () {
+                SpewCookieConsent('@Html.Raw(CookieConsent.CreateBaseCookie(CookieConsentStatusEnum.All))');
+                mustAcceptCookies = false;
+            }, false);
+            const btnEssentialOnly = document.querySelector("#EssentialCookieConsent");
+            btnEssentialOnly.addEventListener("click", function () {
+                document.cookie = 'ai_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+                document.cookie = 'ai_user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+
+                SpewCookieConsent('@Html.Raw(CookieConsent.CreateBaseCookie(CookieConsentStatusEnum.Essential))');
+            }, false);
+        })();
+
+    </script>
+}

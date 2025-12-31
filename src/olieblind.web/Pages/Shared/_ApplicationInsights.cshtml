@@ -1,0 +1,13 @@
+@using olieblind.lib.CookieConsent
+@using olieblind.lib.Services
+@inject IOlieConfig Config
+@inject ICookieConsentFrontEnd CookieConsent
+@{
+    var consentCookie = Context.Request.Cookies[Config.CookieConsentCookieName];
+    var status = CookieConsent.GetCookieConsentStatus(consentCookie);
+
+    if (status == CookieConsentStatusEnum.All)
+    {
+        <script src="/js/ApplicationInsights.js" type="text/javascript"></script>
+    }
+}

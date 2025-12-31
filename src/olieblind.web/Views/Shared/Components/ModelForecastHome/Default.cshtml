@@ -1,0 +1,25 @@
+﻿@using olieblind.lib.Models
+@model ModelForecastIndexModel
+@{
+    var cape = Model?.GetItemByParameterId(9) ?? new ModelForecastIndexModel.ItemModel();
+    var header = Model?.Header ?? new ModelForecastIndexModel.HeaderModel();
+}
+<div class="container">
+    <div class="row">
+        <div class="col-sm">
+            <div class="card" style="width: 322px">
+                <div class="card-header">
+                    NAM @header.Effective.ToString("M/dd") @(header.ForecastHour)Z Forecast (@header.Effective.ToString("HH")Z Run)
+                </div>
+                <a href="/ModelForecast/list?id=@(header.Id)" target="_blank">
+                    <img width="320" height="180" src="@cape.Url" alt="@cape.Title" />
+                </a>
+                <div class="card-body">
+                    <p class="card-text">@cape.Title</p>
+                    <a class="btn btn-secondary" href="/ModelForecast/list?id=@(header.Id)">More Maps</a>
+                    <a class="btn btn-secondary" href="/ModelForecast/ProductList">Older Maps</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

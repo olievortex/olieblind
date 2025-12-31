@@ -1,0 +1,15 @@
+﻿@using olieblind.web.Components
+@model ModelForecastTileViewComponent.ViewModel
+@if (Model.ParameterId > 0)
+{
+    <div class="col-sm">
+        <div class="card" style="width: 322px">
+            <div class="card-header">
+                @Model.Title
+            </div>
+            <a href="@Model.Url" target="_blank">
+                <img width="320" height="180" src="@Model.Url" alt="@Model.Title" />
+            </a>
+        </div>
+    </div>
+}
