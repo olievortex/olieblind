@@ -13,46 +13,44 @@ Make sure the font "Spicy Rice" appears in the list. This font is used in the vi
 
 ### Create install/log directories
 
-    # sudo ~/source/repos/hop/olieblind/infrastructure/linux/createDirectories.sh
+    # sudo ~/source/repos/olieblind/install/create_directories.sh
 
 ### Link to the mount
+If the mount is newly formatted, first add the videos folder.
+
+     # cd /mnt/olieblind-video
+     # sudo mkdir videos
+     # sudo chown olievortex:olievortex videos
+
+Next, link the website to the mount
+
      # cd /var/www
-     # sudo rmdir videos
      # sudo ln -s /mnt/olieblind-video/videos videos
      # chcon -R -t httpd_sys_content_t /mnt/olieblind-video/videos
 
-### Create the environment source script
+### Create and parameterize the environment sourcing script
+The sourceOlieBlind_template.sh script is copied into the olieblind folder. This script is called by other scripts to load the proper environment variables.
 
-    # mkdir -p ~/environments
-    # cp ~/source/repos/hop/olieblind/infrastructure/linux/sourceOlieBlind_template.sh ~/environments
+    # cp ~/source/repos/olieblind/install/sourceOlieBlind_template.sh ~/olieblind
+    # cat ~/olieblind/sourceOlieBlind_template.sh
 
-Replace the placeholder values in the file and then rename it from **sourceOlieBlind_template.sh** to **sourceOlieBlind.sh**. There are instructions in the file on what values to use.
+Replace the placeholder values within the file and then rename it from **sourceOlieBlind_template.sh** to **sourceOlieBlind.sh**. There are instructions within the file on what to do.
+
+    # mv sourceOlieBlind_template.sh sourceOlieBlind.sh
 
 ### MySQL
-In mysql, grant the necessary permissions for mysqldump.
+We will copy some MySQL scripts out of the repository and customize them.
 
-    # mysql --host=**** --port=**** --user=**** --password=****
-    > use mysql
-    > grant reload, process on *.* to 'olieblind_user'@'%';
-    > grant reload, process on *.* to 'olieblind_dev_user'@'%';
-    > flush privileges
-    > exit
+    # cp ~/source/repos/olieblind/scripts/mysql/*.sh ~/olieblind
 
-    # sudo mkdir -p /var/backup
-    # sudo chown olievortex:olievortex /var/backup
-    # mkdir -p /var/backup/mysql
-    # mkdir -p ~/mysql
-    # cp ~/source/repos/hop/olieblind/infrastructure/mysql/*.sh ~/mysql
-    # chmod a+x ~/mysql/*.sh
+Plug in the appropriate host, port, username, and password for both scripts. Don't wrap the IPv6 adress in brackets. Run both scripts and confirm the sql dump files were created in /var/backup/mysql.
 
-Add the appropriate host, port, username, and password. Run both scripts and confirm the sql dump file was created.
+### Google CLI
+Copy the contents of C:\Users\oliev\AppData\Roaming\gcloud\application_default_credentials.json to ~/environments/virtualstormchasing-de884bb5018e.json
 
 ### Install olieblind
     # ~/deploy/deployOlieBlind.sh
     # dotnet dev-certs https --trust
-
-### Google CLI
-Copy the contents of C:\Users\oliev\AppData\Roaming\gcloud\application_default_credentials.json to ~/environments/virtualstormchasing-de884bb5018e.json
 
 ### Validate Olieblind.Cli
 Run the SPC Day One process, confirm a video was created, and check the log for errors.

@@ -1,9 +1,11 @@
 #!/bin/sh
-mkdir -p /var/www/videos
-chown olievortex:olievortex /var/www/videos
-
 mkdir -p /var/log/olieblind
 sudo chown olievortex:olievortex /var/log/olieblind
+
+mkdir -p /var/backup
+chown olievortex:olievortex /var/backup
+mkdir -p /var/backup/mysql
+chown olievortex:olievortex /var/backup/mysql
 
 mkdir -p /opt/olieblind.cli
 chown olievortex:olievortex /opt/olieblind.cli
