@@ -22,22 +22,22 @@
 #
 # m h  dom mon dow   command
 #### Housekeeping
-0 1 * * * /home/olievortex/mysql/olieblind_dev_backup.sh
-5 1 * * * /home/olievortex/mysql/olieblind_backup.sh
-10 1 * * * /home/olievortex/start/startOlieBlind.Cli.sh deleteoldcontent
+0 1 * * * /home/olievortex/olieblind/olieblind_dev_backup.sh
+5 1 * * * /home/olievortex/olieblind/olieblind_backup.sh
+10 1 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh deleteoldcontent
 
 #### The Full Monty
-#0 2,7,14,17,21 * * * /home/olievortex/start/startOlieBlind.Cli.sh spcdayonevideo
-#0 7,18 * * * /home/olievortex/start/startOlieBlind.Cli.sh spcdaytwovideo
-#0 8,20 * * * /home/olievortex/start/startOlieBlind.Cli.sh spcdaythreevideo
-0 21 * * 4 /home/olievortex/start/startOlieBlind.Cli.sh droughtmonitorvideo
-0 3 * * * /home/olievortex/start/startOlieBlind.Cli.sh dayonemaps
+#0 2,7,14,17,21 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh spcdayonevideo
+#0 7,18 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh spcdaytwovideo
+#0 8,20 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh spcdaythreevideo
+0 21 * * 4 /home/olievortex/olieblind/startOlieBlind.Cli.sh droughtmonitorvideo
+0 3 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh dayonemaps
 
 #### MVP (Please go sparingly)
-0 7 * * * /home/olievortex/start/startOlieBlind.Cli.sh spcdayonevideo
-0 7 * * * /home/olievortex/start/startOlieBlind.Cli.sh spcdaytwovideo
-0 8 * * * /home/olievortex/start/startOlieBlind.Cli.sh spcdaythreevideo
+0 7 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh spcdayonevideo
+0 7 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh spcdaytwovideo
+0 8 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh spcdaythreevideo
 
 #### Startup
-@reboot sleep 10; /home/olievortex/start/startOlieBlind.Api.sh
-@reboot /home/olievortex/start/startOlieBlind.Web.sh
+@reboot sleep 10; /home/olievortex/olieblind/startOlieBlind.Api.sh
+@reboot /home/olievortex/olieblind/startOlieBlind.Web.sh
