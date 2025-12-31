@@ -69,7 +69,10 @@ Using DBeaver, we create a login for the website.
 
 ![properties](images/properties.png)
 
-4. Leave all DBA Privileges unchecked.
+4. Under DBA Privileges only select Process and Reload. These permissions are needed to create mysqldump backups.
+
+![DBA Privileges](images/dba_privileges.png)
+
 5. Click the "Schema Privileges" tab.
 6. Select the "olieblind_dev" Catalog
 7. Check All Table Privileges.
