@@ -4,7 +4,7 @@ With the infrastructure in place, we can now install olieblind to the server. Lo
 ## Create symbolic links
 Creates ~/olieblind folder and adds links to scripts from within the repo. Also installs a font.
 
-    # ~/source/repos/olieblind/infrastructure/linux/createLinks.sh
+    # ~/source/repos/olieblind/install/create_links.sh
 
 ## Confirm Font Installation
 Make sure the font "Spicy Rice" appears in the list. This font is used in the video and weather map production.
