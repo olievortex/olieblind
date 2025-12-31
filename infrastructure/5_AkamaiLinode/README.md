@@ -159,6 +159,7 @@ Remeber to restart the webserver after making configuration file changes.
 ### Install certbot
 
     # sudo ln -s /var/lib/snapd/snap /snap
+    # echo If the next line errors, wait 60 seconds and try again.
     # sudo snap install --classic certbot
     # sudo ln -s /snap/bin/certbot /usr/bin/certbot
     # sudo certbot --apache
@@ -177,7 +178,7 @@ Certbot should properly update the configuration. Compare it to this file for an
     ~/source/repo/hop/olieblind/infrastructure/linux/000-olieblind-2-default_after_certbot.conf
 
 ### Port 443 configuration
-This step is documented in the olieblind setup document.
+This step is documented in the installation README.
 
 ### Configure default editor
 Update your .bash_profile to match the editor setting below. This tells crontab what editor to use.
@@ -194,3 +195,5 @@ Update your .bash_profile to match the editor setting below. This tells crontab 
 
 ### Start crontab
     # sudo systemctl start crond.service
+
+The Linode is now ready for install!
