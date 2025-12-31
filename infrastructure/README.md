@@ -4,3 +4,4 @@ All the steps needed to create the infrastructure for this project are in this f
 An overview of the infrastructure is provided in the parent README.
 
 - 1_MySQL: Prepare the MySQL database.
+- 2_Azure: Create all the Azure resources.

@@ -11,7 +11,7 @@ The following software is recommended for the development environment:
 - [PuTTY](https://www.chiark.greenend.org.uk/~sgtatham/putty/) (SSH client)
 - [WinSCP](https://winscp.net/eng/index.php) (Copy files between local computer and remote server)
 - [Postman](https://www.postman.com/) (API testing)
-- [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/?view=azure-cli-latest) (CLI for creating Azure resources)
+- [Azure CLI 64-bit](https://learn.microsoft.com/en-us/cli/azure/?view=azure-cli-latest) (CLI for creating Azure resources)
 
 # Installation
 1. Follow the steps in the README.md file in the infrastructure subfolder.
@@ -56,7 +56,7 @@ All logging is stored in Application Insights, including the Python scripts. It 
 Alerts for unhandled exceptions and uptime monitoring are implemented.
 
 ### Blob Storage (Azure Cloud)
-Full database backups are stored in a container on Azure Blob Storage. A lifecycle rule deletes backups older than 30 days. These backups allow me to easily spawn a new database instance for testing purposes. It also gives me piece of mind I can restore a database from scratch, since cloud offerings aren't always reliable. 
+Full database backup files are stored in a container on Azure Blob Storage. A lifecycle rule deletes backups older than 30 days. These backups allow me to easily spawn a new database instance for testing purposes. It also gives me piece of mind I can restore a database from scratch, since cloud offerings aren't always reliable. 
 
 ### DNS Zone (Microsoft Azure)
 DNS resolution costs about 50 cents per month. The interface is professional, and the resource locks prevent me from accidently nuking the zone.
