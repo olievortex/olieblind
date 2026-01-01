@@ -1,4 +1,16 @@
+using Microsoft.Extensions.DependencyInjection;
+using olieblind.lib.DroughtMonitor;
+using olieblind.lib.ForecastModels;
+using olieblind.lib.Maintenance;
+using olieblind.lib.Processes;
+using olieblind.lib.Radar;
+using olieblind.lib.Radar.Interfaces;
 using olieblind.lib.Services;
+using olieblind.lib.Services.Speech;
+using olieblind.lib.StormEvents;
+using olieblind.lib.StormEvents.Interfaces;
+using olieblind.lib.StormPredictionCenter.Outlooks;
+using olieblind.lib.Video;
 using System.Globalization;
 
 namespace olieblind.lib;
@@ -73,4 +85,42 @@ public static class OlieCommon
         };
     }
 
+    public static void AddOlieLibScopes(this ServiceCollection services)
+    {
+        #region Services
+
+        services.AddScoped<IOlieConfig, OlieConfig>();
+        services.AddScoped<IOlieWebService, OlieWebService>();
+        services.AddScoped<IOlieImageService, OlieImageService>();
+        services.AddScoped<IOlieSpeechService, GoogleSpeechService>();
+        services.AddScoped<ICommonProcess, CommonProcess>();
+
+        #endregion
+
+        #region Business Dependencies
+
+        services.AddScoped<IDatabaseBusiness, DatabaseBusiness>();
+        services.AddScoped<IDatabaseProcess, DatabaseProcess>();
+        services.AddScoped<IDroughtMonitor, DroughtMonitor.DroughtMonitor>();
+        services.AddScoped<IDroughtMonitorScripting, DroughtMonitorScripting>();
+        services.AddScoped<IMySqlMaintenance, MySqlMaintenance>();
+        services.AddScoped<INorthAmericanMesoscale, NorthAmericanMesoscale>();
+        services.AddScoped<IOutlookProduct, OutlookProduct>();
+        services.AddScoped<IOutlookProductParsing, OutlookProductParsing>();
+        services.AddScoped<IOutlookProductScript, OutlookProductScript>();
+        services.AddScoped<IRadarBusiness, RadarBusiness>();
+        services.AddScoped<IRadarSource, RadarSource>();
+
+        #endregion
+
+        #region Processes
+
+        services.AddScoped<ICreateDayOneMapsProcess, CreateDayOneMapsProcess>();
+        services.AddScoped<ICreateDroughtMonitorVideoProcess, CreateDroughtMonitorVideoProcess>();
+        services.AddScoped<ICreateSpcOutlookVideoProcess, CreateSpcOutlookVideoProcess>();
+        services.AddScoped<IDeleteOldContentProcess, DeleteOldContentProcess>();
+        services.AddScoped<IImportStormEventsDatabaseProcess, ImportStormEventsDatabaseProcess>();
+
+        #endregion
+    }
 }

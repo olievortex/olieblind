@@ -42,6 +42,14 @@ public interface IMyRepository
 
     #endregion
 
+    #region RadarSite
+
+    Task<List<RadarSiteEntity>> RadarSiteAllAsync(CancellationToken ct);
+
+    Task RadarSiteCreateAsync(List<RadarSiteEntity> entities, CancellationToken ct);
+
+    #endregion
+
     #region UserCookieConsentLog
 
     Task UserCookieConsentLogCreate(UserCookieConsentLogEntity entity, CancellationToken ct);

@@ -121,6 +121,21 @@ public class MyRepository(MyContext context) : IMyRepository
 
     #endregion
 
+    #region RadarSite
+
+    public async Task<List<RadarSiteEntity>> RadarSiteAllAsync(CancellationToken ct)
+    {
+        return await context.RadarSites.AsNoTracking().ToListAsync(ct);
+    }
+
+    public async Task RadarSiteCreateAsync(List<RadarSiteEntity> entities, CancellationToken ct)
+    {
+        await context.RadarSites.AddRangeAsync(entities, ct);
+        await context.SaveChangesAsync(ct);
+    }
+
+    #endregion
+
     #region UserCookieConsentLog
 
     public async Task UserCookieConsentLogCreate(UserCookieConsentLogEntity entity, CancellationToken ct)

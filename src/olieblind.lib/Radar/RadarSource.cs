@@ -29,11 +29,6 @@ public class RadarSource(IMyRepository repo, IOlieWebService ows) : IRadarSource
     //    cache.Add(entity);
     //}
 
-    //public async Task CreateRadarSiteAsync(RadarSiteEntity entity, CancellationToken ct)
-    //{
-    //    await cosmos.RadarSiteCreateAsync(entity, ct);
-    //}
-
     //public RadarSiteEntity FindClosestRadar(List<RadarSiteEntity> radarSites, double lat, double lon)
     //{
     //    var closest = radarSites.Select(s => new
@@ -74,11 +69,6 @@ public class RadarSource(IMyRepository repo, IOlieWebService ows) : IRadarSource
     //    return result;
     //}
     public Task AddRadarInventoryAsync(List<RadarInventoryEntity> cache, RadarSiteEntity radar, DateTime effectiveTime, AmazonS3Client client, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task CreateRadarSiteAsync(RadarSiteEntity entity, CancellationToken ct)
     {
         throw new NotImplementedException();
     }

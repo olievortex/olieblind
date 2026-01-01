@@ -5,17 +5,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using olieblind.data;
-using olieblind.lib.DroughtMonitor;
-using olieblind.lib.ForecastModels;
-using olieblind.lib.Maintenance;
-using olieblind.lib.Processes;
-using olieblind.lib.Radar;
-using olieblind.lib.Radar.Interfaces;
+using olieblind.lib;
 using olieblind.lib.Services;
 using olieblind.lib.Services.Speech;
-using olieblind.lib.StormEvents;
-using olieblind.lib.StormEvents.Interfaces;
-using olieblind.lib.StormPredictionCenter.Outlooks;
 using olieblind.lib.Video;
 
 namespace olieblind.cli;
@@ -74,6 +66,7 @@ public class Program
             OlieArgs.CommandsEnum.SpcDayTwoVideo => await CreateService<CommandSpcDayTwoVideo>().Run(ct),
             OlieArgs.CommandsEnum.SpcDayThreeVideo => await CreateService<CommandSpcDayThreeVideo>().Run(ct),
             OlieArgs.CommandsEnum.ListVoices => await CommandListVoices.Run(ct),
+            OlieArgs.CommandsEnum.LoadRadars => await CreateService<CommandLoadRadars>().Run(ct),
             _ => throw new ArgumentException($"The command {olieArgs.Command} is not implemented yet."),
         };
     }
@@ -132,43 +125,8 @@ public class Program
         services.Configure<TelemetryConfiguration>(config => config.TelemetryChannel = _channel);
         services.AddScoped(_ => configuration);
         services.AddHttpClient();
-
-        #endregion
-
-        #region Common Dependencies
-
-        services.AddScoped<IOlieConfig, OlieConfig>();
+        services.AddOlieLibScopes();
         services.AddScoped<IMyRepository, MyRepository>();
-        services.AddScoped<IOlieWebService, OlieWebService>();
-        services.AddScoped<IOlieImageService, OlieImageService>();
-        services.AddScoped<IOlieSpeechService, GoogleSpeechService>();
-        services.AddScoped<ICommonProcess, CommonProcess>();
-
-        #endregion
-
-        #region Library Dependencies
-
-        services.AddScoped<IDatabaseBusiness, DatabaseBusiness>();
-        services.AddScoped<IDatabaseProcess, DatabaseProcess>();
-        services.AddScoped<IDroughtMonitor, DroughtMonitor>();
-        services.AddScoped<IDroughtMonitorScripting, DroughtMonitorScripting>();
-        services.AddScoped<IMySqlMaintenance, MySqlMaintenance>();
-        services.AddScoped<INorthAmericanMesoscale, NorthAmericanMesoscale>();
-        services.AddScoped<IOutlookProduct, OutlookProduct>();
-        services.AddScoped<IOutlookProductParsing, OutlookProductParsing>();
-        services.AddScoped<IOutlookProductScript, OutlookProductScript>();
-        services.AddScoped<IRadarBusiness, RadarBusiness>();
-        services.AddScoped<IRadarSource, RadarSource>();
-
-        #endregion
-
-        #region Processes
-
-        services.AddScoped<ICreateDayOneMapsProcess, CreateDayOneMapsProcess>();
-        services.AddScoped<ICreateDroughtMonitorVideoProcess, CreateDroughtMonitorVideoProcess>();
-        services.AddScoped<ICreateSpcOutlookVideoProcess, CreateSpcOutlookVideoProcess>();
-        services.AddScoped<IDeleteOldContentProcess, DeleteOldContentProcess>();
-        services.AddScoped<IImportStormEventsDatabaseProcess, ImportStormEventsDatabaseProcess>();
 
         #endregion
 
@@ -182,6 +140,7 @@ public class Program
         services.AddScoped<CommandSpcDayTwoVideo>();
         services.AddScoped<CommandSpcDayThreeVideo>();
         services.AddScoped<CommandListVoices>();
+        services.AddScoped<CommandLoadRadars>();
 
         #endregion
 

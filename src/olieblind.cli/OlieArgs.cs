@@ -14,7 +14,8 @@ public class OlieArgs
         SpcDayOneVideo,
         SpcDayTwoVideo,
         SpcDayThreeVideo,
-        ListVoices
+        ListVoices,
+        LoadRadars
     }
 
     public OlieArgs(string[] args)
@@ -33,6 +34,7 @@ public class OlieArgs
             "spcdaytwovideo" => CommandsEnum.SpcDayTwoVideo,
             "spcdaythreevideo" => CommandsEnum.SpcDayThreeVideo,
             "listvoices" => CommandsEnum.ListVoices,
+            "loadradars" => CommandsEnum.LoadRadars,
             _ => throw new ArgumentException($"Unknown command {command}")
         };
     }

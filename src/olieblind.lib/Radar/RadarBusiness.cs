@@ -1,10 +1,11 @@
 using Amazon.S3;
+using olieblind.data;
 using olieblind.data.Entities;
 using olieblind.lib.Radar.Interfaces;
 
 namespace olieblind.lib.Radar;
 
-public class RadarBusiness(IRadarSource source) : IRadarBusiness
+public class RadarBusiness(IRadarSource source, IMyRepository repo) : IRadarBusiness
 {
     //public async Task<RadarSiteEntity> DownloadInventoryForClosestRadarAsync(List<RadarSiteEntity> radarSites,
     //    List<RadarInventoryEntity> cache, DateTime effectiveTime, double latitude, double longitude,
@@ -24,47 +25,46 @@ public class RadarBusiness(IRadarSource source) : IRadarBusiness
     //    }
     //}
 
-    //public async Task PopulateRadarSitesFromCsvAsync(string csv, CancellationToken ct)
-    //{
-    //    var lines = csv.ReplaceLineEndings("\n").Split('\n');
-    //    var lineNumber = 0;
-
-    //    foreach (var line in lines)
-    //    {
-    //        // Skip the header
-    //        lineNumber++;
-    //        if (lineNumber < 3) continue;
-    //        if (string.IsNullOrEmpty(line)) continue;
-
-    //        // Parse the parts
-    //        var icao = line[9..13];
-    //        var name = line[20..50].Trim();
-    //        var state = line[72..74].Trim();
-    //        var lat = double.Parse(line[106..115]);
-    //        var lon = double.Parse(line[116..126]);
-    //        if (string.IsNullOrWhiteSpace(state)) continue;
-
-    //        // Create the record
-    //        var entity = new RadarSiteEntity
-    //        {
-    //            Id = icao,
-
-    //            Name = name,
-    //            State = state,
-    //            Latitude = lat,
-    //            Longitude = lon,
-    //            Timestamp = DateTime.UtcNow
-    //        };
-
-    //        await source.CreateRadarSiteAsync(entity, ct);
-    //    }
-    //}
-    public Task<RadarSiteEntity> DownloadInventoryForClosestRadarAsync(List<RadarSiteEntity> radarSites, List<RadarInventoryEntity> cache, DateTime effectiveTime, double latitude, double longitude, AmazonS3Client client, CancellationToken ct)
+    public async Task PopulateRadarSitesFromCsvAsync(string csv, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var lines = csv.ReplaceLineEndings("\n").Split('\n');
+        var lineNumber = 0;
+        var radars = new List<RadarSiteEntity>();
+
+        foreach (var line in lines)
+        {
+            // Skip the header
+            lineNumber++;
+            if (lineNumber < 3) continue;
+            if (string.IsNullOrEmpty(line)) continue;
+
+            // Parse the parts
+            var icao = line[9..13];
+            var name = line[20..50].Trim();
+            var state = line[72..74].Trim();
+            var lat = double.Parse(line[106..115]);
+            var lon = double.Parse(line[116..126]);
+            if (string.IsNullOrWhiteSpace(state)) continue;
+
+            // Create the record
+            var entity = new RadarSiteEntity
+            {
+                Id = icao,
+
+                Name = name,
+                State = state,
+                Latitude = lat,
+                Longitude = lon,
+                Timestamp = DateTime.UtcNow
+            };
+
+            radars.Add(entity);
+        }
+
+        await repo.RadarSiteCreateAsync(radars, ct);
     }
 
-    public Task PopulateRadarSitesFromCsvAsync(string csv, CancellationToken ct)
+    public Task<RadarSiteEntity> DownloadInventoryForClosestRadarAsync(List<RadarSiteEntity> radarSites, List<RadarInventoryEntity> cache, DateTime effectiveTime, double latitude, double longitude, AmazonS3Client client, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
