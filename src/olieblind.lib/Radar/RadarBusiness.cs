@@ -25,12 +25,12 @@ public class RadarBusiness(IRadarSource source, IMyRepository repo) : IRadarBusi
     //    }
     //}
 
-    public async Task<List<RadarSiteEntity>> GetPrimaryRadarSitesAsync(CancellationToken ct)
+    public async Task<List<RadarSiteEntity>> GetPrimaryRadarSites(CancellationToken ct)
     {
         return [.. (await repo.RadarSiteGetAll(ct)).Where(w => w.Id.StartsWith('K'))];
     }
 
-    public async Task PopulateRadarSitesFromCsvAsync(string csv, CancellationToken ct)
+    public async Task PopulateRadarSitesFromCsv(string csv, CancellationToken ct)
     {
         var lines = csv.ReplaceLineEndings("\n").Split('\n');
         var lineNumber = 0;
@@ -69,7 +69,7 @@ public class RadarBusiness(IRadarSource source, IMyRepository repo) : IRadarBusi
         await repo.RadarSiteCreate(radars, ct);
     }
 
-    public Task<RadarSiteEntity> DownloadInventoryForClosestRadarAsync(List<RadarSiteEntity> radarSites, List<RadarInventoryEntity> cache, DateTime effectiveTime, double latitude, double longitude, AmazonS3Client client, CancellationToken ct)
+    public Task<RadarSiteEntity> DownloadInventoryForClosestRadar(List<RadarSiteEntity> radarSites, List<RadarInventoryEntity> cache, DateTime effectiveTime, double latitude, double longitude, AmazonS3Client client, CancellationToken ct)
     {
         throw new NotImplementedException();
     }

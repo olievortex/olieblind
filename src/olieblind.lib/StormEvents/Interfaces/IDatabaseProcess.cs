@@ -6,13 +6,13 @@ namespace olieblind.lib.StormEvents.Interfaces;
 
 public interface IDatabaseProcess
 {
-    Task<List<StormEventsDailySummaryEntity>> DeactivateOldSummariesAsync(string id, int year, string sourceFk,
+    Task<List<StormEventsDailySummaryEntity>> DeactivateOldSummaries(string id, int year, string sourceFk,
         CancellationToken ct);
 
     List<DailySummaryModel> GetAggregate(List<DailyDetailModel> models);
 
-    Task<List<DailyDetailModel>> LoadAsync(
+    Task<List<DailyDetailModel>> Load(
         BlobContainerClient blobClient, StormEventsDatabaseEntity eventsDatabase, CancellationToken ct);
 
-    Task SourceDatabasesAsync(BlobContainerClient blobClient, CancellationToken ct);
+    Task SourceDatabases(BlobContainerClient blobClient, CancellationToken ct);
 }

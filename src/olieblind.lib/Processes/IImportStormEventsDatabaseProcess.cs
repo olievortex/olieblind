@@ -5,5 +5,5 @@ namespace olieblind.lib.Processes;
 
 public interface IImportStormEventsDatabaseProcess
 {
-    Task RunAsync(int year, BlobContainerClient blobClient, AmazonS3Client amazonClient, CancellationToken ct);
+    Task Run(int year, string update, BlobContainerClient blobClient, AmazonS3Client amazonClient, CancellationToken ct);
 }

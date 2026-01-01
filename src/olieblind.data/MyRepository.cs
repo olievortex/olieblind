@@ -149,13 +149,12 @@ public class MyRepository(MyContext context) : IMyRepository
         await context.SaveChangesAsync(ct);
     }
 
-    //public async Task<StormEventsDatabaseInventoryEntity?> StormEventsDatabaseInventoryGetAsync(int year, string id,
-    //    CancellationToken ct)
-    //{
-    //    return await context.StormEventsDatabaseInventory.SingleOrDefaultAsync(s =>
-    //        s.Id == id &&
-    //        s.Year == year, ct);
-    //}
+    public async Task<StormEventsDatabaseEntity?> StormEventsDatabaseGet(int year, string id, CancellationToken ct)
+    {
+        return await context.StormEventsDatabases.AsNoTracking().SingleOrDefaultAsync(s =>
+            s.Id == id &&
+            s.Year == year, ct);
+    }
 
     //public async Task StormEventsDatabaseInventoryUpdateAsync(StormEventsDatabaseInventoryEntity entity,
     //    CancellationToken ct)

@@ -5,11 +5,11 @@ namespace olieblind.lib.Radar.Interfaces;
 
 public interface IRadarBusiness
 {
-    Task<RadarSiteEntity> DownloadInventoryForClosestRadarAsync(List<RadarSiteEntity> radarSites,
+    Task<RadarSiteEntity> DownloadInventoryForClosestRadar(List<RadarSiteEntity> radarSites,
         List<RadarInventoryEntity> cache, DateTime effectiveTime, double latitude, double longitude,
         AmazonS3Client client, CancellationToken ct);
 
-    Task<List<RadarSiteEntity>> GetPrimaryRadarSitesAsync(CancellationToken ct);
+    Task<List<RadarSiteEntity>> GetPrimaryRadarSites(CancellationToken ct);
 
-    Task PopulateRadarSitesFromCsvAsync(string csv, CancellationToken ct);
+    Task PopulateRadarSitesFromCsv(string csv, CancellationToken ct);
 }

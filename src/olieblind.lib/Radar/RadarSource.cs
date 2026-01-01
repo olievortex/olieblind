@@ -61,7 +61,7 @@ public class RadarSource(IMyRepository repo, IOlieWebService ows) : IRadarSource
 
     //    return result;
     //}
-    public Task AddRadarInventoryAsync(List<RadarInventoryEntity> cache, RadarSiteEntity radar, DateTime effectiveTime, AmazonS3Client client, CancellationToken ct)
+    public Task AddRadarInventory(List<RadarInventoryEntity> cache, RadarSiteEntity radar, DateTime effectiveTime, AmazonS3Client client, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
@@ -71,7 +71,7 @@ public class RadarSource(IMyRepository repo, IOlieWebService ows) : IRadarSource
         throw new NotImplementedException();
     }
 
-    public Task<RadarInventoryEntity?> GetRadarInventoryAsync(List<RadarInventoryEntity> cache, RadarSiteEntity radar, DateTime effectiveTime, CancellationToken ct)
+    public Task<RadarInventoryEntity?> GetRadarInventory(List<RadarInventoryEntity> cache, RadarSiteEntity radar, DateTime effectiveTime, CancellationToken ct)
     {
         throw new NotImplementedException();
     }

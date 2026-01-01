@@ -15,6 +15,7 @@ public class CommandEventsDatabase(IImportStormEventsDatabaseProcess process, IO
     public async Task<int> Run(OlieArgs olieArgs, CancellationToken ct)
     {
         var year = olieArgs.IntArg1;
+        var update = olieArgs.StrArg1;
 
         try
         {
@@ -25,7 +26,7 @@ public class CommandEventsDatabase(IImportStormEventsDatabaseProcess process, IO
             var blobClient = new BlobContainerClient(new Uri(config.BlobBronzeContainerUri), config.Credential);
 
             // Run
-            await process.RunAsync(year, blobClient, awsClient, ct);
+            await process.Run(year, update, blobClient, awsClient, ct);
 
             return 0;
         }

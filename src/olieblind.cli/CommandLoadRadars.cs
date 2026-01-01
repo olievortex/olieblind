@@ -16,7 +16,7 @@ public class CommandLoadRadars(IRadarBusiness business, ILogger<CommandLoadRadar
 
             var value = await File.ReadAllTextAsync("./Resources/nexrad-stations.txt", ct);
 
-            await business.PopulateRadarSitesFromCsvAsync(value, ct);
+            await business.PopulateRadarSitesFromCsv(value, ct);
 
             return 0;
         }

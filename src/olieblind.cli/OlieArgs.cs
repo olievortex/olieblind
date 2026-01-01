@@ -4,6 +4,7 @@ public class OlieArgs
 {
     public CommandsEnum Command { get; private set; }
     public int IntArg1 { get; private set; }
+    public string StrArg1 { get; private set; } = string.Empty;
 
     public enum CommandsEnum
     {
@@ -41,12 +42,13 @@ public class OlieArgs
 
     private CommandsEnum ReadArgsForEventsDatabase(string[] args)
     {
-        const string usage = "Usage: dotnet olieblind.cli.dll eventsdatabase [year]";
+        const string usage = "Usage: dotnet olieblind.cli.dll eventsdatabase [year] [update]";
 
-        if (args.Length == 1) throw new ArgumentException(usage);
+        if (args.Length != 3) throw new ArgumentException(usage);
         if (!int.TryParse(args[1], out var year)) throw new ArgumentException(usage);
 
         IntArg1 = year;
+        StrArg1 = args[2];
 
         return CommandsEnum.EventsDatabase;
     }

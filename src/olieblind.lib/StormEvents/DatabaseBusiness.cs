@@ -100,7 +100,7 @@ public partial class DatabaseBusiness(IOlieWebService ows, IMyRepository repo) :
 
     #region Database
 
-    public async Task DatabaseDownloadAsync(BlobContainerClient client, List<DatabaseFileModel> model, CancellationToken ct)
+    public async Task DatabaseDownload(BlobContainerClient client, List<DatabaseFileModel> model, CancellationToken ct)
     {
         var inventory = await repo.StormEventsDatabaseGetAll(ct);
 
@@ -131,11 +131,10 @@ public partial class DatabaseBusiness(IOlieWebService ows, IMyRepository repo) :
         }
     }
 
-    //public async Task<StormEventsDatabaseInventoryEntity?> DatabaseGetInventoryAsync(int year, string id,
-    //    CancellationToken ct)
-    //{
-    //    return await cosmos.StormEventsDatabaseInventoryGetAsync(year, id, ct);
-    //}
+    public async Task<StormEventsDatabaseEntity?> DatabaseGetInventory(int year, string id, CancellationToken ct)
+    {
+        return await repo.StormEventsDatabaseGet(year, id, ct);
+    }
 
     //public async Task<List<DailyDetailModel>> DatabaseLoadAsync(
     //    BlobContainerClient blobClient, StormEventsDatabaseInventoryEntity eventsDatabase, CancellationToken ct)
@@ -219,7 +218,7 @@ public partial class DatabaseBusiness(IOlieWebService ows, IMyRepository repo) :
     //    await cosmos.StormEventsDatabaseInventoryUpdateAsync(entity, ct);
     //}
 
-    public async Task<List<DatabaseFileModel>> DatabaseListAsync(CancellationToken ct)
+    public async Task<List<DatabaseFileModel>> DatabaseList(CancellationToken ct)
     {
         var results = await ows.ApiGetString(StormEventsUrl, ct);
         var matches = MatchCsvFileRegex().Matches(results);
@@ -242,57 +241,52 @@ public partial class DatabaseBusiness(IOlieWebService ows, IMyRepository repo) :
 
     #endregion
 
-    public Task ActivateSummaryAsync(StormEventsDailySummaryEntity entity, CancellationToken ct)
+    public Task ActivateSummary(StormEventsDailySummaryEntity entity, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
 
-    public Task AddDailyDetailToCosmosAsync(List<DailyDetailModel> models, string sourceFk, CancellationToken ct)
+    public Task AddDailyDetailToCosmos(List<DailyDetailModel> models, string sourceFk, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
 
-    public Task AddDailySummaryToCosmosAsync(DailySummaryModel model, string sourceFk, CancellationToken ct)
+    public Task AddDailySummaryToCosmos(DailySummaryModel model, string sourceFk, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
 
-    public Task CompareDetailCountAsync(string dateFk, string sourceFk, int count, CancellationToken ct)
+    public Task CompareDetailCount(string dateFk, string sourceFk, int count, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
 
-    public Task<StormEventsDatabaseEntity?> DatabaseGetInventoryAsync(int year, string id, CancellationToken ct)
+    public Task<List<DailyDetailModel>> DatabaseLoad(BlobContainerClient blobClient, StormEventsDatabaseEntity eventsDatabase, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
 
-    public Task<List<DailyDetailModel>> DatabaseLoadAsync(BlobContainerClient blobClient, StormEventsDatabaseEntity eventsDatabase, CancellationToken ct)
+    public Task DatabaseUpdateActive(StormEventsDatabaseEntity entity, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
 
-    public Task DatabaseUpdateActiveAsync(StormEventsDatabaseEntity entity, CancellationToken ct)
+    public Task DatabaseUpdateRowCount(StormEventsDatabaseEntity entity, int rowCount, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
 
-    public Task DatabaseUpdateRowCountAsync(StormEventsDatabaseEntity entity, int rowCount, CancellationToken ct)
+    public Task DeactivateSummary(StormEventsDailySummaryEntity entity, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
 
-    public Task DeactivateSummaryAsync(StormEventsDailySummaryEntity entity, CancellationToken ct)
+    public Task DeleteDetail(string dateFk, string sourceFk, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
 
-    public Task DeleteDetailAsync(string dateFk, string sourceFk, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<List<StormEventsDailySummaryEntity>> GetSummariesForDayAsync(string id, int year, CancellationToken ct)
+    public Task<List<StormEventsDailySummaryEntity>> GetSummariesForDay(string id, int year, CancellationToken ct)
     {
         throw new NotImplementedException();
     }

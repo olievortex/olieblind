@@ -8,41 +8,40 @@ public interface IDatabaseBusiness
 {
     #region Detail
 
-    Task AddDailyDetailToCosmosAsync(List<DailyDetailModel> models, string sourceFk, CancellationToken ct);
+    Task AddDailyDetailToCosmos(List<DailyDetailModel> models, string sourceFk, CancellationToken ct);
 
-    Task CompareDetailCountAsync(string dateFk, string sourceFk, int count, CancellationToken ct);
+    Task CompareDetailCount(string dateFk, string sourceFk, int count, CancellationToken ct);
 
-    Task DeleteDetailAsync(string dateFk, string sourceFk, CancellationToken ct);
+    Task DeleteDetail(string dateFk, string sourceFk, CancellationToken ct);
 
     #endregion
 
     #region Summary
 
-    Task ActivateSummaryAsync(StormEventsDailySummaryEntity entity, CancellationToken ct);
+    Task ActivateSummary(StormEventsDailySummaryEntity entity, CancellationToken ct);
 
-    Task AddDailySummaryToCosmosAsync(DailySummaryModel model, string sourceFk, CancellationToken ct);
+    Task AddDailySummaryToCosmos(DailySummaryModel model, string sourceFk, CancellationToken ct);
 
-    Task DeactivateSummaryAsync(StormEventsDailySummaryEntity entity, CancellationToken ct);
+    Task DeactivateSummary(StormEventsDailySummaryEntity entity, CancellationToken ct);
 
-    Task<List<StormEventsDailySummaryEntity>> GetSummariesForDayAsync(string id, int year,
-        CancellationToken ct);
+    Task<List<StormEventsDailySummaryEntity>> GetSummariesForDay(string id, int year, CancellationToken ct);
 
     #endregion
 
     #region Database
 
-    Task DatabaseDownloadAsync(BlobContainerClient client, List<DatabaseFileModel> model, CancellationToken ct);
+    Task DatabaseDownload(BlobContainerClient client, List<DatabaseFileModel> model, CancellationToken ct);
 
-    Task<StormEventsDatabaseEntity?> DatabaseGetInventoryAsync(int year, string id, CancellationToken ct);
+    Task<StormEventsDatabaseEntity?> DatabaseGetInventory(int year, string id, CancellationToken ct);
 
-    Task<List<DatabaseFileModel>> DatabaseListAsync(CancellationToken ct);
+    Task<List<DatabaseFileModel>> DatabaseList(CancellationToken ct);
 
-    Task<List<DailyDetailModel>> DatabaseLoadAsync(
+    Task<List<DailyDetailModel>> DatabaseLoad(
         BlobContainerClient blobClient, StormEventsDatabaseEntity eventsDatabase, CancellationToken ct);
 
-    Task DatabaseUpdateActiveAsync(StormEventsDatabaseEntity entity, CancellationToken ct);
+    Task DatabaseUpdateActive(StormEventsDatabaseEntity entity, CancellationToken ct);
 
-    Task DatabaseUpdateRowCountAsync(StormEventsDatabaseEntity entity, int rowCount, CancellationToken ct);
+    Task DatabaseUpdateRowCount(StormEventsDatabaseEntity entity, int rowCount, CancellationToken ct);
 
     #endregion
 }

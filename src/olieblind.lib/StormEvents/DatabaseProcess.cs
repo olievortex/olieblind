@@ -33,13 +33,13 @@ public class DatabaseProcess(IDatabaseBusiness business) : IDatabaseProcess
     //    return await business.DatabaseLoadAsync(blobClient, eventsDatabase, ct);
     //}
 
-    public async Task SourceDatabasesAsync(BlobContainerClient blobClient, CancellationToken ct)
+    public async Task SourceDatabases(BlobContainerClient blobClient, CancellationToken ct)
     {
-        var eventsList = await business.DatabaseListAsync(ct);
-        await business.DatabaseDownloadAsync(blobClient, eventsList, ct);
+        var eventsList = await business.DatabaseList(ct);
+        await business.DatabaseDownload(blobClient, eventsList, ct);
     }
 
-    public Task<List<StormEventsDailySummaryEntity>> DeactivateOldSummariesAsync(string id, int year, string sourceFk, CancellationToken ct)
+    public Task<List<StormEventsDailySummaryEntity>> DeactivateOldSummaries(string id, int year, string sourceFk, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
@@ -49,7 +49,7 @@ public class DatabaseProcess(IDatabaseBusiness business) : IDatabaseProcess
         throw new NotImplementedException();
     }
 
-    public Task<List<DailyDetailModel>> LoadAsync(BlobContainerClient blobClient, StormEventsDatabaseEntity eventsDatabase, CancellationToken ct)
+    public Task<List<DailyDetailModel>> Load(BlobContainerClient blobClient, StormEventsDatabaseEntity eventsDatabase, CancellationToken ct)
     {
         throw new NotImplementedException();
     }

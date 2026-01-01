@@ -56,14 +56,7 @@ public interface IMyRepository
 
     Task StormEventsDatabaseCreate(StormEventsDatabaseEntity entity, CancellationToken ct);
 
-
-    //public async Task<StormEventsDatabaseInventoryEntity?> StormEventsDatabaseInventoryGetAsync(int year, string id,
-    //    CancellationToken ct)
-    //{
-    //    return await context.StormEventsDatabaseInventory.SingleOrDefaultAsync(s =>
-    //        s.Id == id &&
-    //        s.Year == year, ct);
-    //}
+    Task<StormEventsDatabaseEntity?> StormEventsDatabaseGet(int year, string id, CancellationToken ct);
 
     //public async Task StormEventsDatabaseInventoryUpdateAsync(StormEventsDatabaseInventoryEntity entity,
     //    CancellationToken ct)
