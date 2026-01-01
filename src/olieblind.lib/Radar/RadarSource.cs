@@ -8,71 +8,57 @@ namespace olieblind.lib.Radar;
 
 public class RadarSource(IMyRepository repo, IOlieWebService ows) : IRadarSource
 {
-    //public const string LevelIiBucket = "noaa-nexrad-level2";
+    public const string LevelIiBucket = "noaa-nexrad-level2";
 
-    //public async Task AddRadarInventoryAsync(List<RadarInventoryEntity> cache, RadarSiteEntity radar,
-    //    DateTime effectiveTime, AmazonS3Client client, CancellationToken ct)
-    //{
-    //    var prefix = $"{effectiveTime:yyyy}/{effectiveTime:MM}/{effectiveTime:dd}/{radar.Id}/";
-    //    var products = await ows.AwsListAsync(LevelIiBucket, prefix, client, ct);
-
-    //    var entity = new RadarInventoryEntity
-    //    {
-    //        BucketName = LevelIiBucket,
-    //        EffectiveDate = $"{effectiveTime:yyyy-MM-dd}",
-    //        FileList = products,
-    //        Id = radar.Id,
-    //        Timestamp = DateTime.UtcNow
-    //    };
-
-    //    await cosmos.RadarInventoryAddAsync(entity, ct);
-    //    cache.Add(entity);
-    //}
-
-    //public RadarSiteEntity FindClosestRadar(List<RadarSiteEntity> radarSites, double lat, double lon)
-    //{
-    //    var closest = radarSites.Select(s => new
-    //        {
-    //            s.Id,
-    //            Distance = Math.Sqrt(Math.Pow(s.Latitude - lat, 2) + Math.Pow(s.Longitude - lon, 2))
-    //        })
-    //        .OrderBy(o => o.Distance)
-    //        .First();
-
-    //    return radarSites
-    //        .Single(s => s.Id == closest.Id);
-    //}
-
-    //public async Task<RadarInventoryEntity?> GetRadarInventoryAsync(List<RadarInventoryEntity> cache,
-    //    RadarSiteEntity radar, DateTime effectiveTime, CancellationToken ct)
-    //{
-    //    var effectiveDate = $"{effectiveTime:yyyy-MM-dd}";
-    //    var result = cache.SingleOrDefault(a => a.BucketName == LevelIiBucket &&
-    //                                            a.EffectiveDate == effectiveDate &&
-    //                                            a.Id == radar.Id);
-
-    //    if (result is not null) return result;
-
-    //    result = await cosmos.RadarInventoryGetAsync(radar.Id, effectiveDate, LevelIiBucket, ct);
-
-    //    if (result is null) return null;
-
-    //    cache.Add(result);
-
-    //    return result;
-    //}
-    public Task AddRadarInventory(List<RadarInventoryEntity> cache, RadarSiteEntity radar, DateTime effectiveTime, AmazonS3Client client, CancellationToken ct)
+    public async Task AddRadarInventory(List<RadarInventoryEntity> cache, RadarSiteEntity radar,
+        DateTime effectiveTime, AmazonS3Client client, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var prefix = $"{effectiveTime:yyyy}/{effectiveTime:MM}/{effectiveTime:dd}/{radar.Id}/";
+        var products = await ows.AwsList(LevelIiBucket, prefix, client, ct);
+
+        var entity = new RadarInventoryEntity
+        {
+            BucketName = LevelIiBucket,
+            EffectiveDate = $"{effectiveTime:yyyy-MM-dd}",
+            FileList = string.Join('|', products),
+            Id = radar.Id,
+            Timestamp = DateTime.UtcNow
+        };
+
+        await repo.RadarInventoryAdd(entity, ct);
+        cache.Add(entity);
     }
 
     public RadarSiteEntity FindClosestRadar(List<RadarSiteEntity> radarSites, double lat, double lon)
     {
-        throw new NotImplementedException();
+        var closest = radarSites.Select(s => new
+        {
+            s.Id,
+            Distance = Math.Sqrt(Math.Pow(s.Latitude - lat, 2) + Math.Pow(s.Longitude - lon, 2))
+        })
+            .OrderBy(o => o.Distance)
+            .First();
+
+        return radarSites
+            .Single(s => s.Id == closest.Id);
     }
 
-    public Task<RadarInventoryEntity?> GetRadarInventory(List<RadarInventoryEntity> cache, RadarSiteEntity radar, DateTime effectiveTime, CancellationToken ct)
+    public async Task<RadarInventoryEntity?> GetRadarInventory(List<RadarInventoryEntity> cache,
+        RadarSiteEntity radar, DateTime effectiveTime, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var effectiveDate = $"{effectiveTime:yyyy-MM-dd}";
+        var result = cache.SingleOrDefault(a => a.BucketName == LevelIiBucket &&
+                                                a.EffectiveDate == effectiveDate &&
+                                                a.Id == radar.Id);
+
+        if (result is not null) return result;
+
+        result = await repo.RadarInventoryGet(radar.Id, effectiveDate, LevelIiBucket, ct);
+
+        if (result is null) return null;
+
+        cache.Add(result);
+
+        return result;
     }
 }

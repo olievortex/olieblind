@@ -27,3 +27,26 @@ public class StormEventsDailySummaryEntity
         return Id;
     }
 }
+
+//CREATE TABLE olieblind_dev.StormEventDailySummaries (
+//	  Id varchar(36) NOT NULL,
+//	  `Year` INT NOT NULL,
+//	  SourceFk varchar(36) NOT NULL,
+//    HeadlineEventTime DATETIME NULL,
+//    SatellitePathPoster varchar(320) NULL,
+//	  SatellitePath1080 varchar(320) NULL,
+//	  Hail INT NOT NULL,
+//    Wind INT NOT NULL,
+//	  F5 INT NOT NULL,
+//    F4 INT NOT NULL,
+//    F3 INT NOT NULL,
+//    F2 INT NOT NULL,
+//	  F1 INT NOT NULL,
+//    RowCount INT NOT NULL,
+//	  `Timestamp` DATETIME NOT NULL,
+//	  IsCurrent BOOL NOT NULL,
+//  CONSTRAINT StormEventDailySummaries_PK PRIMARY KEY(Id,`Year`, SourceFk)
+//)
+//ENGINE=InnoDB
+//DEFAULT CHARSET=utf8mb4
+//COLLATE = utf8mb4_0900_ai_ci;

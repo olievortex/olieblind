@@ -7,23 +7,23 @@ namespace olieblind.lib.Radar;
 
 public class RadarBusiness(IRadarSource source, IMyRepository repo) : IRadarBusiness
 {
-    //public async Task<RadarSiteEntity> DownloadInventoryForClosestRadarAsync(List<RadarSiteEntity> radarSites,
-    //    List<RadarInventoryEntity> cache, DateTime effectiveTime, double latitude, double longitude,
-    //    AmazonS3Client client, CancellationToken ct)
-    //{
-    //    var radarSite = source.FindClosestRadar(radarSites, latitude, longitude);
-    //    await DownloadInventory(effectiveTime);
-    //    await DownloadInventory(effectiveTime.AddHours(-3));
-    //    await DownloadInventory(effectiveTime.AddHours(1));
+    public async Task<RadarSiteEntity> DownloadInventoryForClosestRadar(List<RadarSiteEntity> radarSites,
+        List<RadarInventoryEntity> cache, DateTime effectiveTime, double latitude, double longitude,
+        AmazonS3Client client, CancellationToken ct)
+    {
+        var radarSite = source.FindClosestRadar(radarSites, latitude, longitude);
+        await DownloadInventory(effectiveTime);
+        await DownloadInventory(effectiveTime.AddHours(-3));
+        await DownloadInventory(effectiveTime.AddHours(1));
 
-    //    return radarSite;
+        return radarSite;
 
-    //    async Task DownloadInventory(DateTime timeValue)
-    //    {
-    //        var inventory = await source.GetRadarInventoryAsync(cache, radarSite, timeValue, ct);
-    //        if (inventory is null) await source.AddRadarInventoryAsync(cache, radarSite, timeValue, client, ct);
-    //    }
-    //}
+        async Task DownloadInventory(DateTime timeValue)
+        {
+            var inventory = await source.GetRadarInventory(cache, radarSite, timeValue, ct);
+            if (inventory is null) await source.AddRadarInventory(cache, radarSite, timeValue, client, ct);
+        }
+    }
 
     public async Task<List<RadarSiteEntity>> GetPrimaryRadarSites(CancellationToken ct)
     {
@@ -67,10 +67,5 @@ public class RadarBusiness(IRadarSource source, IMyRepository repo) : IRadarBusi
         }
 
         await repo.RadarSiteCreate(radars, ct);
-    }
-
-    public Task<RadarSiteEntity> DownloadInventoryForClosestRadar(List<RadarSiteEntity> radarSites, List<RadarInventoryEntity> cache, DateTime effectiveTime, double latitude, double longitude, AmazonS3Client client, CancellationToken ct)
-    {
-        throw new NotImplementedException();
     }
 }

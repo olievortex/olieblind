@@ -1,7 +1,9 @@
 ﻿using Amazon.S3;
 using Azure.Storage.Blobs;
+using olieblind.data;
 using olieblind.data.Entities;
 using olieblind.lib.Radar.Interfaces;
+using olieblind.lib.StormEvents;
 using olieblind.lib.StormEvents.Interfaces;
 using olieblind.lib.StormEvents.Models;
 
@@ -10,11 +12,11 @@ namespace olieblind.lib.Processes;
 public class ImportStormEventsDatabaseProcess(
     IDatabaseProcess database,
     IDatabaseBusiness dbBusiness,
-    IRadarBusiness radarBusiness) : IImportStormEventsDatabaseProcess
+    IRadarBusiness radarBusiness,
+    IMyRepository repo) : IImportStormEventsDatabaseProcess
 {
     private List<RadarSiteEntity> _radarSites = [];
     private readonly List<RadarInventoryEntity> _radarInventory = [];
-    private int _dayCount;
 
     /// <summary>
     /// 1. Download the Storm Events inventory list
@@ -31,7 +33,6 @@ public class ImportStormEventsDatabaseProcess(
     {
         _radarSites = await radarBusiness.GetPrimaryRadarSites(ct);
         _radarInventory.Clear();
-        _dayCount = 0;
 
         await database.SourceDatabases(blobClient, ct);
         await ProcessEventsDatabases(year, update, blobClient, amazonClient, ct);
@@ -39,64 +40,55 @@ public class ImportStormEventsDatabaseProcess(
 
     private async Task ProcessEventsDatabases(int year, string update, BlobContainerClient blobClient, AmazonS3Client amazonClient, CancellationToken ct)
     {
-        var inventory = await dbBusiness.DatabaseGetInventory(year, update, ct)
+        var inventory = await repo.StormEventsDatabaseGet(year, update, ct)
                         ?? throw new InvalidOperationException($"No record for year {year}, update {update}");
 
-        //var events = await database.LoadAsync(blobClient, inventory, ct);
+        var events = await dbBusiness.DatabaseLoad(blobClient, inventory, ct);
 
-        //if (inventory.RowCount == 0)
-        //{
-        //    await dbBusiness.DatabaseUpdateRowCountAsync(inventory, events.Count, ct);
-        //    inventory.RowCount = events.Count;
-        //}
+        if (inventory.RowCount == 0)
+        {
+            await dbBusiness.DatabaseUpdateRowCount(inventory, events.Count, ct);
+            inventory.RowCount = events.Count;
+        }
 
-        //var start = new DateTime(year, 1, 1, 12, 0, 0, DateTimeKind.Utc);
+        var start = new DateTime(year, 1, 1, 12, 0, 0, DateTimeKind.Utc);
 
-        //var work = events
-        //    .Where(w => w.Effective >= start)
-        //    .Select(s => s.EffectiveDate)
-        //    .Distinct()
-        //    .OrderBy(o => o)
-        //    .ToList();
+        var work = events
+            .Where(w => w.Effective >= start)
+            .Select(s => s.EffectiveDate)
+            .Distinct()
+            .OrderBy(o => o)
+            .ToList();
 
-        //foreach (var workItem in work)
-        //{
-        //    var toProcess = events.Where(w => w.EffectiveDate == workItem).ToList();
-        //    await ProcessWorkItemAsync(workItem, year, update, toProcess, amazonClient, ct);
+        foreach (var effectiveDate in work)
+        {
+            var toProcess = events.Where(w => w.EffectiveDate == effectiveDate).ToList();
+            await ProcessWorkItem(effectiveDate, year, update, toProcess, amazonClient, ct);
+        }
 
-        //    if (_dayCount > 31) return;
-        //}
-
-        //var result = _dayCount > 0;
-
-        //if (!result) await dbBusiness.DatabaseUpdateActiveAsync(inventory, ct);
+        await dbBusiness.DatabaseUpdateActive(inventory, ct);
     }
 
-    private async Task ProcessWorkItem(string id, int year, string sourceFk, List<DailyDetailModel> models,
-        AmazonS3Client amazonClient, CancellationToken ct)
+    private async Task ProcessWorkItem(string effectiveDate, int year, string update, List<DailyDetailModel> models, AmazonS3Client amazonClient, CancellationToken ct)
     {
-        Console.WriteLine($"Id: {id}, SourceFk: {sourceFk}");
-
-        var summaries = await database.DeactivateOldSummaries(id, year, sourceFk, ct);
-        var current = summaries.SingleOrDefault(s => s.SourceFk == sourceFk);
+        var summaries = await database.DeactivateOldSummaries(effectiveDate, year, update, ct);
+        var current = summaries.SingleOrDefault(s => s.SourceFk == update);
 
         if (current is not null && !current.IsCurrent)
         {
-            await dbBusiness.CompareDetailCount(id, sourceFk, current.RowCount, ct);
+            await dbBusiness.CompareDetailCount(effectiveDate, update, current.RowCount, ct);
             await dbBusiness.ActivateSummary(current, ct);
-            if (_dayCount == 0) _dayCount++;
         }
         else if (current is null)
         {
-            await dbBusiness.DeleteDetail(id, sourceFk, ct);
+            await repo.StormEventsDailyDetailDelete(effectiveDate, update, ct);
             await AssignRadarAsync(models, amazonClient, ct);
-            await dbBusiness.AddDailyDetailToCosmos(models, sourceFk, ct);
-            var aggregate = database.GetAggregate(models);
+            await dbBusiness.AddDailyDetailToCosmos(models, update, ct);
+            var aggregate = DailySummaryBusiness.AggregateByDate(models);
             if (aggregate.Count != 1)
                 throw new InvalidOperationException(
-                    $"Got more than one aggregate for dateFk: {id}, sourceFk: {sourceFk}");
-            await dbBusiness.AddDailySummaryToCosmos(aggregate[0], sourceFk, ct);
-            _dayCount++;
+                    $"Got more than one aggregate for EffectiveDate: {effectiveDate}, Update: {update}");
+            await dbBusiness.AddDailySummaryToCosmos(aggregate[0], update, ct);
         }
     }
 

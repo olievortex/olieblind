@@ -121,6 +121,24 @@ public class MyRepository(MyContext context) : IMyRepository
 
     #endregion
 
+    #region RadarInventory
+
+    public async Task RadarInventoryAdd(RadarInventoryEntity entity, CancellationToken ct)
+    {
+        await context.RadarInventories.AddAsync(entity, ct);
+        await context.SaveChangesAsync(ct);
+    }
+
+    public async Task<RadarInventoryEntity?> RadarInventoryGet(string id, string effectiveDate, string bucket, CancellationToken ct)
+    {
+        return await context.RadarInventories.SingleOrDefaultAsync(s =>
+            s.Id == id &&
+            s.EffectiveDate == effectiveDate &&
+            s.BucketName == bucket, ct);
+    }
+
+    #endregion
+
     #region RadarSite
 
     public async Task<List<RadarSiteEntity>> RadarSiteGetAll(CancellationToken ct)
@@ -136,12 +154,90 @@ public class MyRepository(MyContext context) : IMyRepository
 
     #endregion
 
-    #region StormEventsDatabase
+    #region StormEventsDailyDetail
 
-    public async Task<List<StormEventsDatabaseEntity>> StormEventsDatabaseGetAll(CancellationToken ct)
+    public async Task StormEventsDailyDetailCreate(List<StormEventsDailyDetailEntity> entities, CancellationToken ct)
     {
-        return await context.StormEventsDatabases.AsNoTracking().ToListAsync(ct);
+        await context.StormEventsDailyDetails.AddRangeAsync(entities, ct);
+        await context.SaveChangesAsync(ct);
     }
+
+    public async Task StormEventsDailyDetailDelete(string dateFk, string sourceFk, CancellationToken ct)
+    {
+        var items = await context.StormEventsDailyDetails
+            .Where(w =>
+                w.DateFk == dateFk &&
+                w.SourceFk == sourceFk)
+            .ToListAsync(ct);
+
+        foreach (var item in items)
+        {
+            context.StormEventsDailyDetails.Remove(item);
+        }
+
+        await context.SaveChangesAsync(ct);
+    }
+
+    public async Task<int> StormEventsDailyDetailCount(string dateFk, string sourceFk, CancellationToken ct)
+    {
+        return await context.StormEventsDailyDetails
+            .CountAsync(w =>
+                w.DateFk == dateFk &&
+                w.SourceFk == sourceFk, ct);
+    }
+
+    #endregion
+
+    #region StormEventsDailySummary
+
+    public async Task StormEventsDailySummaryCreate(StormEventsDailySummaryEntity entity, CancellationToken ct)
+    {
+        await context.StormEventsDailySummaries.AddAsync(entity, ct);
+        await context.SaveChangesAsync(ct);
+    }
+
+    //public async Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryListMissingPostersForYear(int year,
+    //    CancellationToken ct)
+    //{
+    //    return await context.StormEventsDailySummary
+    //        .Where(w =>
+    //            w.Year == year &&
+    //            w.HeadlineEventTime != null &&
+    //            // ReSharper disable once EntityFramework.UnsupportedServerSideFunctionCall
+    //            (EF.Functions.CoalesceUndefined(w.SatellitePath1080, null) == null ||
+    //             // ReSharper disable once EntityFramework.UnsupportedServerSideFunctionCall
+    //             EF.Functions.CoalesceUndefined(w.SatellitePathPoster, null) == null))
+    //        .ToListAsync(ct);
+    //}
+
+    //public async Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryListSevereForYear(int year,
+    //    CancellationToken ct)
+    //{
+    //    return await context.StormEventsDailySummary
+    //        .Where(w =>
+    //            w.Year == year)
+    //        .ToListAsync(ct);
+    //}
+
+    public async Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryGet(string effectiveDate, int year, CancellationToken ct)
+    {
+        return await context.StormEventsDailySummaries
+            .AsNoTracking()
+            .Where(w =>
+                w.Id == effectiveDate &&
+                w.Year == year)
+            .ToListAsync(ct);
+    }
+
+    public async Task StormEventsDailySummaryUpdate(StormEventsDailySummaryEntity entity, CancellationToken ct)
+    {
+        context.StormEventsDailySummaries.Update(entity);
+        await context.SaveChangesAsync(ct);
+    }
+
+    #endregion
+
+    #region StormEventsDatabase
 
     public async Task StormEventsDatabaseCreate(StormEventsDatabaseEntity entity, CancellationToken ct)
     {
@@ -156,12 +252,16 @@ public class MyRepository(MyContext context) : IMyRepository
             s.Year == year, ct);
     }
 
-    //public async Task StormEventsDatabaseInventoryUpdateAsync(StormEventsDatabaseInventoryEntity entity,
-    //    CancellationToken ct)
-    //{
-    //    context.StormEventsDatabaseInventory.Update(entity);
-    //    await context.SaveChangesAsync(ct);
-    //}
+    public async Task<List<StormEventsDatabaseEntity>> StormEventsDatabaseGetAll(CancellationToken ct)
+    {
+        return await context.StormEventsDatabases.AsNoTracking().ToListAsync(ct);
+    }
+
+    public async Task StormEventsDatabaseInventoryUpdate(StormEventsDatabaseEntity entity, CancellationToken ct)
+    {
+        context.StormEventsDatabases.Update(entity);
+        await context.SaveChangesAsync(ct);
+    }
 
     #endregion
 

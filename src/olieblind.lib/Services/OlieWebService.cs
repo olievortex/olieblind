@@ -1,4 +1,6 @@
-﻿using Azure;
+﻿using Amazon.S3;
+using Amazon.S3.Model;
+using Azure;
 using Azure.AI.TextAnalytics;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
@@ -163,10 +165,51 @@ public class OlieWebService(IHttpClientFactory httpClientFactory) : IOlieWebServ
 
     #endregion
 
+    #region Aws
+
+    //public async Task AwsDownloadAsync(string filename, string bucketName, string key, IAmazonS3 client,
+    //    CancellationToken ct)
+    //{
+    //    var response = await client.GetObjectAsync(bucketName, key, ct);
+    //    await response.WriteResponseStreamToFileAsync(filename, false, ct);
+    //}
+
+    public async Task<List<string>> AwsList(string bucketName, string prefix, IAmazonS3 client, CancellationToken ct)
+    {
+        var result = new List<string>();
+        ListObjectsV2Response response;
+
+        var request = new ListObjectsV2Request
+        {
+            BucketName = bucketName,
+            Prefix = prefix
+        };
+
+        do
+        {
+            response = await client.ListObjectsV2Async(request, ct);
+
+            result.AddRange(response.S3Objects.Select(s => s.Key));
+
+            // If the response is truncated, set the request ContinuationToken
+            // from the NextContinuationToken property of the response.
+            request.ContinuationToken = response.NextContinuationToken;
+        } while (response.IsTruncated ?? false);
+
+        return result;
+    }
+
+    #endregion
+
     #region Blob
 
-    public async Task BlobUploadFile(BlobContainerClient client, string fileName, string localFileName,
-        CancellationToken ct)
+    public async Task BlobDownloadFile(BlobContainerClient client, string fileName, string localFileName, CancellationToken ct)
+    {
+        var blobClient = client.GetBlobClient(fileName);
+        await blobClient.DownloadToAsync(localFileName, ct);
+    }
+
+    public async Task BlobUploadFile(BlobContainerClient client, string fileName, string localFileName, CancellationToken ct)
     {
         var blobClient = client.GetBlobClient(fileName);
         var contentType = "application/octet-stream";
@@ -201,7 +244,7 @@ public class OlieWebService(IHttpClientFactory httpClientFactory) : IOlieWebServ
     {
         Directory.Delete(path);
     }
-    
+
     public List<string> DirectoryList(string path)
     {
         if (!Directory.Exists(path)) return [];
@@ -225,6 +268,16 @@ public class OlieWebService(IHttpClientFactory httpClientFactory) : IOlieWebServ
     public async Task<byte[]> FileReadAllBytes(string path, CancellationToken ct)
     {
         return await File.ReadAllBytesAsync(path, ct);
+    }
+
+    public async Task<string> FileReadAllTextFromGz(string path, CancellationToken ct)
+    {
+        await using var stream = File.OpenRead(path);
+        await using var gzip = new GZipStream(stream, CompressionMode.Decompress);
+        using var sr = new StreamReader(gzip);
+        var result = await sr.ReadToEndAsync(ct);
+
+        return result;
     }
 
     public async Task FileWriteAllBytes(string path, byte[] data, CancellationToken ct)
