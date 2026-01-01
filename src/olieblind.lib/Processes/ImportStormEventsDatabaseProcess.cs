@@ -11,21 +11,22 @@ public class ImportStormEventsDatabaseProcess(
     IDatabaseProcess database,
     IDatabaseBusiness dbBusiness,
     IRadarSource radarSource,
-    IRadarBusiness radarBusiness)
+    IRadarBusiness radarBusiness) : IImportStormEventsDatabaseProcess
 {
     private List<RadarSiteEntity> _radarSites = [];
     private readonly List<RadarInventoryEntity> _radarInventory = [];
     private int _dayCount;
 
-    public async Task<bool> RunAsync(int year, string id, BlobContainerClient blobClient, AmazonS3Client amazonClient,
+    public async Task RunAsync(int year, BlobContainerClient blobClient, AmazonS3Client amazonClient,
         CancellationToken ct)
     {
         _radarSites = await radarSource.GetPrimaryRadarSitesAsync(ct);
         _radarInventory.Clear();
         _dayCount = 0;
+        var id = string.Empty;
 
         await database.SourceDatabasesAsync(blobClient, ct);
-        return await ProcessEventsDatabasesAsync(year, id, blobClient, amazonClient, ct);
+        await ProcessEventsDatabasesAsync(year, id, blobClient, amazonClient, ct);
     }
 
     private async Task<bool> ProcessEventsDatabasesAsync(int year, string id, BlobContainerClient blobClient,

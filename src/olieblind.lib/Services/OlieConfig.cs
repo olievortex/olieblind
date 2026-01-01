@@ -63,6 +63,8 @@ public class OlieConfig : IOlieConfig
 
     public string VideoPath => GetString("OlieVideoPath");
 
+    public string BlobBronzeContainerUri => GetString("OlieBlobBronzeContainerUri");
+
     private string GetString(string key)
     {
         return _config[key] ?? throw new ApplicationException($"{key} setting missing from configuration");

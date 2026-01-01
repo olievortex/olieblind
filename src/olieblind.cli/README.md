@@ -13,4 +13,5 @@ The following evironment variables are required to run locally. Replace the dumm
   "OlieBaseVideoUrl": "https://www.olievortex.com/videos",
   "OlieSpeechVoiceName": "en-US-Standard-C",
   "APPLICATIONINSIGHTS_CONNECTION_STRING": "xxxx"
+  "OlieBlobBronzeContainerUri": "https://xxxx.blob.core.windows.net/bronze",
 }

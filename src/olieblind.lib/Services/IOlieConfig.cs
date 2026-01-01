@@ -41,4 +41,6 @@ public interface IOlieConfig
     string SpeechVoiceName { get; }
 
     string VideoPath { get; }
+
+    string BlobBronzeContainerUri { get; }
 }

@@ -9,8 +9,12 @@ using olieblind.lib.DroughtMonitor;
 using olieblind.lib.ForecastModels;
 using olieblind.lib.Maintenance;
 using olieblind.lib.Processes;
+using olieblind.lib.Radar;
+using olieblind.lib.Radar.Interfaces;
 using olieblind.lib.Services;
 using olieblind.lib.Services.Speech;
+using olieblind.lib.StormEvents;
+using olieblind.lib.StormEvents.Interfaces;
 using olieblind.lib.StormPredictionCenter.Outlooks;
 using olieblind.lib.Video;
 
@@ -59,26 +63,16 @@ public class Program
     private static async Task<int> MainAsync(string[] args, CancellationToken ct)
     {
         var olieArgs = new OlieArgs(args);
-        var configService = CreateService<IOlieConfig>();
-        var droughtProcess = CreateService<ICreateDroughtMonitorVideoProcess>();
-        var spcProcess = CreateService<ICreateSpcOutlookVideoProcess>();
-        var mapProcess = CreateService<ICreateDayOneMapsProcess>();
-        var deleteProcess = CreateService<IDeleteOldContentProcess>();
 
         return olieArgs.Command switch
         {
-            OlieArgs.CommandsEnum.DayOneMaps => await new CommandDayOneMaps(
-                mapProcess, CreateLogger<CommandDayOneMaps>()).Run(ct),
-            OlieArgs.CommandsEnum.DeleteOldContent => await new CommandDeleteOldContent(
-                deleteProcess, configService, CreateLogger<CommandDeleteOldContent>()).Run(ct),
-            OlieArgs.CommandsEnum.DroughtMonitorVideo => await new CommandDroughtMonitorVideo(
-                droughtProcess, configService, CreateLogger<CommandDroughtMonitorVideo>()).Run(ct),
-            OlieArgs.CommandsEnum.SpcDayOneVideo => await new CommandSpcDayOneVideo(
-                spcProcess, configService, CreateLogger<CommandSpcDayOneVideo>()).Run(ct),
-            OlieArgs.CommandsEnum.SpcDayTwoVideo => await new CommandSpcDayTwoVideo(
-                spcProcess, configService, CreateLogger<CommandSpcDayTwoVideo>()).Run(ct),
-            OlieArgs.CommandsEnum.SpcDayThreeVideo => await new CommandSpcDayThreeVideo(
-                spcProcess, configService, CreateLogger<CommandSpcDayThreeVideo>()).Run(ct),
+            OlieArgs.CommandsEnum.DayOneMaps => await CreateService<CommandDayOneMaps>().Run(ct),
+            OlieArgs.CommandsEnum.DeleteOldContent => await CreateService<CommandDeleteOldContent>().Run(ct),
+            OlieArgs.CommandsEnum.DroughtMonitorVideo => await CreateService<CommandDroughtMonitorVideo>().Run(ct),
+            OlieArgs.CommandsEnum.EventsDatabase => await CreateService<CommandEventsDatabase>().Run(olieArgs, ct),
+            OlieArgs.CommandsEnum.SpcDayOneVideo => await CreateService<CommandSpcDayOneVideo>().Run(ct),
+            OlieArgs.CommandsEnum.SpcDayTwoVideo => await CreateService<CommandSpcDayTwoVideo>().Run(ct),
+            OlieArgs.CommandsEnum.SpcDayThreeVideo => await CreateService<CommandSpcDayThreeVideo>().Run(ct),
             OlieArgs.CommandsEnum.ListVoices => await CommandListVoices.Run(ct),
             _ => throw new ArgumentException($"The command {olieArgs.Command} is not implemented yet."),
         };
@@ -152,34 +146,42 @@ public class Program
 
         #endregion
 
-        #region CreateMaps Dependencies
+        #region Library Dependencies
 
-        services.AddScoped<ICreateDayOneMapsProcess, CreateDayOneMapsProcess>();
+        services.AddScoped<IDatabaseBusiness, DatabaseBusiness>();
+        services.AddScoped<IDatabaseProcess, DatabaseProcess>();
+        services.AddScoped<IDroughtMonitor, DroughtMonitor>();
+        services.AddScoped<IDroughtMonitorScripting, DroughtMonitorScripting>();
+        services.AddScoped<IMySqlMaintenance, MySqlMaintenance>();
         services.AddScoped<INorthAmericanMesoscale, NorthAmericanMesoscale>();
-
-        #endregion
-
-        #region SpcVideo Dependencies
-
-        services.AddScoped<ICreateSpcOutlookVideoProcess, CreateSpcOutlookVideoProcess>();
         services.AddScoped<IOutlookProduct, OutlookProduct>();
         services.AddScoped<IOutlookProductParsing, OutlookProductParsing>();
         services.AddScoped<IOutlookProductScript, OutlookProductScript>();
+        services.AddScoped<IRadarBusiness, RadarBusiness>();
+        services.AddScoped<IRadarSource, RadarSource>();
 
         #endregion
 
-        #region DroughtMonitor Dependencies
+        #region Processes
 
+        services.AddScoped<ICreateDayOneMapsProcess, CreateDayOneMapsProcess>();
         services.AddScoped<ICreateDroughtMonitorVideoProcess, CreateDroughtMonitorVideoProcess>();
-        services.AddScoped<IDroughtMonitor, DroughtMonitor>();
-        services.AddScoped<IDroughtMonitorScripting, DroughtMonitorScripting>();
+        services.AddScoped<ICreateSpcOutlookVideoProcess, CreateSpcOutlookVideoProcess>();
+        services.AddScoped<IDeleteOldContentProcess, DeleteOldContentProcess>();
+        services.AddScoped<IImportStormEventsDatabaseProcess, ImportStormEventsDatabaseProcess>();
 
         #endregion
 
-        #region DeleteContent Dependencies
+        #region Commands
 
-        services.AddScoped<IDeleteOldContentProcess, DeleteOldContentProcess>();
-        services.AddScoped<IMySqlMaintenance, MySqlMaintenance>();
+        services.AddScoped<CommandDayOneMaps>();
+        services.AddScoped<CommandDeleteOldContent>();
+        services.AddScoped<CommandDroughtMonitorVideo>();
+        services.AddScoped<CommandEventsDatabase>();
+        services.AddScoped<CommandSpcDayOneVideo>();
+        services.AddScoped<CommandSpcDayTwoVideo>();
+        services.AddScoped<CommandSpcDayThreeVideo>();
+        services.AddScoped<CommandListVoices>();
 
         #endregion
 
