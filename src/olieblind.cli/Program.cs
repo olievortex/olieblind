@@ -7,8 +7,6 @@ using Microsoft.Extensions.Logging;
 using olieblind.data;
 using olieblind.lib;
 using olieblind.lib.Services;
-using olieblind.lib.Services.Speech;
-using olieblind.lib.Video;
 
 namespace olieblind.cli;
 

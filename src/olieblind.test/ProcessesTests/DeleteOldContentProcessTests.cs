@@ -60,9 +60,9 @@ public class DeleteOldContentProcessTests
         // Act & Assert
         Assert.DoesNotThrow(() => process.SafeDeleteFile(null!));
     }
-    
+
     #region SafeDelete Folder
-    
+
     [Test]
     public void SafeDeleteFolder_NoExceptionThrown_ServiceThrows()
     {
@@ -76,7 +76,7 @@ public class DeleteOldContentProcessTests
         // Act & Assert
         Assert.DoesNotThrow(() => process.SafeDeleteFolder("/var/www/olie/dillon.txt"));
     }
-    
+
     [Test]
     public void SafeDeleteFolder_ExitsEarly_EmptyPath()
     {
@@ -87,10 +87,10 @@ public class DeleteOldContentProcessTests
 
         // Act
         process.SafeDeleteFolder(string.Empty);
-        
+
         // Assert
         ows.Verify(v => v.DirectoryDelete(It.IsAny<string>()), Times.Never);
     }
-    
+
     #endregion
 }

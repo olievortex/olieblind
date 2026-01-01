@@ -1,5 +1,4 @@
 ﻿using Amazon.S3;
-using Amazon.S3.Model;
 using Azure.AI.TextAnalytics;
 using Azure.Storage.Blobs;
 
