@@ -4,13 +4,13 @@ using olieblind.data.Entities;
 using olieblind.lib.Services;
 using olieblind.lib.StormEvents.Interfaces;
 using olieblind.lib.StormEvents.Models;
+using System.Text.RegularExpressions;
 
 namespace olieblind.lib.StormEvents;
 
-public partial class DatabaseBusiness(IOlieWebService ows, IMyRepository repo) :
-    IDatabaseBusiness
+public partial class DatabaseBusiness(IOlieWebService ows, IMyRepository repo) : IDatabaseBusiness
 {
-    //private const string StormEventsUrl = "https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/";
+    private const string StormEventsUrl = "https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/";
 
     //#region private class StormEventRow
 
@@ -98,39 +98,38 @@ public partial class DatabaseBusiness(IOlieWebService ows, IMyRepository repo) :
 
     //#endregion
 
-    //#region Database
+    #region Database
 
-    //public async Task DatabaseDownloadAsync(BlobContainerClient client, List<DatabaseFileModel> model,
-    //    CancellationToken ct)
-    //{
-    //    var inventory = await cosmos.StormEventsDatabaseInventoryAllAsync(ct);
+    public async Task DatabaseDownloadAsync(BlobContainerClient client, List<DatabaseFileModel> model, CancellationToken ct)
+    {
+        var inventory = await repo.StormEventsDatabaseGetAll(ct);
 
-    //    foreach (var csv in model)
-    //    {
-    //        if (csv.Year < 2010) continue;
+        foreach (var csv in model)
+        {
+            if (csv.Year < 2010) continue;
 
-    //        var entity = inventory
-    //            .SingleOrDefault(w => w.Id == csv.Updated && w.Year == csv.Year);
-    //        if (entity is not null) continue;
+            var entity = inventory
+                .SingleOrDefault(w => w.Id == csv.Updated && w.Year == csv.Year);
+            if (entity is not null) continue;
 
-    //        var localFileName = CommonProcess.CreateLocalTmpPath(".csv.gz");
-    //        var fileName = $"bronze/storm-events/{csv.Name}";
-    //        var content = await ows.ApiGetBytesAsync($"{StormEventsUrl}/{csv.Name}", ct);
-    //        await ows.FileWriteAllBytesAsync(localFileName, content, ct);
-    //        await ows.BlobUploadFileAsync(client, fileName, localFileName, ct);
+            var localFileName = OlieCommon.CreateLocalTmpPath(".csv.gz");
+            var fileName = $"bronze/storm-events/{csv.Name}";
+            var content = await ows.ApiGetBytes($"{StormEventsUrl}/{csv.Name}", ct);
+            await ows.FileWriteAllBytes(localFileName, content, ct);
+            await ows.BlobUploadFile(client, fileName, localFileName, ct);
 
-    //        entity = new StormEventsDatabaseInventoryEntity
-    //        {
-    //            Id = csv.Updated,
-    //            Year = csv.Year,
-    //            BlobName = fileName,
-    //            Timestamp = DateTime.UtcNow
-    //        };
+            entity = new StormEventsDatabaseEntity
+            {
+                Id = csv.Updated,
+                Year = csv.Year,
+                BlobName = fileName,
+                Timestamp = DateTime.UtcNow
+            };
 
-    //        await cosmos.StormEventsDatabaseInventoryCreateAsync(entity, ct);
-    //        CommonProcess.DeleteTempFiles([localFileName], ows);
-    //    }
-    //}
+            await repo.StormEventsDatabaseCreate(entity, ct);
+            OlieCommon.DeleteTempFiles(ows, [localFileName]);
+        }
+    }
 
     //public async Task<StormEventsDatabaseInventoryEntity?> DatabaseGetInventoryAsync(int year, string id,
     //    CancellationToken ct)
@@ -220,28 +219,29 @@ public partial class DatabaseBusiness(IOlieWebService ows, IMyRepository repo) :
     //    await cosmos.StormEventsDatabaseInventoryUpdateAsync(entity, ct);
     //}
 
-    //public async Task<List<DatabaseFileModel>> DatabaseListAsync(CancellationToken ct)
-    //{
-    //    var results = await ows.ApiGetStringAsync(StormEventsUrl, ct);
-    //    var matches = MatchCsvFileRegex().Matches(results);
+    public async Task<List<DatabaseFileModel>> DatabaseListAsync(CancellationToken ct)
+    {
+        var results = await ows.ApiGetString(StormEventsUrl, ct);
+        var matches = MatchCsvFileRegex().Matches(results);
 
-    //    return matches.Select(s => new DatabaseFileModel
-    //    {
-    //        Name = s.Value
-    //    }).ToList();
-    //}
+        return [.. matches.Select(s => new DatabaseFileModel
+        {
+            Name = s.Value
+        })];
+    }
 
-    //#endregion
+    #endregion
 
-    //#region Regex
+    #region Regex
 
     //[GeneratedRegex("[^0-9-]+")]
     //private static partial Regex StripTimeZoneRegex();
 
-    //[GeneratedRegex(@"StormEvents_details-ftp_v1\.0_d\d{4}_c\d{8}\.csv\.gz(?=\"")")]
-    //private static partial Regex MatchCsvFileRegex();
+    [GeneratedRegex(@"StormEvents_details-ftp_v1\.0_d\d{4}_c\d{8}\.csv\.gz(?=\"")")]
+    private static partial Regex MatchCsvFileRegex();
 
-    //#endregion
+    #endregion
+
     public Task ActivateSummaryAsync(StormEventsDailySummaryEntity entity, CancellationToken ct)
     {
         throw new NotImplementedException();
@@ -262,32 +262,22 @@ public partial class DatabaseBusiness(IOlieWebService ows, IMyRepository repo) :
         throw new NotImplementedException();
     }
 
-    public Task DatabaseDownloadAsync(BlobContainerClient client, List<DatabaseFileModel> model, CancellationToken ct)
+    public Task<StormEventsDatabaseEntity?> DatabaseGetInventoryAsync(int year, string id, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
 
-    public Task<StormEventsDatabaseInventoryEntity?> DatabaseGetInventoryAsync(int year, string id, CancellationToken ct)
+    public Task<List<DailyDetailModel>> DatabaseLoadAsync(BlobContainerClient blobClient, StormEventsDatabaseEntity eventsDatabase, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
 
-    public Task<List<DatabaseFileModel>> DatabaseListAsync(CancellationToken ct)
+    public Task DatabaseUpdateActiveAsync(StormEventsDatabaseEntity entity, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
 
-    public Task<List<DailyDetailModel>> DatabaseLoadAsync(BlobContainerClient blobClient, StormEventsDatabaseInventoryEntity eventsDatabase, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task DatabaseUpdateActiveAsync(StormEventsDatabaseInventoryEntity entity, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task DatabaseUpdateRowCountAsync(StormEventsDatabaseInventoryEntity entity, int rowCount, CancellationToken ct)
+    public Task DatabaseUpdateRowCountAsync(StormEventsDatabaseEntity entity, int rowCount, CancellationToken ct)
     {
         throw new NotImplementedException();
     }

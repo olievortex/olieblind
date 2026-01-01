@@ -10,23 +10,20 @@ namespace olieblind.lib.Processes;
 public class ImportStormEventsDatabaseProcess(
     IDatabaseProcess database,
     IDatabaseBusiness dbBusiness,
-    IRadarSource radarSource,
     IRadarBusiness radarBusiness) : IImportStormEventsDatabaseProcess
 {
     private List<RadarSiteEntity> _radarSites = [];
     private readonly List<RadarInventoryEntity> _radarInventory = [];
     private int _dayCount;
 
-    public async Task RunAsync(int year, BlobContainerClient blobClient, AmazonS3Client amazonClient,
-        CancellationToken ct)
+    public async Task RunAsync(int year, BlobContainerClient blobClient, AmazonS3Client amazonClient, CancellationToken ct)
     {
-        _radarSites = await radarSource.GetPrimaryRadarSitesAsync(ct);
+        _radarSites = await radarBusiness.GetPrimaryRadarSitesAsync(ct);
         _radarInventory.Clear();
         _dayCount = 0;
-        var id = string.Empty;
 
         await database.SourceDatabasesAsync(blobClient, ct);
-        await ProcessEventsDatabasesAsync(year, id, blobClient, amazonClient, ct);
+        //await ProcessEventsDatabasesAsync(year, id, blobClient, amazonClient, ct);
     }
 
     private async Task<bool> ProcessEventsDatabasesAsync(int year, string id, BlobContainerClient blobClient,

@@ -33,16 +33,16 @@ public interface IDatabaseBusiness
 
     Task DatabaseDownloadAsync(BlobContainerClient client, List<DatabaseFileModel> model, CancellationToken ct);
 
-    Task<StormEventsDatabaseInventoryEntity?> DatabaseGetInventoryAsync(int year, string id, CancellationToken ct);
+    Task<StormEventsDatabaseEntity?> DatabaseGetInventoryAsync(int year, string id, CancellationToken ct);
 
     Task<List<DatabaseFileModel>> DatabaseListAsync(CancellationToken ct);
 
     Task<List<DailyDetailModel>> DatabaseLoadAsync(
-        BlobContainerClient blobClient, StormEventsDatabaseInventoryEntity eventsDatabase, CancellationToken ct);
+        BlobContainerClient blobClient, StormEventsDatabaseEntity eventsDatabase, CancellationToken ct);
 
-    Task DatabaseUpdateActiveAsync(StormEventsDatabaseInventoryEntity entity, CancellationToken ct);
+    Task DatabaseUpdateActiveAsync(StormEventsDatabaseEntity entity, CancellationToken ct);
 
-    Task DatabaseUpdateRowCountAsync(StormEventsDatabaseInventoryEntity entity, int rowCount, CancellationToken ct);
+    Task DatabaseUpdateRowCountAsync(StormEventsDatabaseEntity entity, int rowCount, CancellationToken ct);
 
     #endregion
 }

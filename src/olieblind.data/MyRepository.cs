@@ -123,16 +123,46 @@ public class MyRepository(MyContext context) : IMyRepository
 
     #region RadarSite
 
-    public async Task<List<RadarSiteEntity>> RadarSiteAllAsync(CancellationToken ct)
+    public async Task<List<RadarSiteEntity>> RadarSiteGetAll(CancellationToken ct)
     {
         return await context.RadarSites.AsNoTracking().ToListAsync(ct);
     }
 
-    public async Task RadarSiteCreateAsync(List<RadarSiteEntity> entities, CancellationToken ct)
+    public async Task RadarSiteCreate(List<RadarSiteEntity> entities, CancellationToken ct)
     {
         await context.RadarSites.AddRangeAsync(entities, ct);
         await context.SaveChangesAsync(ct);
     }
+
+    #endregion
+
+    #region StormEventsDatabase
+
+    public async Task<List<StormEventsDatabaseEntity>> StormEventsDatabaseGetAll(CancellationToken ct)
+    {
+        return await context.StormEventsDatabases.AsNoTracking().ToListAsync(ct);
+    }
+
+    public async Task StormEventsDatabaseCreate(StormEventsDatabaseEntity entity, CancellationToken ct)
+    {
+        await context.StormEventsDatabases.AddAsync(entity, ct);
+        await context.SaveChangesAsync(ct);
+    }
+
+    //public async Task<StormEventsDatabaseInventoryEntity?> StormEventsDatabaseInventoryGetAsync(int year, string id,
+    //    CancellationToken ct)
+    //{
+    //    return await context.StormEventsDatabaseInventory.SingleOrDefaultAsync(s =>
+    //        s.Id == id &&
+    //        s.Year == year, ct);
+    //}
+
+    //public async Task StormEventsDatabaseInventoryUpdateAsync(StormEventsDatabaseInventoryEntity entity,
+    //    CancellationToken ct)
+    //{
+    //    context.StormEventsDatabaseInventory.Update(entity);
+    //    await context.SaveChangesAsync(ct);
+    //}
 
     #endregion
 

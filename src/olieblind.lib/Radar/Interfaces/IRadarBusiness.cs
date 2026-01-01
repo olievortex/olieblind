@@ -9,5 +9,7 @@ public interface IRadarBusiness
         List<RadarInventoryEntity> cache, DateTime effectiveTime, double latitude, double longitude,
         AmazonS3Client client, CancellationToken ct);
 
+    Task<List<RadarSiteEntity>> GetPrimaryRadarSitesAsync(CancellationToken ct);
+
     Task PopulateRadarSitesFromCsvAsync(string csv, CancellationToken ct);
 }

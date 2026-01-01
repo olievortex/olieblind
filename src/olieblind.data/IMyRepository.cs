@@ -44,9 +44,33 @@ public interface IMyRepository
 
     #region RadarSite
 
-    Task<List<RadarSiteEntity>> RadarSiteAllAsync(CancellationToken ct);
+    Task<List<RadarSiteEntity>> RadarSiteGetAll(CancellationToken ct);
 
-    Task RadarSiteCreateAsync(List<RadarSiteEntity> entities, CancellationToken ct);
+    Task RadarSiteCreate(List<RadarSiteEntity> entities, CancellationToken ct);
+
+    #endregion
+
+    #region StormEventsDatabase
+
+    Task<List<StormEventsDatabaseEntity>> StormEventsDatabaseGetAll(CancellationToken ct);
+
+    Task StormEventsDatabaseCreate(StormEventsDatabaseEntity entity, CancellationToken ct);
+
+
+    //public async Task<StormEventsDatabaseInventoryEntity?> StormEventsDatabaseInventoryGetAsync(int year, string id,
+    //    CancellationToken ct)
+    //{
+    //    return await context.StormEventsDatabaseInventory.SingleOrDefaultAsync(s =>
+    //        s.Id == id &&
+    //        s.Year == year, ct);
+    //}
+
+    //public async Task StormEventsDatabaseInventoryUpdateAsync(StormEventsDatabaseInventoryEntity entity,
+    //    CancellationToken ct)
+    //{
+    //    context.StormEventsDatabaseInventory.Update(entity);
+    //    await context.SaveChangesAsync(ct);
+    //}
 
     #endregion
 

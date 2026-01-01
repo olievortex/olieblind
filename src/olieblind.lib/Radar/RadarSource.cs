@@ -43,13 +43,6 @@ public class RadarSource(IMyRepository repo, IOlieWebService ows) : IRadarSource
     //        .Single(s => s.Id == closest.Id);
     //}
 
-    //public async Task<List<RadarSiteEntity>> GetPrimaryRadarSitesAsync(CancellationToken ct)
-    //{
-    //    return (await cosmos.RadarSiteAllAsync(ct))
-    //        .Where(w => w.Id.StartsWith("K"))
-    //        .ToList();
-    //}
-
     //public async Task<RadarInventoryEntity?> GetRadarInventoryAsync(List<RadarInventoryEntity> cache,
     //    RadarSiteEntity radar, DateTime effectiveTime, CancellationToken ct)
     //{
@@ -74,11 +67,6 @@ public class RadarSource(IMyRepository repo, IOlieWebService ows) : IRadarSource
     }
 
     public RadarSiteEntity FindClosestRadar(List<RadarSiteEntity> radarSites, double lat, double lon)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<List<RadarSiteEntity>> GetPrimaryRadarSitesAsync(CancellationToken ct)
     {
         throw new NotImplementedException();
     }

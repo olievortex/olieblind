@@ -9,7 +9,6 @@ public interface IRadarSource
         AmazonS3Client client, CancellationToken ct);
 
     RadarSiteEntity FindClosestRadar(List<RadarSiteEntity> radarSites, double lat, double lon);
-    Task<List<RadarSiteEntity>> GetPrimaryRadarSitesAsync(CancellationToken ct);
 
     Task<RadarInventoryEntity?> GetRadarInventoryAsync(List<RadarInventoryEntity> cache, RadarSiteEntity radar,
         DateTime effectiveTime, CancellationToken ct);

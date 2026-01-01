@@ -12,7 +12,7 @@ public interface IDatabaseProcess
     List<DailySummaryModel> GetAggregate(List<DailyDetailModel> models);
 
     Task<List<DailyDetailModel>> LoadAsync(
-        BlobContainerClient blobClient, StormEventsDatabaseInventoryEntity eventsDatabase, CancellationToken ct);
+        BlobContainerClient blobClient, StormEventsDatabaseEntity eventsDatabase, CancellationToken ct);
 
     Task SourceDatabasesAsync(BlobContainerClient blobClient, CancellationToken ct);
 }

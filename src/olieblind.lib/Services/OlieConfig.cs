@@ -5,27 +5,11 @@ using System.Diagnostics.CodeAnalysis;
 namespace olieblind.lib.Services;
 
 [ExcludeFromCodeCoverage]
-public class OlieConfig : IOlieConfig
+public class OlieConfig(IConfiguration config) : IOlieConfig
 {
-    private readonly IConfiguration _config;
+    private readonly IConfiguration _config = config;
 
-    public DefaultAzureCredential Credential { get; }
-
-    public OlieConfig(IConfiguration config)
-    {
-        _config = config;
-
-#pragma warning disable CS0618 // Type or member is obsolete
-        var credOptions = new DefaultAzureCredentialOptions
-        {
-            ExcludeVisualStudioCodeCredential = true,
-            ExcludeVisualStudioCredential = true,
-            ExcludeSharedTokenCacheCredential = true
-        };
-#pragma warning restore CS0618 // Type or member is obsolete
-
-        Credential = new DefaultAzureCredential(credOptions);
-    }
+    public DefaultAzureCredential Credential { get; } = new DefaultAzureCredential();
 
     public string ApplicationInsightsConnectionString => GetString("APPLICATIONINSIGHTS_CONNECTION_STRING");
 

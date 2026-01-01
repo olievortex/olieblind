@@ -25,6 +25,11 @@ public class RadarBusiness(IRadarSource source, IMyRepository repo) : IRadarBusi
     //    }
     //}
 
+    public async Task<List<RadarSiteEntity>> GetPrimaryRadarSitesAsync(CancellationToken ct)
+    {
+        return [.. (await repo.RadarSiteGetAll(ct)).Where(w => w.Id.StartsWith('K'))];
+    }
+
     public async Task PopulateRadarSitesFromCsvAsync(string csv, CancellationToken ct)
     {
         var lines = csv.ReplaceLineEndings("\n").Split('\n');
@@ -61,7 +66,7 @@ public class RadarBusiness(IRadarSource source, IMyRepository repo) : IRadarBusi
             radars.Add(entity);
         }
 
-        await repo.RadarSiteCreateAsync(radars, ct);
+        await repo.RadarSiteCreate(radars, ct);
     }
 
     public Task<RadarSiteEntity> DownloadInventoryForClosestRadarAsync(List<RadarSiteEntity> radarSites, List<RadarInventoryEntity> cache, DateTime effectiveTime, double latitude, double longitude, AmazonS3Client client, CancellationToken ct)
