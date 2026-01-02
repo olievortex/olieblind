@@ -131,7 +131,7 @@ public class MyRepository(MyContext context) : IMyRepository
 
     public async Task<RadarInventoryEntity?> RadarInventoryGet(string id, string effectiveDate, string bucket, CancellationToken ct)
     {
-        return await context.RadarInventories.SingleOrDefaultAsync(s =>
+        return await context.RadarInventories.AsNoTracking().SingleOrDefaultAsync(s =>
             s.Id == id &&
             s.EffectiveDate == effectiveDate &&
             s.BucketName == bucket, ct);
