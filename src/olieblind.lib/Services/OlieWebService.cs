@@ -7,6 +7,7 @@ using Azure.Storage.Blobs.Models;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO.Compression;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 
@@ -108,10 +109,34 @@ public class OlieWebService(IHttpClientFactory httpClientFactory) : IOlieWebServ
     public async Task ApiDownloadBytes(string path, string url, CancellationToken ct)
     {
         using var hc = httpClientFactory.CreateClient();
+        hc.Timeout = TimeSpan.FromSeconds(30);
         var response = await ApiGetResponseMessage(url, hc, 4, ct);
 
         var body = await response.Content.ReadAsByteArrayAsync(ct);
         await File.WriteAllBytesAsync(path, body, ct);
+    }
+
+    public async Task<(HttpStatusCode, EntityTagHeaderValue?, string)> ApiGet(string url, EntityTagHeaderValue? etag, CancellationToken ct)
+    {
+        using var hc = new HttpClient();
+        hc.Timeout = TimeSpan.FromSeconds(30);
+
+        if (etag is not null) hc.DefaultRequestHeaders.IfNoneMatch.Add(etag);
+
+        try
+        {
+            using var response = await hc.GetAsync(url, ct);
+
+            var body = await response.Content.ReadAsStringAsync(ct);
+            var etagResponse = response.Headers.ETag;
+            var responseCode = response.StatusCode;
+
+            return (responseCode, etagResponse, body);
+        }
+        catch (OperationCanceledException)
+        {
+            return (HttpStatusCode.NotFound, null, string.Empty);
+        }
     }
 
     private async static Task<HttpResponseMessage> ApiGetResponseMessage(string url, HttpClient hc, int maxTries, CancellationToken ct)
@@ -132,6 +157,7 @@ public class OlieWebService(IHttpClientFactory httpClientFactory) : IOlieWebServ
     public async Task<byte[]> ApiGetBytes(string url, CancellationToken ct)
     {
         using var hc = httpClientFactory.CreateClient();
+        hc.Timeout = TimeSpan.FromSeconds(30);
         var response = await ApiGetResponseMessage(url, hc, 4, ct);
 
         var body = await response.Content.ReadAsByteArrayAsync(ct);
@@ -141,6 +167,7 @@ public class OlieWebService(IHttpClientFactory httpClientFactory) : IOlieWebServ
     public async Task<string> ApiGetString(string url, CancellationToken ct)
     {
         using var hc = httpClientFactory.CreateClient();
+        hc.Timeout = TimeSpan.FromSeconds(30);
         var response = await ApiGetResponseMessage(url, hc, 4, ct);
 
         var body = await response.Content.ReadAsStringAsync(ct);
