@@ -16,4 +16,13 @@ public class MyContext(DbContextOptions<MyContext> options) : DbContext(options)
     public virtual DbSet<StormEventsDailySummaryEntity> StormEventsDailySummaries { get; set; }
     public virtual DbSet<StormEventsDatabaseEntity> StormEventsDatabases { get; set; }
     public virtual DbSet<UserCookieConsentLogEntity> UserCookieConsentLogs { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<RadarInventoryEntity>()
+            .Property(e => e.FileList)
+            .HasColumnType("json");
+    }
 }

@@ -189,7 +189,10 @@ public class OlieWebService(IHttpClientFactory httpClientFactory) : IOlieWebServ
         {
             response = await client.ListObjectsV2Async(request, ct);
 
-            result.AddRange(response.S3Objects.Select(s => s.Key));
+            if (response.S3Objects != null)
+            {
+                result.AddRange(response.S3Objects.Select(s => s.Key));
+            }
 
             // If the response is truncated, set the request ContinuationToken
             // from the NextContinuationToken property of the response.

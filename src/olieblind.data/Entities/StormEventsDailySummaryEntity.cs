@@ -28,7 +28,7 @@ public class StormEventsDailySummaryEntity
     }
 }
 
-//CREATE TABLE olieblind_dev.StormEventDailySummaries (
+//CREATE TABLE olieblind_dev.StormEventsDailySummaries (
 //	  Id varchar(36) NOT NULL,
 //	  `Year` INT NOT NULL,
 //	  SourceFk varchar(36) NOT NULL,

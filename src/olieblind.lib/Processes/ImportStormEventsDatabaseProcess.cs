@@ -48,7 +48,6 @@ public class ImportStormEventsDatabaseProcess(
         if (inventory.RowCount == 0)
         {
             await dbBusiness.DatabaseUpdateRowCount(inventory, events.Count, ct);
-            inventory.RowCount = events.Count;
         }
 
         var start = new DateTime(year, 1, 1, 12, 0, 0, DateTimeKind.Utc);

@@ -11,17 +11,25 @@ public class RadarBusiness(IRadarSource source, IMyRepository repo) : IRadarBusi
         List<RadarInventoryEntity> cache, DateTime effectiveTime, double latitude, double longitude,
         AmazonS3Client client, CancellationToken ct)
     {
-        var radarSite = source.FindClosestRadar(radarSites, latitude, longitude);
-        await DownloadInventory(effectiveTime);
-        await DownloadInventory(effectiveTime.AddHours(-3));
-        await DownloadInventory(effectiveTime.AddHours(1));
+        foreach (var radarSite in source.FindClosestRadars(radarSites, latitude, longitude))
+        {
+            var inventory = await DownloadInventory(radarSite, effectiveTime);
+            if (inventory.FileList.Count == 0) continue;
 
-        return radarSite;
+            await DownloadInventory(radarSite, effectiveTime.AddHours(-3));
+            await DownloadInventory(radarSite, effectiveTime.AddHours(1));
 
-        async Task DownloadInventory(DateTime timeValue)
+            return radarSite;
+        }
+
+        throw new InvalidOperationException($"Unable to find a radar for {latitude}, {longitude}");
+
+        async Task<RadarInventoryEntity> DownloadInventory(RadarSiteEntity radarSite, DateTime timeValue)
         {
             var inventory = await source.GetRadarInventory(cache, radarSite, timeValue, ct);
-            if (inventory is null) await source.AddRadarInventory(cache, radarSite, timeValue, client, ct);
+            inventory ??= await source.AddRadarInventory(cache, radarSite, timeValue, client, ct);
+
+            return inventory;
         }
     }
 
@@ -49,7 +57,9 @@ public class RadarBusiness(IRadarSource source, IMyRepository repo) : IRadarBusi
             var state = line[72..74].Trim();
             var lat = double.Parse(line[106..115]);
             var lon = double.Parse(line[116..126]);
+            var type = line[140..146];
             if (string.IsNullOrWhiteSpace(state)) continue;
+            if (type != "NEXRAD") continue;
 
             // Create the record
             var entity = new RadarSiteEntity

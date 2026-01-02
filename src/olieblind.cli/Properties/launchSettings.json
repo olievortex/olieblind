@@ -1,7 +1,7 @@
 ﻿{
   "profiles": {
     "OlievortexRed.Cli": {
-      "commandLineArgs": "eventsdatabase 2020 20251118",
+      "commandLineArgs": "eventsdatabase 2011 20250520",
       "commandName": "Project"
     }
   }

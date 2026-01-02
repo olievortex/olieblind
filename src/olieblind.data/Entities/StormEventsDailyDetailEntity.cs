@@ -20,7 +20,7 @@ public class StormEventsDailyDetailEntity
     [MaxLength(5)] public string Magnitude { get; init; } = string.Empty;
     public float Latitude { get; init; }
     public float Longitude { get; init; }
-    [MaxLength(1000)] public string Narrative { get; init; } = string.Empty;
+    [MaxLength(65535)] public string Narrative { get; init; } = string.Empty;
     [MaxLength(16)] public string ClosestRadar { get; init; } = string.Empty;
 }
 
@@ -38,7 +38,7 @@ public class StormEventsDailyDetailEntity
 //	  Magnitude varchar(5) NOT NULL,
 //    Latitude FLOAT NOT NULL,
 //	  Longitude FLOAT NOT NULL,
-//    Narrative varchar(1000) NOT NULL,
+//    Narrative text NOT NULL,
 //    ClosestRadar varchar(16) NOT NULL,
 //  CONSTRAINT StormEventsDailyDetails_PK PRIMARY KEY(Id, DateFk, SourceFk)
 //)

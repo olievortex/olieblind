@@ -8,9 +8,9 @@ namespace olieblind.lib.Radar;
 
 public class RadarSource(IMyRepository repo, IOlieWebService ows) : IRadarSource
 {
-    public const string LevelIiBucket = "noaa-nexrad-level2";
+    public const string LevelIiBucket = "unidata-nexrad-level2";
 
-    public async Task AddRadarInventory(List<RadarInventoryEntity> cache, RadarSiteEntity radar,
+    public async Task<RadarInventoryEntity> AddRadarInventory(List<RadarInventoryEntity> cache, RadarSiteEntity radar,
         DateTime effectiveTime, AmazonS3Client client, CancellationToken ct)
     {
         var prefix = $"{effectiveTime:yyyy}/{effectiveTime:MM}/{effectiveTime:dd}/{radar.Id}/";
@@ -20,27 +20,31 @@ public class RadarSource(IMyRepository repo, IOlieWebService ows) : IRadarSource
         {
             BucketName = LevelIiBucket,
             EffectiveDate = $"{effectiveTime:yyyy-MM-dd}",
-            FileList = string.Join('|', products),
+            FileList = products,
             Id = radar.Id,
             Timestamp = DateTime.UtcNow
         };
 
         await repo.RadarInventoryAdd(entity, ct);
         cache.Add(entity);
+
+        return entity;
     }
 
-    public RadarSiteEntity FindClosestRadar(List<RadarSiteEntity> radarSites, double lat, double lon)
+    public List<RadarSiteEntity> FindClosestRadars(List<RadarSiteEntity> radarSites, double lat, double lon)
     {
-        var closest = radarSites.Select(s => new
-        {
-            s.Id,
-            Distance = Math.Sqrt(Math.Pow(s.Latitude - lat, 2) + Math.Pow(s.Longitude - lon, 2))
-        })
+        var closest = radarSites
+            .Select(s => new
+            {
+                s,
+                Distance = Math.Sqrt(Math.Pow(s.Latitude - lat, 2) + Math.Pow(s.Longitude - lon, 2))
+            })
             .OrderBy(o => o.Distance)
-            .First();
+            .Select(s => s.s)
+            .Take(4)
+            .ToList();
 
-        return radarSites
-            .Single(s => s.Id == closest.Id);
+        return closest;
     }
 
     public async Task<RadarInventoryEntity?> GetRadarInventory(List<RadarInventoryEntity> cache,
