@@ -1,17 +1,18 @@
+using olieblind.data;
 using olieblind.data.Entities;
 using olieblind.lib.StormEvents.Interfaces;
 using olieblind.lib.StormEvents.Models;
 
 namespace olieblind.lib.StormEvents;
 
-public class SpcProcess(ISpcBusiness business) : ISpcProcess
+public class SpcProcess(ISpcBusiness business, IMyRepository repo) : ISpcProcess
 {
     public async Task<(int start, int stop, List<StormEventsReportEntity>)> GetInventoryByYear(int year, CancellationToken ct)
     {
         var start = SpcBusiness.GetFirstDayNumberForYear(year);
         var stop = SpcBusiness.GetLastDayNumberForYear(year);
         var items =
-            start <= stop ? await business.GetInventoryByYear(year, ct) : [];
+            start <= stop ? await repo.StormEventsReportsByYear(year, ct) : [];
 
         return (start, stop, items);
     }

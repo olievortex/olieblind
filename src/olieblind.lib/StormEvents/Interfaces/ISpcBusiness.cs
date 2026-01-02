@@ -15,7 +15,5 @@ public interface ISpcBusiness
 
     DailySummaryModel? GetAggregate(List<DailyDetailModel> models);
 
-    Task<List<StormEventsReportEntity>> GetInventoryByYear(int year, CancellationToken ct);
-
     StormEventsReportEntity? GetLatest(DateTime effectiveDate, List<StormEventsReportEntity> inventory);
 }

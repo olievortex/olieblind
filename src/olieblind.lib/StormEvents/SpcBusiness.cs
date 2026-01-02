@@ -110,10 +110,6 @@ public class SpcBusiness(IMyRepository repo, ISpcSource source) : ISpcBusiness
         return (int)(new DateTime(year, 12, 31) - new DateTime(year, 1, 1)).TotalDays;
     }
 
-    //public async Task<List<StormEventsSpcInventoryEntity>> GetInventoryByYearAsync(int year, CancellationToken ct)
-    //{
-    //    return await cosmos.StormEventsSpcInventoryListByYearAsync(year, ct);
-    //}
     public Task AddDailyDetail(List<DailyDetailModel> models, StormEventsReportEntity inventory, CancellationToken ct)
     {
         throw new NotImplementedException();
@@ -135,11 +131,6 @@ public class SpcBusiness(IMyRepository repo, ISpcSource source) : ISpcBusiness
     }
 
     public DailySummaryModel? GetAggregate(List<DailyDetailModel> models)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<List<StormEventsReportEntity>> GetInventoryByYear(int year, CancellationToken ct)
     {
         throw new NotImplementedException();
     }

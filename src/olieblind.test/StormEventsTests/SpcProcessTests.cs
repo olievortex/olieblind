@@ -1,4 +1,5 @@
 using Moq;
+using olieblind.data;
 using olieblind.data.Entities;
 using olieblind.lib.StormEvents;
 using olieblind.lib.StormEvents.Interfaces;
@@ -17,9 +18,10 @@ public class SpcProcessTests
         var ct = CancellationToken.None;
         const int year = 2025;
         var spc = new Mock<ISpcBusiness>();
-        var testable = new SpcProcess(spc.Object);
+        var repo = new Mock<IMyRepository>();
+        var testable = new SpcProcess(spc.Object, repo.Object);
         var expected = new List<StormEventsReportEntity>() { new() };
-        spc.Setup(s => s.GetInventoryByYear(year, ct))
+        repo.Setup(s => s.StormEventsReportsByYear(year, ct))
             .ReturnsAsync(expected);
 
         // Test
@@ -36,8 +38,9 @@ public class SpcProcessTests
         var ct = CancellationToken.None;
         const int year = 2018;
         var spc = new Mock<ISpcBusiness>();
-        var testable = new SpcProcess(spc.Object);
-        spc.Setup(s => s.GetInventoryByYear(year, ct))
+        var repo = new Mock<IMyRepository>();
+        var testable = new SpcProcess(spc.Object, repo.Object);
+        repo.Setup(s => s.StormEventsReportsByYear(year, ct))
             .ReturnsAsync([new()]);
 
         // Test
@@ -57,7 +60,7 @@ public class SpcProcessTests
         // Arrange
         var ct = CancellationToken.None;
         var business = new Mock<ISpcBusiness>();
-        var testable = new SpcProcess(business.Object);
+        var testable = new SpcProcess(business.Object, null!);
         var inventory = new StormEventsReportEntity();
         var events = new List<DailyDetailModel>();
 
@@ -80,7 +83,7 @@ public class SpcProcessTests
     {
         // Arrange
         var spc = new Mock<ISpcBusiness>();
-        var testable = new SpcProcess(spc.Object);
+        var testable = new SpcProcess(spc.Object, null!);
         var inventory = new StormEventsReportEntity
         {
             IsDailySummaryComplete = true,
@@ -99,7 +102,7 @@ public class SpcProcessTests
     {
         // Arrange
         var spc = new Mock<ISpcBusiness>();
-        var testable = new SpcProcess(spc.Object);
+        var testable = new SpcProcess(spc.Object, null!);
         var inventory = new StormEventsReportEntity
         {
             IsDailyDetailComplete = true
@@ -129,7 +132,7 @@ public class SpcProcessTests
             .Returns((StormEventsReportEntity?)null);
         spc.Setup(s => s.DownloadNew(effectiveDate, ct))
             .ReturnsAsync(entity);
-        var testable = new SpcProcess(spc.Object);
+        var testable = new SpcProcess(spc.Object, null!);
 
         // Act
         var result = await testable.SourceInventory(effectiveDate, inventoryList, ct);
@@ -151,7 +154,7 @@ public class SpcProcessTests
             .ReturnsAsync(inventory);
         spc.Setup(s => s.GetLatest(effectiveDate, inventoryList))
             .Returns(inventory);
-        var testable = new SpcProcess(spc.Object);
+        var testable = new SpcProcess(spc.Object, null!);
 
         // Act
         var result = await testable.SourceInventory(effectiveDate, inventoryList, ct);

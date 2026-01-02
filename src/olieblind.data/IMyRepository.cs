@@ -113,6 +113,24 @@ public interface IMyRepository
 
     #endregion
 
+    #region StormEventsReport
+
+    //public async Task StormEventsSpcInventoryCreateAsync(StormEventsSpcInventoryEntity entity, CancellationToken ct)
+    //{
+    //    await context.StormEventsSpcInventory.AddAsync(entity, ct);
+    //    await context.SaveChangesAsync(ct);
+    //}
+
+    Task<List<StormEventsReportEntity>> StormEventsReportsByYear(int year, CancellationToken ct);
+
+    //public async Task StormEventsSpcInventoryUpdateAsync(StormEventsSpcInventoryEntity entity, CancellationToken ct)
+    //{
+    //    context.StormEventsSpcInventory.Update(entity);
+    //    await context.SaveChangesAsync(ct);
+    //}
+
+    #endregion
+
     #region UserCookieConsentLog
 
     Task UserCookieConsentLogCreate(UserCookieConsentLogEntity entity, CancellationToken ct);
