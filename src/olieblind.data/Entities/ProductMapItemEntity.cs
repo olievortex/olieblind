@@ -2,7 +2,7 @@
 
 namespace olieblind.data.Entities;
 
-public class ProductMapItem
+public class ProductMapItemEntity
 {
     [Key]
     public int Id { get; set; }

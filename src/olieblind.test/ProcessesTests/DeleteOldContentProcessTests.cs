@@ -23,12 +23,12 @@ public class DeleteOldContentProcessTests
                 ]);
         repo.Setup(s => s.ProductMapList(ct))
             .ReturnsAsync([
-                new ProductMap { Id = 12, Timestamp = timestamp }
+                new ProductMapEntity { Id = 12, Timestamp = timestamp }
                 ]);
         repo.Setup(s => s.ProductMapItemList(12, ct))
             .ReturnsAsync([
-                new ProductMapItem { LocalPath = @"C:\temp\file1.png" },
-                new ProductMapItem { LocalPath = @"C:\temp\file2.png" }
+                new ProductMapItemEntity { LocalPath = @"C:\temp\file1.png" },
+                new ProductMapItemEntity { LocalPath = @"C:\temp\file2.png" }
                 ]);
         var ows = new Mock<IOlieWebService>();
         var mysql = new Mock<IMySqlMaintenance>();
@@ -60,9 +60,9 @@ public class DeleteOldContentProcessTests
         // Act & Assert
         Assert.DoesNotThrow(() => process.SafeDeleteFile(null!));
     }
-    
+
     #region SafeDelete Folder
-    
+
     [Test]
     public void SafeDeleteFolder_NoExceptionThrown_ServiceThrows()
     {
@@ -76,7 +76,7 @@ public class DeleteOldContentProcessTests
         // Act & Assert
         Assert.DoesNotThrow(() => process.SafeDeleteFolder("/var/www/olie/dillon.txt"));
     }
-    
+
     [Test]
     public void SafeDeleteFolder_ExitsEarly_EmptyPath()
     {
@@ -87,10 +87,10 @@ public class DeleteOldContentProcessTests
 
         // Act
         process.SafeDeleteFolder(string.Empty);
-        
+
         // Assert
         ows.Verify(v => v.DirectoryDelete(It.IsAny<string>()), Times.Never);
     }
-    
+
     #endregion
 }

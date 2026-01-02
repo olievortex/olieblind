@@ -1,4 +1,5 @@
-﻿using Azure.AI.TextAnalytics;
+﻿using Amazon.S3;
+using Azure.AI.TextAnalytics;
 using Azure.Storage.Blobs;
 
 namespace olieblind.lib.Services;
@@ -24,7 +25,22 @@ public interface IOlieWebService
 
     #endregion
 
+    #region Aws
+
+    //public async Task AwsDownloadAsync(string filename, string bucketName, string key, IAmazonS3 client,
+    //    CancellationToken ct)
+    //{
+    //    var response = await client.GetObjectAsync(bucketName, key, ct);
+    //    await response.WriteResponseStreamToFileAsync(filename, false, ct);
+    //}
+
+    Task<List<string>> AwsList(string bucketName, string prefix, IAmazonS3 client, CancellationToken ct);
+
+    #endregion
+
     #region Blob
+
+    Task BlobDownloadFile(BlobContainerClient client, string fileName, string localFileName, CancellationToken ct);
 
     Task BlobUploadFile(BlobContainerClient client, string fileName, string localFileName, CancellationToken ct);
 
@@ -38,6 +54,7 @@ public interface IOlieWebService
     void FileDelete(string path);
     void FileMakeDirectory(string path);
     Task<byte[]> FileReadAllBytes(string path, CancellationToken ct);
+    Task<string> FileReadAllTextFromGz(string path, CancellationToken ct);
     Task FileWriteAllBytes(string path, byte[] data, CancellationToken ct);
 
     #endregion

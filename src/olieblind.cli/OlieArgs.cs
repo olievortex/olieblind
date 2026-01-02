@@ -3,16 +3,20 @@
 public class OlieArgs
 {
     public CommandsEnum Command { get; private set; }
+    public int IntArg1 { get; private set; }
+    public string StrArg1 { get; private set; } = string.Empty;
 
     public enum CommandsEnum
     {
         DayOneMaps,
         DeleteOldContent,
         DroughtMonitorVideo,
+        EventsDatabase,
         SpcDayOneVideo,
         SpcDayTwoVideo,
         SpcDayThreeVideo,
-        ListVoices
+        ListVoices,
+        LoadRadars
     }
 
     public OlieArgs(string[] args)
@@ -26,11 +30,26 @@ public class OlieArgs
             "dayonemaps" => CommandsEnum.DayOneMaps,
             "deleteoldcontent" => CommandsEnum.DeleteOldContent,
             "droughtmonitorvideo" => CommandsEnum.DroughtMonitorVideo,
+            "eventsdatabase" => ReadArgsForEventsDatabase(args),
             "spcdayonevideo" => CommandsEnum.SpcDayOneVideo,
             "spcdaytwovideo" => CommandsEnum.SpcDayTwoVideo,
             "spcdaythreevideo" => CommandsEnum.SpcDayThreeVideo,
             "listvoices" => CommandsEnum.ListVoices,
+            "loadradars" => CommandsEnum.LoadRadars,
             _ => throw new ArgumentException($"Unknown command {command}")
         };
+    }
+
+    private CommandsEnum ReadArgsForEventsDatabase(string[] args)
+    {
+        const string usage = "Usage: dotnet olieblind.cli.dll eventsdatabase [year] [update]";
+
+        if (args.Length != 3) throw new ArgumentException(usage);
+        if (!int.TryParse(args[1], out var year)) throw new ArgumentException(usage);
+
+        IntArg1 = year;
+        StrArg1 = args[2];
+
+        return CommandsEnum.EventsDatabase;
     }
 }

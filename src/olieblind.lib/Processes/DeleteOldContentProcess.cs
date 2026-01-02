@@ -51,17 +51,17 @@ public class DeleteOldContentProcess(IMyRepository repo, IOlieWebService ows, IM
         }
     }
 
-    private async Task DeleteModelForecastMaps(List<ProductMap> maps, CancellationToken ct)
+    private async Task DeleteModelForecastMaps(List<ProductMapEntity> maps, CancellationToken ct)
     {
         var query = maps
             .Where(w => w.Timestamp < DateTime.UtcNow.AddDays(-7))
             .ToList();
-        
+
         foreach (var item in query)
         {
             var items = await repo.ProductMapItemList(item.Id, ct);
             var folderPath = string.Empty;
-            
+
             foreach (var mapItem in items)
             {
                 folderPath = mapItem.LocalPath;
@@ -121,7 +121,7 @@ public class DeleteOldContentProcess(IMyRepository repo, IOlieWebService ows, IM
             // Ignore
         }
     }
-    
+
     public void SafeDeleteFile(string path)
     {
         try

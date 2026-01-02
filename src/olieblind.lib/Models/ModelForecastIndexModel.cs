@@ -18,7 +18,7 @@ public class ModelForecastIndexModel
         public DateTime Effective { get; set; }
         public int ForecastHour { get; set; }
 
-        public static HeaderModel Map(ProductMap entity)
+        public static HeaderModel Map(ProductMapEntity entity)
         {
             return new HeaderModel
             {
@@ -35,7 +35,7 @@ public class ModelForecastIndexModel
         public string Title { get; set; } = string.Empty;
         public int ParameterId { get; set; }
 
-        public static ItemModel Map(ProductMapItem entity)
+        public static ItemModel Map(ProductMapItemEntity entity)
         {
             return new ItemModel
             {

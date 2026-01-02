@@ -94,7 +94,7 @@ public class CreateDayOneMapsProcessTests
     public async Task AddToDatabaseAsync_CreatesProductMap_Initialized()
     {
         // Arrange
-        ProductMap entity = new();
+        ProductMapEntity entity = new();
         const string baseVideoUrl = "a";
         const string destinationBaseUrl = "aa";
         const string modelForecastPath = "b";
@@ -118,8 +118,8 @@ public class CreateDayOneMapsProcessTests
             .Returns(sourceUrl);
         var ows = new Mock<IOlieWebService>();
         var repo = new Mock<IMyRepository>();
-        repo.Setup(s => s.ProductMapCreate(It.IsAny<ProductMap>(), ct))
-            .Callback((ProductMap e, CancellationToken _) => entity = e);
+        repo.Setup(s => s.ProductMapCreate(It.IsAny<ProductMapEntity>(), ct))
+            .Callback((ProductMapEntity e, CancellationToken _) => entity = e);
         var testable = new CreateDayOneMapsProcess(repo.Object, nam.Object, config.Object, ows.Object)
         {
             EffectiveDateOnly = dateOnly,
@@ -146,7 +146,7 @@ public class CreateDayOneMapsProcessTests
     public async Task AddToDatabaseAsync_CreatesProductMapItems_Initialized()
     {
         // Arrange
-        List<ProductMapItem> entities = [];
+        List<ProductMapItemEntity> entities = [];
         const string baseVideoUrl = "a";
         const string destinationBaseUrl = "aa";
         const string modelForecastPath = "b";
@@ -171,10 +171,10 @@ public class CreateDayOneMapsProcessTests
             .Returns(sourceUrl);
         var ows = new Mock<IOlieWebService>();
         var repo = new Mock<IMyRepository>();
-        repo.Setup(s => s.ProductMapCreate(It.IsAny<ProductMap>(), ct))
-            .Callback((ProductMap e, CancellationToken _) => e.Id = mapId);
-        repo.Setup(s => s.ProductMapItemCreate(It.IsAny<ProductMapItem>(), ct))
-            .Callback((ProductMapItem e, CancellationToken _) => entities.Add(e));
+        repo.Setup(s => s.ProductMapCreate(It.IsAny<ProductMapEntity>(), ct))
+            .Callback((ProductMapEntity e, CancellationToken _) => e.Id = mapId);
+        repo.Setup(s => s.ProductMapItemCreate(It.IsAny<ProductMapItemEntity>(), ct))
+            .Callback((ProductMapItemEntity e, CancellationToken _) => entities.Add(e));
         var testable = new CreateDayOneMapsProcess(repo.Object, nam.Object, config.Object, ows.Object)
         {
             EffectiveDateOnly = dateOnly,

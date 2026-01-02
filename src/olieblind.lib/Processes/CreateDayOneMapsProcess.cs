@@ -49,7 +49,7 @@ public class CreateDayOneMapsProcess(
 
     public async Task AddToDatabaseAsync(CancellationToken ct)
     {
-        var map = new ProductMap
+        var map = new ProductMapEntity
         {
             Effective = EffectiveDateTime,
             ForecastHour = ForecastHour,
@@ -65,7 +65,7 @@ public class CreateDayOneMapsProcess(
         {
             var filename = $"{FilePrefix}_{product.File}_1.png";
 
-            var item = new ProductMapItem
+            var item = new ProductMapItemEntity
             {
                 GeographyId = 1,
                 IsActive = true,
