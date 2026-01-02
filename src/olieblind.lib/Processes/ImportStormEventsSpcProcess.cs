@@ -8,7 +8,7 @@ namespace olieblind.lib.Processes;
 
 public class ImportStormEventsSpcProcess(
     ISpcProcess spc,
-    ISpcBusiness spcBusiness,
+    ISpcSource spcSource,
     IRadarBusiness radarBusiness)
 {
     private List<RadarSiteEntity> _radarSites = [];
@@ -25,7 +25,7 @@ public class ImportStormEventsSpcProcess(
     public async Task ProcessStormReportsForYearAsync(int year, AmazonS3Client client, CancellationToken ct)
     {
         var (start, stop, inventoryYear) =
-            await spc.GetInventoryByYearAsync(year, ct);
+            await spc.GetInventoryByYear(year, ct);
         var cutoff = DateTime.UtcNow.AddDays(-2).Date;
 
         for (var day = start; day <= stop; day++)
@@ -33,10 +33,10 @@ public class ImportStormEventsSpcProcess(
             var effectiveDate = new DateTime(year, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddDays(day);
             if (effectiveDate > cutoff) break;
 
-            var inventory = await spc.SourceInventoryAsync(effectiveDate, inventoryYear, ct);
+            var inventory = await spc.SourceInventory(effectiveDate, inventoryYear, ct);
             if (spc.ShouldSkip(inventory)) continue;
 
-            var events = spcBusiness.Parse(effectiveDate, inventory.Rows);
+            var events = spcSource.Parse(effectiveDate, inventory.Rows);
             await AssignRadarAsync(events, client, ct);
 
             await spc.ProcessEvents(events, inventory, ct);

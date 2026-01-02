@@ -1,4 +1,5 @@
 using olieblind.data;
+using olieblind.data.Entities;
 using olieblind.lib.StormEvents.Interfaces;
 using olieblind.lib.StormEvents.Models;
 
@@ -94,31 +95,56 @@ public class SpcBusiness(IMyRepository repo, ISpcSource source) : ISpcBusiness
     //        .FirstOrDefault();
     //}
 
-    //public List<DailyDetailModel> Parse(DateTime effectiveDate, string[] lines)
-    //{
-    //    return source.Parse(effectiveDate, lines);
-    //}
+    public static int GetFirstDayNumberForYear(int year)
+    {
+        return year switch
+        {
+            < 2025 => int.MaxValue,
+            2025 => (int)(new DateTime(2025, 10, 1) - new DateTime(2025, 1, 1)).TotalDays,
+            _ => 0,
+        };
+    }
 
-    //public static int GetFirstDayNumberForYear(int year)
-    //{
-    //    return year switch
-    //    {
-    //        < 2025 => int.MaxValue,
-    //        // 2024 => (int)(new DateTime(2024, 12, 1) - new DateTime(2024, 1, 1)).TotalDays,
-    //        _ => 0
-    //    };
-    //}
-
-    //public static int GetLastDayNumberForYear(int year)
-    //{
-    //    return (int)(new DateTime(year, 12, 31) - new DateTime(year, 1, 1)).TotalDays;
-    //}
+    public static int GetLastDayNumberForYear(int year)
+    {
+        return (int)(new DateTime(year, 12, 31) - new DateTime(year, 1, 1)).TotalDays;
+    }
 
     //public async Task<List<StormEventsSpcInventoryEntity>> GetInventoryByYearAsync(int year, CancellationToken ct)
     //{
     //    return await cosmos.StormEventsSpcInventoryListByYearAsync(year, ct);
     //}
-    public List<DailyDetailModel> Parse(DateTime effectiveDate, string[] lines)
+    public Task AddDailyDetail(List<DailyDetailModel> models, StormEventsReportEntity inventory, CancellationToken ct)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task AddDailySummary(StormEventsReportEntity inventory, DailySummaryModel? model, string sourceFk, CancellationToken ct)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<StormEventsReportEntity> DownloadNew(DateTime effectiveDate, CancellationToken ct)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<StormEventsReportEntity> DownloadUpdate(StormEventsReportEntity inventory, CancellationToken ct)
+    {
+        throw new NotImplementedException();
+    }
+
+    public DailySummaryModel? GetAggregate(List<DailyDetailModel> models)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<List<StormEventsReportEntity>> GetInventoryByYear(int year, CancellationToken ct)
+    {
+        throw new NotImplementedException();
+    }
+
+    public StormEventsReportEntity? GetLatest(DateTime effectiveDate, List<StormEventsReportEntity> inventory)
     {
         throw new NotImplementedException();
     }

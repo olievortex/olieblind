@@ -19,13 +19,13 @@ public class ImportStormEventsSpcProcessTests
         var spc = new Mock<ISpcProcess>();
         spc.Setup(s => s.ShouldSkip(It.IsAny<StormEventsReportEntity>()))
             .Returns(false);
-        spc.Setup(s => s.GetInventoryByYearAsync(It.IsAny<int>(), ct))
+        spc.Setup(s => s.GetInventoryByYear(It.IsAny<int>(), ct))
             .ReturnsAsync((42, 42, []));
         spc.Setup(s =>
-                s.SourceInventoryAsync(It.IsAny<DateTime>(), It.IsAny<List<StormEventsReportEntity>>(), ct))
+                s.SourceInventory(It.IsAny<DateTime>(), It.IsAny<List<StormEventsReportEntity>>(), ct))
             .ReturnsAsync(new StormEventsReportEntity());
-        var spcBusiness = new Mock<ISpcBusiness>();
-        spcBusiness.Setup(s => s.Parse(It.IsAny<DateTime>(), It.IsAny<string[]>()))
+        var spcSource = new Mock<ISpcSource>();
+        spcSource.Setup(s => s.Parse(It.IsAny<DateTime>(), It.IsAny<string[]>()))
             .Returns([new DailyDetailModel()]);
         var radarBusiness = new Mock<IRadarBusiness>();
         radarBusiness.Setup(s => s.GetPrimaryRadarSites(ct))
@@ -35,7 +35,7 @@ public class ImportStormEventsSpcProcessTests
                 null!, ct))
             .ReturnsAsync(new RadarSiteEntity());
         var testable =
-            new ImportStormEventsSpcProcess(spc.Object, spcBusiness.Object, radarBusiness.Object);
+            new ImportStormEventsSpcProcess(spc.Object, spcSource.Object, radarBusiness.Object);
 
         // Act
         await testable.Run(null!, ct);
@@ -61,7 +61,7 @@ public class ImportStormEventsSpcProcessTests
         var spc = new Mock<ISpcProcess>();
         spc.Setup(s => s.ShouldSkip(It.IsAny<StormEventsReportEntity>()))
             .Returns(true);
-        spc.Setup(s => s.GetInventoryByYearAsync(year, ct))
+        spc.Setup(s => s.GetInventoryByYear(year, ct))
             .ReturnsAsync((start, stop, []));
         var testable = new ImportStormEventsSpcProcess(spc.Object, null!, null!);
 
@@ -85,7 +85,7 @@ public class ImportStormEventsSpcProcessTests
         var spc = new Mock<ISpcProcess>();
         spc.Setup(s => s.ShouldSkip(It.IsAny<StormEventsReportEntity>()))
             .Returns(true);
-        spc.Setup(s => s.GetInventoryByYearAsync(year, ct))
+        spc.Setup(s => s.GetInventoryByYear(year, ct))
             .ReturnsAsync((dayNumber, dayNumber, []));
         var testable = new ImportStormEventsSpcProcess(spc.Object, null!, null!);
 
@@ -107,15 +107,15 @@ public class ImportStormEventsSpcProcessTests
         var spc = new Mock<ISpcProcess>();
         spc.Setup(s => s.ShouldSkip(It.IsAny<StormEventsReportEntity>()))
             .Returns(false);
-        spc.Setup(s => s.GetInventoryByYearAsync(year, ct))
+        spc.Setup(s => s.GetInventoryByYear(year, ct))
             .ReturnsAsync((42, 42, []));
         spc.Setup(s =>
-                s.SourceInventoryAsync(It.IsAny<DateTime>(), It.IsAny<List<StormEventsReportEntity>>(), ct))
+                s.SourceInventory(It.IsAny<DateTime>(), It.IsAny<List<StormEventsReportEntity>>(), ct))
             .ReturnsAsync(new StormEventsReportEntity());
-        var spcBusiness = new Mock<ISpcBusiness>();
-        spcBusiness.Setup(s => s.Parse(It.IsAny<DateTime>(), It.IsAny<string[]>()))
+        var spcSource = new Mock<ISpcSource>();
+        spcSource.Setup(s => s.Parse(It.IsAny<DateTime>(), It.IsAny<string[]>()))
             .Returns([]);
-        var testable = new ImportStormEventsSpcProcess(spc.Object, spcBusiness.Object, null!);
+        var testable = new ImportStormEventsSpcProcess(spc.Object, spcSource.Object, null!);
 
         // Act
         await testable.ProcessStormReportsForYearAsync(year, null!, ct);
