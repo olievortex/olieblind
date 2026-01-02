@@ -21,8 +21,10 @@ public class EntityCompressionTests
         return JsonSerializer.Serialize(source).Length;
     }
 
+    #region RadarInventoryEntity
+
     [Test]
-    public void Compress_Compresses_RadarInventoryEntity()
+    public void CompressRadarInventoryEntity_Compresses_ManyItems()
     {
         var list = DeepCopy(RadarInventory);
         var uncompressed = CombinedLength(list);
@@ -40,7 +42,21 @@ public class EntityCompressionTests
     }
 
     [Test]
-    public void Decompress_NoLossOfData_RadarInventoryEntity()
+    public void CompressRadarInventoryEntity_DoesNothing_FewItems()
+    {
+        var list = new List<string> { "2011/03/22/KABR/KABR20110322_000622_V03.gz" };
+        var uncompressed = CombinedLength(list);
+        var entity = new RadarInventoryEntity { FileList = list };
+
+        EntityCompression.Compress(entity);
+
+        var compressed = CombinedLength(list);
+
+        Assert.That(uncompressed, Is.EqualTo(compressed));
+    }
+
+    [Test]
+    public void DecompressRadarInventoryEntity_NoLossOfData_ManyItems()
     {
         var list = DeepCopy(RadarInventory);
         var uncompressed = JsonSerializer.Serialize(list);
@@ -60,4 +76,50 @@ public class EntityCompressionTests
             Assert.That(uncompressed, Is.Not.EqualTo(compressed));
         }
     }
+
+    [Test]
+    public void DecompressRadarInventoryEntity_DoesNothing_FewItems()
+    {
+        var list = new List<string> { "2011/03/22/KABR/KABR20110322_000622_V03.gz" };
+        var uncompressed = JsonSerializer.Serialize(list);
+        var entity = new RadarInventoryEntity { FileList = list };
+
+        EntityCompression.Compress(entity);
+
+        var compressed = JsonSerializer.Serialize(list);
+
+        EntityCompression.Decompress(entity);
+
+        var decompressed = JsonSerializer.Serialize(list);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(uncompressed, Is.EqualTo(decompressed));
+            Assert.That(uncompressed, Is.EqualTo(compressed));
+        }
+    }
+
+    [Test]
+    public void DecompressRadarInventoryEntity_DoesNothing_UnexpectedData()
+    {
+        var list = new List<string> { "2011/03/22/KABR/KABR20110322_000622V03.gz", "2011/03/22/KABR/KABR20110322_001552_V03.gz" };
+        var uncompressed = JsonSerializer.Serialize(list);
+        var entity = new RadarInventoryEntity { FileList = list };
+
+        EntityCompression.Compress(entity);
+
+        var compressed = JsonSerializer.Serialize(list);
+
+        EntityCompression.Decompress(entity);
+
+        var decompressed = JsonSerializer.Serialize(list);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(uncompressed, Is.EqualTo(decompressed));
+            Assert.That(uncompressed, Is.EqualTo(compressed));
+        }
+    }
+
+    #endregion
 }
