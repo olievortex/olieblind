@@ -2,8 +2,8 @@ using Moq;
 using olieblind.lib.Processes;
 using olieblind.lib.Services;
 using olieblind.lib.Services.Speech;
+using olieblind.lib.StormPredictionCenter.Interfaces;
 using olieblind.lib.StormPredictionCenter.Models;
-using olieblind.lib.StormPredictionCenter.Outlooks;
 using olieblind.lib.Video;
 using System.Drawing;
 
@@ -38,7 +38,7 @@ public class CreateSpcOutlookVideoProcessTests
         };
 
         // Act
-        await testable.RunAsync(string.Empty, null!, string.Empty, string.Empty, DayNumber, ct);
+        await testable.Run(string.Empty, null!, string.Empty, string.Empty, DayNumber, ct);
 
         // Assert
         parsing.Verify(v => v.ParseNarrative(It.IsAny<string>(), DayNumber), Times.Once);

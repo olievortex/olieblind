@@ -1,0 +1,15 @@
+using Azure.Storage.Blobs;
+using olieblind.data.Entities;
+
+namespace olieblind.lib.StormPredictionCenter.Interfaces;
+
+public interface IMesoProductSource
+{
+    Task<string?> DownloadHtml(int year, int index, CancellationToken ct);
+
+    Task DownloadImage(string imageName, SpcMesoProductEntity product, BlobContainerClient blobClient, CancellationToken ct);
+
+    Task<int> GetLatestIdForYear(int year, CancellationToken ct);
+
+    Task UpdateCosmos(SpcMesoProductEntity existing, string areasAffected, string concerning, CancellationToken ct);
+}

@@ -8,6 +8,7 @@ public class OlieArgs
 
     public enum CommandsEnum
     {
+        DailyStormDownload,
         DayOneMaps,
         DeleteOldContent,
         DroughtMonitorVideo,
@@ -27,6 +28,7 @@ public class OlieArgs
 
         Command = command switch
         {
+            "dailystormdownload" => CommandsEnum.DailyStormDownload,
             "dayonemaps" => CommandsEnum.DayOneMaps,
             "deleteoldcontent" => CommandsEnum.DeleteOldContent,
             "droughtmonitorvideo" => CommandsEnum.DroughtMonitorVideo,

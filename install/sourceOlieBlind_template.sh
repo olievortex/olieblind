@@ -37,3 +37,4 @@ export APPLICATIONINSIGHTS_CONNECTION_STRING='__applicationinsights_connection_s
 export GOOGLE_APPLICATION_CREDENTIALS=/home/olievortex/environments/virtualstormchasing-de884bb5018e.json
 export OlieMySqlBackupContainer=https://stolieblinda3dd.blob.core.windows.net/mysql-backups
 export OlieMySqlBackupPath=C:/workspace/backup/mysql
+export OlieBlobBronzeContainerUri=https://stolieblinda3dd.blob.core.windows.net/bronze

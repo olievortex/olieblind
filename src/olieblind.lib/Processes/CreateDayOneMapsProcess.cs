@@ -1,6 +1,7 @@
 ﻿using olieblind.data;
 using olieblind.data.Entities;
 using olieblind.lib.ForecastModels;
+using olieblind.lib.Processes.Interfaces;
 using olieblind.lib.Services;
 
 namespace olieblind.lib.Processes;
@@ -22,7 +23,7 @@ public class CreateDayOneMapsProcess(
     public string ImageFolder => nam.GetFolder(EffectiveDateOnly, config.ModelForecastPath);
     public string SourceUrl => nam.GetNcepUrl(EffectiveDateOnly, EffectiveHour, ForecastHour);
 
-    public async Task RunAsync(DateOnly effectiveDateOnly, int effectiveHour, int forecastHour, CancellationToken ct)
+    public async Task Run(DateOnly effectiveDateOnly, int effectiveHour, int forecastHour, CancellationToken ct)
     {
         EffectiveDateOnly = effectiveDateOnly;
         EffectiveHour = effectiveHour;

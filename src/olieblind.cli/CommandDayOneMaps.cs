@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Logging;
-using olieblind.lib.Processes;
+using olieblind.lib.Processes.Interfaces;
 
 namespace olieblind.cli;
 
@@ -16,7 +16,7 @@ public class CommandDayOneMaps(ICreateDayOneMapsProcess process, ILogger<Command
             Console.WriteLine($"{LoggerName} triggered");
             logger.LogInformation("{loggerName} triggered", LoggerName);
 
-            await process.RunAsync(DateOnly.FromDateTime(DateTime.UtcNow), EffectiveHour, ForecastHour, ct);
+            await process.Run(DateOnly.FromDateTime(DateTime.UtcNow), EffectiveHour, ForecastHour, ct);
             return 0;
         }
         catch (Exception ex)

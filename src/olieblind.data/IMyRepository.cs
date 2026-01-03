@@ -58,6 +58,18 @@ public interface IMyRepository
 
     #endregion
 
+    #region SpcMesoProduct
+
+    Task SpcMesoProductCreate(SpcMesoProductEntity entity, CancellationToken ct);
+
+    Task<SpcMesoProductEntity?> SpcMesoProductGet(int year, int index, CancellationToken ct);
+
+    Task<SpcMesoProductEntity?> SpcMesoProductGetLatest(int year, CancellationToken ct);
+
+    Task SpcMesoProductUpdate(SpcMesoProductEntity entity, CancellationToken ct);
+
+    #endregion
+
     #region StormEventsDailyDetail
 
     Task StormEventsDailyDetailCreate(List<StormEventsDailyDetailEntity> entities, CancellationToken ct);

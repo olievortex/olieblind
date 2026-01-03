@@ -56,6 +56,7 @@ public class Program
 
         return olieArgs.Command switch
         {
+            OlieArgs.CommandsEnum.DailyStormDownload => await CreateService<CommandDailyStormDownload>().Run(ct),
             OlieArgs.CommandsEnum.DayOneMaps => await CreateService<CommandDayOneMaps>().Run(ct),
             OlieArgs.CommandsEnum.DeleteOldContent => await CreateService<CommandDeleteOldContent>().Run(ct),
             OlieArgs.CommandsEnum.DroughtMonitorVideo => await CreateService<CommandDroughtMonitorVideo>().Run(ct),

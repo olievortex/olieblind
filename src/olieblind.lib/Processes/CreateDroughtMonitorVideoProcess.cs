@@ -1,4 +1,5 @@
 using olieblind.lib.DroughtMonitor;
+using olieblind.lib.Processes.Interfaces;
 using olieblind.lib.Services;
 using olieblind.lib.Services.Speech;
 using olieblind.lib.Video;
@@ -25,7 +26,7 @@ public class CreateDroughtMonitorVideoProcess(
     public Point PosterSize { get; init; } = new(640, 360);
     public int ImageLengthSeconds { get; init; } = 5;
 
-    public async Task RunAsync(string folderRoot, string voiceName, CancellationToken ct)
+    public async Task Run(string folderRoot, string voiceName, CancellationToken ct)
     {
         // Acquire a product
         var xml = await droughtMonitor.GetCurrentDroughtMonitorXmlAsync(ct);

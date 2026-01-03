@@ -1,6 +1,6 @@
 ﻿using Azure.Storage.Blobs;
 
-namespace olieblind.lib.Processes;
+namespace olieblind.lib.Processes.Interfaces;
 
 public interface IDeleteOldContentProcess
 {

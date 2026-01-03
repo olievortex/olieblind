@@ -1,6 +1,6 @@
 ﻿using Azure.Storage.Blobs;
 using Microsoft.Extensions.Logging;
-using olieblind.lib.Processes;
+using olieblind.lib.Processes.Interfaces;
 using olieblind.lib.Services;
 
 namespace olieblind.cli;
