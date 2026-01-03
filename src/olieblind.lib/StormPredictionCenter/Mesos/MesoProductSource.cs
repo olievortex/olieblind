@@ -1,9 +1,8 @@
-using System.Net;
-using Azure.Storage.Blobs;
 using olieblind.data;
 using olieblind.data.Entities;
 using olieblind.lib.Services;
 using olieblind.lib.StormPredictionCenter.Interfaces;
+using System.Net;
 
 namespace olieblind.lib.StormPredictionCenter.Mesos;
 
@@ -23,20 +22,16 @@ public class MesoProductSource(IOlieWebService ows, IMyRepository repo) : IMesoP
         return html;
     }
 
-    public async Task DownloadImage(string imageName, SpcMesoProductEntity product, BlobContainerClient blobClient, CancellationToken ct)
+    public async Task DownloadImage(string imageName, SpcMesoProductEntity product, string goldPath, CancellationToken ct)
     {
         if (product.GraphicUrl is not null) return;
 
         var dt = product.EffectiveTime;
-        var ext = Path.GetExtension(imageName);
         var url = $"{BaseUrl}{dt.Year}/{imageName}";
-        var blobFileName = $"gold/spc/meso/{dt.Year}/{dt.Month}/{imageName}";
-        var local = OlieCommon.CreateLocalTmpPath(ext);
+        var blobFileName = $"{goldPath}/gold/spc/meso/{dt.Year}/{dt.Month}/{imageName}";
 
         var image = await ows.ApiGetBytes(url, ct);
-        await ows.FileWriteAllBytes(local, image, ct);
-        await ows.BlobUploadFile(blobClient, blobFileName, local, ct);
-        ows.FileDelete(local);
+        await ows.FileWriteAllBytes(blobFileName, image, ct);
 
         product.GraphicUrl = blobFileName;
         product.Timestamp = DateTime.UtcNow;

@@ -2,11 +2,16 @@ using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
 using Microsoft.Extensions.Logging;
-using olieblind.lib.Processes;
+using olieblind.lib.Processes.Interfaces;
+using olieblind.lib.Services;
 
 namespace olieblind.cli;
 
-public class CommandDailyStormDownload(ILogger<CommandDailyStormDownload> logger, ImportStormEventsSpcProcess stormEventsSpcProcess)
+public class CommandDailyStormDownload(
+    ILogger<CommandDailyStormDownload> logger,
+    IOlieConfig config,
+    IImportStormEventsSpcProcess stormEventsSpcProcess,
+    ISpcMesosProcess spcMesosProcess)
 {
     private const string LoggerName = $"olieblind.cli {nameof(CommandDailyStormDownload)}";
 
@@ -19,7 +24,7 @@ public class CommandDailyStormDownload(ILogger<CommandDailyStormDownload> logger
 
             await RunImportStormEventsSpcProcess(ct);
             //await RunSatelliteAwsInventoryProcess(ct);
-            //await RunSpcMesosProcess(ct);
+            await RunSpcMesosProcess(ct);
 
             return 0;
         }
@@ -45,18 +50,11 @@ public class CommandDailyStormDownload(ILogger<CommandDailyStormDownload> logger
     //    await process.RunAsync(client, ct);
     //}
 
-    //private async Task RunSpcMesosProcess(CancellationToken ct)
-    //{
-    //    var olieConfig = new OlieConfig(configuration);
-    //    var credOptions = new DefaultAzureCredentialOptions
-    //    {
-    //        ExcludeVisualStudioCodeCredential = true,
-    //        ExcludeVisualStudioCredential = true
-    //    };
+    private async Task RunSpcMesosProcess(CancellationToken ct)
+    {
+        var year = DateTime.UtcNow.Year;
+        var goldPath = config.VideoPath;
 
-    //    var blobClient = new BlobContainerClient(new Uri(olieConfig.OlieBlobGoldContainerUri),
-    //        new DefaultAzureCredential(credOptions));
-    //    var process = new SpcMesosProcess(mesoProductProcess);
-    //    await process.RunAsync(blobClient, true, false, ct);
-    //}
+        await spcMesosProcess.Run(year, false, goldPath, ct);
+    }
 }
