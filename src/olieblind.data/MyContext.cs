@@ -15,6 +15,7 @@ public class MyContext(DbContextOptions<MyContext> options) : DbContext(options)
     public virtual DbSet<StormEventsDailyDetailEntity> StormEventsDailyDetails { get; set; }
     public virtual DbSet<StormEventsDailySummaryEntity> StormEventsDailySummaries { get; set; }
     public virtual DbSet<StormEventsDatabaseEntity> StormEventsDatabases { get; set; }
+    public virtual DbSet<StormEventsReportEntity> StormEventsReports { get; set; }
     public virtual DbSet<UserCookieConsentLogEntity> UserCookieConsentLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

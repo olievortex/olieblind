@@ -113,6 +113,16 @@ public interface IMyRepository
 
     #endregion
 
+    #region StormEventsReport
+
+    Task StormEventsReportCreate(StormEventsReportEntity entity, CancellationToken ct);
+
+    Task<List<StormEventsReportEntity>> StormEventsReportsByYear(int year, CancellationToken ct);
+
+    Task StormEventsReportUpdate(StormEventsReportEntity entity, CancellationToken ct);
+
+    #endregion
+
     #region UserCookieConsentLog
 
     Task UserCookieConsentLogCreate(UserCookieConsentLogEntity entity, CancellationToken ct);

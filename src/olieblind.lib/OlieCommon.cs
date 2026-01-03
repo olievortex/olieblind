@@ -11,6 +11,7 @@ using olieblind.lib.StormEvents;
 using olieblind.lib.StormEvents.Interfaces;
 using olieblind.lib.StormPredictionCenter.Outlooks;
 using olieblind.lib.Video;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace olieblind.lib;
@@ -85,6 +86,7 @@ public static class OlieCommon
         };
     }
 
+    [ExcludeFromCodeCoverage]
     public static void AddOlieLibScopes(this ServiceCollection services)
     {
         #region Services

@@ -9,6 +9,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\StormEvents\250105_rpts_filtered.csv" />
+    <None Remove="Resources\StormEvents\CsvFiles.html" />
+    <None Remove="Resources\StormEvents\StormEvents_Olie.csv.gz" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\StormEvents\250105_rpts_filtered.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\StormEvents\CsvFiles.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\StormEvents\StormEvents_Olie.csv.gz">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

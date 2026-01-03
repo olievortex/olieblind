@@ -83,11 +83,8 @@ public class ImportStormEventsDatabaseProcess(
             await repo.StormEventsDailyDetailDelete(effectiveDate, update, ct);
             await AssignRadarAsync(models, amazonClient, ct);
             await dbBusiness.AddDailyDetailToCosmos(models, update, ct);
-            var aggregate = DailySummaryBusiness.AggregateByDate(models);
-            if (aggregate.Count != 1)
-                throw new InvalidOperationException(
-                    $"Got more than one aggregate for EffectiveDate: {effectiveDate}, Update: {update}");
-            await dbBusiness.AddDailySummaryToCosmos(aggregate[0], update, ct);
+            var aggregate = DailySummaryBusiness.AggregateByDate(models).First();
+            await dbBusiness.AddDailySummaryToCosmos(aggregate, update, ct);
         }
     }
 

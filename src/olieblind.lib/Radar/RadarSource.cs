@@ -1,6 +1,7 @@
 using Amazon.S3;
 using olieblind.data;
 using olieblind.data.Entities;
+using olieblind.lib.Mapping;
 using olieblind.lib.Radar.Interfaces;
 using olieblind.lib.Services;
 
@@ -24,6 +25,8 @@ public class RadarSource(IMyRepository repo, IOlieWebService ows) : IRadarSource
             Id = radar.Id,
             Timestamp = DateTime.UtcNow
         };
+
+        EntityCompression.Compress(entity);
 
         await repo.RadarInventoryAdd(entity, ct);
         cache.Add(entity);

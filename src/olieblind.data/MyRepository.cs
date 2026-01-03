@@ -131,7 +131,7 @@ public class MyRepository(MyContext context) : IMyRepository
 
     public async Task<RadarInventoryEntity?> RadarInventoryGet(string id, string effectiveDate, string bucket, CancellationToken ct)
     {
-        return await context.RadarInventories.SingleOrDefaultAsync(s =>
+        return await context.RadarInventories.AsNoTracking().SingleOrDefaultAsync(s =>
             s.Id == id &&
             s.EffectiveDate == effectiveDate &&
             s.BucketName == bucket, ct);
@@ -260,6 +260,32 @@ public class MyRepository(MyContext context) : IMyRepository
     public async Task StormEventsDatabaseInventoryUpdate(StormEventsDatabaseEntity entity, CancellationToken ct)
     {
         context.StormEventsDatabases.Update(entity);
+        await context.SaveChangesAsync(ct);
+    }
+
+    #endregion
+
+    #region StormEventsReport
+
+    public async Task StormEventsReportCreate(StormEventsReportEntity entity, CancellationToken ct)
+    {
+        await context.StormEventsReports.AddAsync(entity, ct);
+        await context.SaveChangesAsync(ct);
+    }
+
+    public async Task<List<StormEventsReportEntity>> StormEventsReportsByYear(int year, CancellationToken ct)
+    {
+        var yearValue = $"{year}-";
+
+        return await context.StormEventsReports
+            .AsNoTracking()
+            .Where(w => w.EffectiveDate.StartsWith(yearValue))
+            .ToListAsync(ct);
+    }
+
+    public async Task StormEventsReportUpdate(StormEventsReportEntity entity, CancellationToken ct)
+    {
+        context.StormEventsReports.Update(entity);
         await context.SaveChangesAsync(ct);
     }
 

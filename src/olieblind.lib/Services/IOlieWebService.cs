@@ -1,6 +1,8 @@
 ﻿using Amazon.S3;
 using Azure.AI.TextAnalytics;
 using Azure.Storage.Blobs;
+using System.Net;
+using System.Net.Http.Headers;
 
 namespace olieblind.lib.Services;
 
@@ -19,6 +21,7 @@ public interface IOlieWebService
     #region Api
 
     Task ApiDownloadBytes(string path, string url, CancellationToken ct);
+    Task<(HttpStatusCode, EntityTagHeaderValue?, string)> ApiGet(string url, EntityTagHeaderValue? etag, CancellationToken ct);
     Task<byte[]> ApiGetBytes(string url, CancellationToken ct);
     Task<string> ApiGetString(string url, CancellationToken ct);
     Task<string> ApiPostJson(string uri, string json, Dictionary<string, string> headers, CancellationToken ct);
