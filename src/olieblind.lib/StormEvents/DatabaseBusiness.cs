@@ -143,7 +143,9 @@ public partial class DatabaseBusiness(IOlieWebService ows, IMyRepository repo) :
                 Narrative = record.Narrative,
                 State = record.State
             };
-            result.Add(model);
+
+            var isNaN = float.IsNaN(model.Longitude) || float.IsNaN(model.Latitude);
+            if (!isNaN) result.Add(model);
         }
 
         return result;
