@@ -1,7 +1,7 @@
 ﻿using Amazon.S3;
 using Azure.Storage.Blobs;
 
-namespace olieblind.lib.Processes;
+namespace olieblind.lib.Processes.Interfaces;
 
 public interface IImportStormEventsDatabaseProcess
 {

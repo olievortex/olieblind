@@ -1,7 +1,8 @@
+using olieblind.lib.Processes.Interfaces;
 using olieblind.lib.Services;
 using olieblind.lib.Services.Speech;
+using olieblind.lib.StormPredictionCenter.Interfaces;
 using olieblind.lib.StormPredictionCenter.Models;
-using olieblind.lib.StormPredictionCenter.Outlooks;
 using olieblind.lib.Video;
 using System.Drawing;
 
@@ -25,7 +26,7 @@ public class CreateSpcOutlookVideoProcess(
     public Point PosterSize { get; init; } = new(640, 360);
     public int ImageLengthSeconds { get; init; } = 5;
 
-    public async Task RunAsync(string folderRoot, string fontName, string fontPath, string voiceName, int dayNumber, CancellationToken ct)
+    public async Task Run(string folderRoot, string fontName, string fontPath, string voiceName, int dayNumber, CancellationToken ct)
     {
         var category = $"Day {dayNumber} Convective Outlook";
         var filePrefix = $"Day{dayNumber}Outlook";

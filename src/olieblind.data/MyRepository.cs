@@ -154,6 +154,41 @@ public class MyRepository(MyContext context) : IMyRepository
 
     #endregion
 
+    #region SpcMesoProduct
+
+    public async Task SpcMesoProductCreate(SpcMesoProductEntity entity, CancellationToken ct)
+    {
+        await context.SpcMesoProducts.AddAsync(entity, ct);
+        await context.SaveChangesAsync(ct);
+    }
+
+    public async Task<SpcMesoProductEntity?> SpcMesoProductGet(int year, int index, CancellationToken ct)
+    {
+        return await context.SpcMesoProducts
+            .AsNoTracking()
+            .Where(w =>
+                w.EffectiveDate.StartsWith($"{year}-") &&
+                w.Id == index)
+            .SingleOrDefaultAsync(ct);
+    }
+
+    public async Task<SpcMesoProductEntity?> SpcMesoProductGetLatest(int year, CancellationToken ct)
+    {
+        return await context.SpcMesoProducts
+            .AsNoTracking()
+            .Where(w => w.EffectiveDate.StartsWith($"{year}-"))
+            .OrderByDescending(o => o.Id)
+            .FirstOrDefaultAsync(ct);
+    }
+
+    public async Task SpcMesoProductUpdate(SpcMesoProductEntity entity, CancellationToken ct)
+    {
+        context.SpcMesoProducts.Update(entity);
+        await context.SaveChangesAsync(ct);
+    }
+
+    #endregion
+
     #region StormEventsDailyDetail
 
     public async Task StormEventsDailyDetailCreate(List<StormEventsDailyDetailEntity> entities, CancellationToken ct)

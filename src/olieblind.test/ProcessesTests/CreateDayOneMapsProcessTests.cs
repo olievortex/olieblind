@@ -40,7 +40,7 @@ public class CreateDayOneMapsProcessTests
         var testable = new CreateDayOneMapsProcess(repo.Object, nam.Object, config.Object, ows.Object);
 
         // Act
-        await testable.RunAsync(dateOnly, effectiveHour, forecastHour, CancellationToken.None);
+        await testable.Run(dateOnly, effectiveHour, forecastHour, CancellationToken.None);
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -189,7 +189,7 @@ public class CreateDayOneMapsProcessTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(entities, Has.Count.EqualTo(16));
-            Assert.That(entities[0].Id, Is.EqualTo(0));
+            Assert.That(entities[0].Id, Is.Zero);
             Assert.That(entities[0].GeographyId, Is.EqualTo(geographyId));
             Assert.That(entities[0].LocalPath, Is.EqualTo("bb/nam0618_Dewpoint_1.png"));
             Assert.That(entities[1].ParameterId, Is.EqualTo(parameterId));

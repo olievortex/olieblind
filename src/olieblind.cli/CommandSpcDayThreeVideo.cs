@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Logging;
-using olieblind.lib.Processes;
+using olieblind.lib.Processes.Interfaces;
 using olieblind.lib.Services;
 
 namespace olieblind.cli;
@@ -17,7 +17,7 @@ public class CommandSpcDayThreeVideo(ICreateSpcOutlookVideoProcess process, IOli
             Console.WriteLine($"{LoggerName} triggered");
             logger.LogInformation("{loggerName} triggered", LoggerName);
 
-            await process.RunAsync(
+            await process.Run(
                 config.VideoPath,
                 FontName,
                 config.FontPath,

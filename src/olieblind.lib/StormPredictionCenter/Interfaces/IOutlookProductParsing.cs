@@ -1,6 +1,6 @@
 ﻿using olieblind.lib.StormPredictionCenter.Models;
 
-namespace olieblind.lib.StormPredictionCenter.Outlooks;
+namespace olieblind.lib.StormPredictionCenter.Interfaces;
 
 public interface IOutlookProductParsing
 {

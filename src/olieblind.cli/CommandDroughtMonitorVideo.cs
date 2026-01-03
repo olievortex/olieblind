@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Logging;
-using olieblind.lib.Processes;
+using olieblind.lib.Processes.Interfaces;
 using olieblind.lib.Services;
 
 namespace olieblind.cli;
@@ -15,7 +15,7 @@ public class CommandDroughtMonitorVideo(ICreateDroughtMonitorVideoProcess proces
             Console.WriteLine($"{_loggerName} triggered");
             logger.LogInformation("{loggerName} triggered", _loggerName);
 
-            await process.RunAsync(config.VideoPath, config.SpeechVoiceName, ct);
+            await process.Run(config.VideoPath, config.SpeechVoiceName, ct);
             return 0;
         }
         catch (Exception ex)

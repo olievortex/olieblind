@@ -35,7 +35,7 @@ public class CreateDroughtMonitorVideoProcessTests
         };
 
         // Act
-        await testable.RunAsync(string.Empty, string.Empty, ct);
+        await testable.Run(string.Empty, string.Empty, ct);
 
         // Verify
         droughtMonitor.Verify(v => v.GetImageNames(), Times.Once);

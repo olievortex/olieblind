@@ -2,6 +2,7 @@
 using Azure.Storage.Blobs;
 using olieblind.data;
 using olieblind.data.Entities;
+using olieblind.lib.Processes.Interfaces;
 using olieblind.lib.Radar.Interfaces;
 using olieblind.lib.StormEvents;
 using olieblind.lib.StormEvents.Interfaces;

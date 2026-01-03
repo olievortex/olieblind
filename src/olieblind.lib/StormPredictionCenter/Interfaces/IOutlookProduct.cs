@@ -1,7 +1,7 @@
 ﻿using olieblind.lib.StormPredictionCenter.Models;
 using System.Drawing;
 
-namespace olieblind.lib.StormPredictionCenter.Outlooks;
+namespace olieblind.lib.StormPredictionCenter.Interfaces;
 
 public interface IOutlookProduct
 {
