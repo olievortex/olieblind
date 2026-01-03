@@ -115,19 +115,11 @@ public interface IMyRepository
 
     #region StormEventsReport
 
-    //public async Task StormEventsSpcInventoryCreateAsync(StormEventsSpcInventoryEntity entity, CancellationToken ct)
-    //{
-    //    await context.StormEventsSpcInventory.AddAsync(entity, ct);
-    //    await context.SaveChangesAsync(ct);
-    //}
+    Task StormEventsReportCreate(StormEventsReportEntity entity, CancellationToken ct);
 
     Task<List<StormEventsReportEntity>> StormEventsReportsByYear(int year, CancellationToken ct);
 
-    //public async Task StormEventsSpcInventoryUpdateAsync(StormEventsSpcInventoryEntity entity, CancellationToken ct)
-    //{
-    //    context.StormEventsSpcInventory.Update(entity);
-    //    await context.SaveChangesAsync(ct);
-    //}
+    Task StormEventsReportUpdate(StormEventsReportEntity entity, CancellationToken ct);
 
     #endregion
 

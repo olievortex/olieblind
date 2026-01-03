@@ -1,5 +1,6 @@
 using olieblind.data;
 using olieblind.data.Entities;
+using olieblind.lib.Mapping;
 using olieblind.lib.StormEvents.Interfaces;
 using olieblind.lib.StormEvents.Models;
 
@@ -7,93 +8,88 @@ namespace olieblind.lib.StormEvents;
 
 public class SpcBusiness(IMyRepository repo, ISpcSource source) : ISpcBusiness
 {
-    //public async Task AddDailyDetailAsync(List<DailyDetailModel> models,
-    //    StormEventsSpcInventoryEntity inventory, CancellationToken ct)
-    //{
-    //    if (inventory.IsDailyDetailComplete) return;
+    public async Task AddDailyDetail(List<DailyDetailModel> models, StormEventsReportEntity inventory, CancellationToken ct)
+    {
+        if (inventory.IsDailyDetailComplete) return;
 
-    //    await cosmos.StormEventsDailyDetailDeleteAsync(inventory.EffectiveDate, inventory.Id, ct);
-    //    var entities = EntityMapping.ToStormEventsDailyDetail(models, inventory.Id);
-    //    await cosmos.StormEventsDailyDetailCreateAsync(entities, ct);
+        await repo.StormEventsDailyDetailDelete(inventory.EffectiveDate, inventory.Id, ct);
+        var entities = EntityMapping.ToStormEventsDailyDetail(models, inventory.Id);
+        await repo.StormEventsDailyDetailCreate(entities, ct);
 
-    //    inventory.IsDailyDetailComplete = true;
-    //    inventory.Timestamp = DateTime.UtcNow;
-    //    await cosmos.StormEventsSpcInventoryUpdateAsync(inventory, ct);
-    //}
+        inventory.IsDailyDetailComplete = true;
+        inventory.Timestamp = DateTime.UtcNow;
+        await repo.StormEventsReportUpdate(inventory, ct);
+    }
 
-    //public async Task AddDailySummaryAsync(StormEventsSpcInventoryEntity inventory, DailySummaryModel? model,
-    //    string sourceFk, CancellationToken ct)
-    //{
-    //    if (inventory.IsDailySummaryComplete) return;
-    //    if (model is null) return;
+    public async Task AddDailySummary(StormEventsReportEntity inventory, DailySummaryModel? model, string sourceFk, CancellationToken ct)
+    {
+        if (inventory.IsDailySummaryComplete) return;
+        if (model is null) return;
 
-    //    foreach (var oldInventory in await cosmos.StormEventsDailySummaryListSummariesForDate(inventory.EffectiveDate,
-    //                 inventory.DecodeEffectiveDate().Year, ct))
-    //        if (oldInventory.IsCurrent)
-    //        {
-    //            oldInventory.IsCurrent = false;
-    //            oldInventory.Timestamp = DateTime.UtcNow;
-    //            await cosmos.StormEventsDailySummaryUpdateAsync(oldInventory, ct);
-    //        }
+        foreach (var oldInventory in await repo.StormEventsDailySummaryGet(inventory.EffectiveDate, inventory.DecodeEffectiveDate().Year, ct))
+            if (oldInventory.IsCurrent)
+            {
+                oldInventory.IsCurrent = false;
+                oldInventory.Timestamp = DateTime.UtcNow;
+                await repo.StormEventsDailySummaryUpdate(oldInventory, ct);
+            }
 
-    //    var entity = EntityMapping.ToStormEventsDailySummary([model], sourceFk)[0];
-    //    entity.IsCurrent = true;
-    //    await cosmos.StormEventsDailySummaryCreateAsync(entity, ct);
+        var entity = EntityMapping.ToStormEventsDailySummary([model], sourceFk)[0];
+        entity.IsCurrent = true;
+        await repo.StormEventsDailySummaryCreate(entity, ct);
 
-    //    var tornadoes = entity.F1 + entity.F2 + entity.F3 + entity.F4 + entity.F5;
-    //    inventory.IsDailySummaryComplete = true;
-    //    inventory.IsTornadoDay = tornadoes > 0;
-    //    await cosmos.StormEventsSpcInventoryUpdateAsync(inventory, ct);
-    //}
+        var tornadoes = entity.F1 + entity.F2 + entity.F3 + entity.F4 + entity.F5;
+        inventory.IsDailySummaryComplete = true;
+        inventory.IsTornadoDay = tornadoes > 0;
+        await repo.StormEventsReportUpdate(inventory, ct);
+    }
 
-    //public async Task<StormEventsSpcInventoryEntity> DownloadNewAsync(DateTime effectiveDate, CancellationToken ct)
-    //{
-    //    var (body, etag) = await source.DownloadNewAsync(effectiveDate, ct);
-    //    var entity = StormEventsSpcInventoryEntity.FromValues(effectiveDate, body, etag);
+    public async Task<StormEventsReportEntity> DownloadNew(DateTime effectiveDate, CancellationToken ct)
+    {
+        var (body, etag) = await source.DownloadNew(effectiveDate, ct);
+        var entity = StormEventsReportEntity.FromValues(effectiveDate, body, etag);
 
-    //    await cosmos.StormEventsSpcInventoryCreateAsync(entity, ct);
+        await repo.StormEventsReportCreate(entity, ct);
 
-    //    return entity;
-    //}
+        return entity;
+    }
 
-    //public async Task<StormEventsSpcInventoryEntity> DownloadUpdateAsync(StormEventsSpcInventoryEntity inventory,
-    //    CancellationToken ct)
-    //{
-    //    if ((DateTime.UtcNow - inventory.Timestamp).TotalDays < 8) return inventory;
-    //    if (!inventory.IsTornadoDay) return inventory;
+    public async Task<StormEventsReportEntity> DownloadUpdate(StormEventsReportEntity inventory, CancellationToken ct)
+    {
+        if ((DateTime.UtcNow - inventory.Timestamp).TotalDays < 8) return inventory;
+        if (!inventory.IsTornadoDay) return inventory;
 
-    //    var (body, etag, isUpdated) =
-    //        await source.DownloadUpdateAsync(inventory.DecodeEffectiveDate(), inventory.Id, ct);
-    //    if (!isUpdated)
-    //    {
-    //        inventory.Timestamp = DateTime.UtcNow;
-    //        await cosmos.StormEventsSpcInventoryUpdateAsync(inventory, ct);
-    //        return inventory; // Matched the etag
-    //    }
+        var (body, etag, isUpdated) =
+            await source.DownloadUpdate(inventory.DecodeEffectiveDate(), inventory.Id, ct);
+        if (!isUpdated)
+        {
+            inventory.Timestamp = DateTime.UtcNow;
+            await repo.StormEventsReportUpdate(inventory, ct);
+            return inventory; // Matched the etag
+        }
 
-    //    var entity = StormEventsSpcInventoryEntity.FromValues(inventory.DecodeEffectiveDate(), body, etag);
-    //    await cosmos.StormEventsSpcInventoryCreateAsync(entity, ct);
+        var entity = StormEventsReportEntity.FromValues(inventory.DecodeEffectiveDate(), body, etag);
+        await repo.StormEventsReportCreate(entity, ct);
 
-    //    return entity;
-    //}
+        return entity;
+    }
 
-    //public DailySummaryModel? GetAggregate(List<DailyDetailModel> models)
-    //{
-    //    var aggregate = DailySummaryBusiness.AggregateByDate(models);
-    //    if (aggregate.Count > 1) throw new Exception("SPC Storm Reports day misalignment");
-    //    if (aggregate.Count == 0) return null;
+    public DailySummaryModel? GetAggregate(List<DailyDetailModel> models)
+    {
+        var aggregate = DailySummaryBusiness.AggregateByDate(models);
+        if (aggregate.Count > 1) throw new Exception("SPC Storm Reports day misalignment");
+        if (aggregate.Count == 0) return null;
 
-    //    return aggregate[0];
-    //}
+        return aggregate[0];
+    }
 
-    //public StormEventsSpcInventoryEntity? GetLatest(DateTime effectiveDate,
-    //    List<StormEventsSpcInventoryEntity> inventory)
-    //{
-    //    return inventory
-    //        .Where(w => w.EffectiveDate == $"{effectiveDate:yyyy-MM-dd}")
-    //        .OrderByDescending(o => o.Timestamp)
-    //        .FirstOrDefault();
-    //}
+    public StormEventsReportEntity? GetLatest(DateTime effectiveDate, List<StormEventsReportEntity> inventory)
+    {
+        return inventory
+            .Where(w => w.EffectiveDate == $"{effectiveDate:yyyy-MM-dd}")
+            .OrderByDescending(o => o.Timestamp)
+            .FirstOrDefault();
+    }
 
     public static int GetFirstDayNumberForYear(int year)
     {
@@ -108,35 +104,5 @@ public class SpcBusiness(IMyRepository repo, ISpcSource source) : ISpcBusiness
     public static int GetLastDayNumberForYear(int year)
     {
         return (int)(new DateTime(year, 12, 31) - new DateTime(year, 1, 1)).TotalDays;
-    }
-
-    public Task AddDailyDetail(List<DailyDetailModel> models, StormEventsReportEntity inventory, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task AddDailySummary(StormEventsReportEntity inventory, DailySummaryModel? model, string sourceFk, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<StormEventsReportEntity> DownloadNew(DateTime effectiveDate, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<StormEventsReportEntity> DownloadUpdate(StormEventsReportEntity inventory, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
-
-    public DailySummaryModel? GetAggregate(List<DailyDetailModel> models)
-    {
-        throw new NotImplementedException();
-    }
-
-    public StormEventsReportEntity? GetLatest(DateTime effectiveDate, List<StormEventsReportEntity> inventory)
-    {
-        throw new NotImplementedException();
     }
 }

@@ -267,11 +267,11 @@ public class MyRepository(MyContext context) : IMyRepository
 
     #region StormEventsReport
 
-    //public async Task StormEventsSpcInventoryCreateAsync(StormEventsSpcInventoryEntity entity, CancellationToken ct)
-    //{
-    //    await context.StormEventsSpcInventory.AddAsync(entity, ct);
-    //    await context.SaveChangesAsync(ct);
-    //}
+    public async Task StormEventsReportCreate(StormEventsReportEntity entity, CancellationToken ct)
+    {
+        await context.StormEventsReports.AddAsync(entity, ct);
+        await context.SaveChangesAsync(ct);
+    }
 
     public async Task<List<StormEventsReportEntity>> StormEventsReportsByYear(int year, CancellationToken ct)
     {
@@ -283,11 +283,11 @@ public class MyRepository(MyContext context) : IMyRepository
             .ToListAsync(ct);
     }
 
-    //public async Task StormEventsSpcInventoryUpdateAsync(StormEventsSpcInventoryEntity entity, CancellationToken ct)
-    //{
-    //    context.StormEventsSpcInventory.Update(entity);
-    //    await context.SaveChangesAsync(ct);
-    //}
+    public async Task StormEventsReportUpdate(StormEventsReportEntity entity, CancellationToken ct)
+    {
+        context.StormEventsReports.Update(entity);
+        await context.SaveChangesAsync(ct);
+    }
 
     #endregion
 
