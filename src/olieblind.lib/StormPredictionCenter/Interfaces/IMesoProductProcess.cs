@@ -1,6 +1,4 @@
-﻿using Azure.Storage.Blobs;
-
-namespace olieblind.lib.StormPredictionCenter.Interfaces;
+﻿namespace olieblind.lib.StormPredictionCenter.Interfaces;
 
 public interface IMesoProductProcess
 {

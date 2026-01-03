@@ -1,6 +1,4 @@
-﻿using Azure.Storage.Blobs;
-
-namespace olieblind.lib.Processes.Interfaces;
+﻿namespace olieblind.lib.Processes.Interfaces;
 
 public interface ISpcMesosProcess
 {
