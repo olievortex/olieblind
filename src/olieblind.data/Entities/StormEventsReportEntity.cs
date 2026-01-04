@@ -34,18 +34,18 @@ public class StormEventsReportEntity
         return DateTime.ParseExact(EffectiveDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
     }
 
-// CREATE TABLE olieblind_dev.StormEventsReports(
-//   Id varchar(320) NOT NULL,
-//   EffectiveDate varchar(32) NOT NULL,
-//	 `Rows` json NOT NULL,
-//	 `Timestamp` DATETIME NOT NULL,
-//	 IsDailySummaryComplete BOOL NOT NULL,
-//   IsDailyDetailComplete BOOL NOT NULL,
-//	 IsTornadoDay BOOL NOT NULL,
-// CONSTRAINT StormEventsReports_PK PRIMARY KEY(Id, EffectiveDate)
-//)
-//ENGINE=InnoDB
-//DEFAULT CHARSET=utf8mb4
-//COLLATE = utf8mb4_0900_ai_ci;
+    // CREATE TABLE olieblind_dev.StormEventsReports(
+    //   Id varchar(320) NOT NULL,
+    //   EffectiveDate varchar(32) NOT NULL,
+    //	 `Rows` json NOT NULL,
+    //	 `Timestamp` DATETIME NOT NULL,
+    //	 IsDailySummaryComplete BOOL NOT NULL,
+    //   IsDailyDetailComplete BOOL NOT NULL,
+    //	 IsTornadoDay BOOL NOT NULL,
+    // CONSTRAINT StormEventsReports_PK PRIMARY KEY(Id, EffectiveDate)
+    //)
+    //ENGINE=InnoDB
+    //DEFAULT CHARSET=utf8mb4
+    //COLLATE = utf8mb4_0900_ai_ci;
 
 }
