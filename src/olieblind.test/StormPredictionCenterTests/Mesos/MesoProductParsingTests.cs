@@ -66,13 +66,16 @@ public class MesoProductParsingTests
     #region GetImageName
 
     [Test]
-    public void GetImageName_ThrowsException_BadHtml()
+    public void GetImageName_ReturnsNull_BadHtml()
     {
         // Arrange
         var testable = new MesoProductParsing();
 
-        // Act, Assert
-        Assert.Throws<ApplicationException>(() => testable.GetImageName(string.Empty));
+        // Act
+        var result = testable.GetImageName(string.Empty);
+
+        // Assert
+        Assert.That(result, Is.Null);
     }
 
     [Test]
