@@ -17,7 +17,7 @@ public class StormEventsDailyDetailEntity
     [MaxLength(25)] public string EventType { get; init; } = string.Empty;
     [MaxLength(5)] public string ForecastOffice { get; init; } = string.Empty;
     public DateTime Timestamp { get; init; }
-    [MaxLength(5)] public string Magnitude { get; init; } = string.Empty;
+    [MaxLength(8)] public string Magnitude { get; init; } = string.Empty;
     public float Latitude { get; init; }
     public float Longitude { get; init; }
     [MaxLength(65535)] public string Narrative { get; init; } = string.Empty;
@@ -35,7 +35,7 @@ public class StormEventsDailyDetailEntity
 //    EventType varchar(25) NOT NULL,
 //    ForecastOffice varchar(5) NOT NULL,
 //	  `Timestamp` DATETIME NOT NULL,
-//	  Magnitude varchar(5) NOT NULL,
+//	  Magnitude varchar(8) NOT NULL,
 //    Latitude FLOAT NOT NULL,
 //	  Longitude FLOAT NOT NULL,
 //    Narrative text NOT NULL,

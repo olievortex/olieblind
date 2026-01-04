@@ -73,6 +73,6 @@ public class OlieArgs
             throw new ArgumentException(usage);
         }
 
-        return CommandsEnum.EventsDatabase;
+        return CommandsEnum.EventsSpc;
     }
 }

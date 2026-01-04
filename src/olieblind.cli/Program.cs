@@ -135,6 +135,7 @@ public class Program
         services.AddScoped<CommandDeleteOldContent>();
         services.AddScoped<CommandDroughtMonitorVideo>();
         services.AddScoped<CommandEventsDatabase>();
+        services.AddScoped<CommandEventsSpc>();
         services.AddScoped<CommandSpcDayOneVideo>();
         services.AddScoped<CommandSpcDayTwoVideo>();
         services.AddScoped<CommandSpcDayThreeVideo>();

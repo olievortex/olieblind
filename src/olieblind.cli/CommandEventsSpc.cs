@@ -6,7 +6,7 @@ using olieblind.lib.Processes.Interfaces;
 
 namespace olieblind.cli;
 
-internal class CommandEventsSpc(ILogger<CommandEventsSpc> logger, IImportStormEventsSpcProcess process)
+public class CommandEventsSpc(ILogger<CommandEventsSpc> logger, IImportStormEventsSpcProcess process)
 {
     private const string LoggerName = $"olieblind.cli {nameof(CommandEventsSpc)}";
 

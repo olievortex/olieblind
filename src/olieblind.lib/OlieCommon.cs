@@ -114,6 +114,9 @@ public static class OlieCommon
         services.AddScoped<IOutlookProductScript, OutlookProductScript>();
         services.AddScoped<IRadarBusiness, RadarBusiness>();
         services.AddScoped<IRadarSource, RadarSource>();
+        services.AddScoped<ISpcBusiness, SpcBusiness>();
+        services.AddScoped<ISpcProcess, SpcProcess>();
+        services.AddScoped<ISpcSource, SpcSource>();
 
         #endregion
 
@@ -124,6 +127,7 @@ public static class OlieCommon
         services.AddScoped<ICreateSpcOutlookVideoProcess, CreateSpcOutlookVideoProcess>();
         services.AddScoped<IDeleteOldContentProcess, DeleteOldContentProcess>();
         services.AddScoped<IImportStormEventsDatabaseProcess, ImportStormEventsDatabaseProcess>();
+        services.AddScoped<IImportStormEventsSpcProcess, ImportStormEventsSpcProcess>();
 
         #endregion
     }
