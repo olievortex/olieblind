@@ -8,11 +8,11 @@ public class OlieArgs
 
     public enum CommandsEnum
     {
-        DailyStormDownload,
         DayOneMaps,
         DeleteOldContent,
         DroughtMonitorVideo,
         EventsDatabase,
+        EventsSpc,
         SpcDayOneVideo,
         SpcDayTwoVideo,
         SpcDayThreeVideo,
@@ -28,11 +28,11 @@ public class OlieArgs
 
         Command = command switch
         {
-            "dailystormdownload" => CommandsEnum.DailyStormDownload,
             "dayonemaps" => CommandsEnum.DayOneMaps,
             "deleteoldcontent" => CommandsEnum.DeleteOldContent,
             "droughtmonitorvideo" => CommandsEnum.DroughtMonitorVideo,
             "eventsdatabase" => ReadArgsForEventsDatabase(args),
+            "eventsspc" => ReadArgsForEventsSpc(args),
             "spcdayonevideo" => CommandsEnum.SpcDayOneVideo,
             "spcdaytwovideo" => CommandsEnum.SpcDayTwoVideo,
             "spcdaythreevideo" => CommandsEnum.SpcDayThreeVideo,
@@ -51,6 +51,27 @@ public class OlieArgs
 
         IntArg1 = year;
         StrArg1 = args[2];
+
+        return CommandsEnum.EventsDatabase;
+    }
+
+    private CommandsEnum ReadArgsForEventsSpc(string[] args)
+    {
+        const string usage = "Usage: dotnet olieblind.cli.dll eventsspc [year|blank for current year]";
+
+        if (args.Length < 2)
+        {
+            IntArg1 = DateTime.UtcNow.Year;
+        }
+        else if (args.Length == 2)
+        {
+            if (!int.TryParse(args[1], out var year)) throw new ArgumentException(usage);
+            IntArg1 = year;
+        }
+        else
+        {
+            throw new ArgumentException(usage);
+        }
 
         return CommandsEnum.EventsDatabase;
     }

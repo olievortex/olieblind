@@ -56,11 +56,11 @@ public class Program
 
         return olieArgs.Command switch
         {
-            OlieArgs.CommandsEnum.DailyStormDownload => await CreateService<CommandDailyStormDownload>().Run(ct),
             OlieArgs.CommandsEnum.DayOneMaps => await CreateService<CommandDayOneMaps>().Run(ct),
             OlieArgs.CommandsEnum.DeleteOldContent => await CreateService<CommandDeleteOldContent>().Run(ct),
             OlieArgs.CommandsEnum.DroughtMonitorVideo => await CreateService<CommandDroughtMonitorVideo>().Run(ct),
             OlieArgs.CommandsEnum.EventsDatabase => await CreateService<CommandEventsDatabase>().Run(olieArgs, ct),
+            OlieArgs.CommandsEnum.EventsSpc => await CreateService<CommandEventsSpc>().Run(olieArgs, ct),
             OlieArgs.CommandsEnum.SpcDayOneVideo => await CreateService<CommandSpcDayOneVideo>().Run(ct),
             OlieArgs.CommandsEnum.SpcDayTwoVideo => await CreateService<CommandSpcDayTwoVideo>().Run(ct),
             OlieArgs.CommandsEnum.SpcDayThreeVideo => await CreateService<CommandSpcDayThreeVideo>().Run(ct),

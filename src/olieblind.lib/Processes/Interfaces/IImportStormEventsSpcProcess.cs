@@ -4,5 +4,5 @@ namespace olieblind.lib.Processes.Interfaces;
 
 public interface IImportStormEventsSpcProcess
 {
-    Task Run(AmazonS3Client client, CancellationToken ct);
+    Task Run(int year, AmazonS3Client client, CancellationToken ct);
 }

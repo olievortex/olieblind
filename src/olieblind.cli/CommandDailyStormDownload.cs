@@ -1,6 +1,3 @@
-using Amazon;
-using Amazon.Runtime;
-using Amazon.S3;
 using Microsoft.Extensions.Logging;
 using olieblind.lib.Processes.Interfaces;
 using olieblind.lib.Services;
@@ -10,7 +7,6 @@ namespace olieblind.cli;
 public class CommandDailyStormDownload(
     ILogger<CommandDailyStormDownload> logger,
     IOlieConfig config,
-    IImportStormEventsSpcProcess stormEventsSpcProcess,
     ISpcMesosProcess spcMesosProcess)
 {
     private const string LoggerName = $"olieblind.cli {nameof(CommandDailyStormDownload)}";
@@ -22,7 +18,6 @@ public class CommandDailyStormDownload(
             Console.WriteLine($"{LoggerName} triggered");
             logger.LogInformation("{loggerName} triggered", LoggerName);
 
-            await RunImportStormEventsSpcProcess(ct);
             //await RunSatelliteAwsInventoryProcess(ct);
             await RunSpcMesosProcess(ct);
 
@@ -35,12 +30,6 @@ public class CommandDailyStormDownload(
 
             return 1;
         }
-    }
-
-    private async Task RunImportStormEventsSpcProcess(CancellationToken ct)
-    {
-        var awsClient = new AmazonS3Client(new AnonymousAWSCredentials(), RegionEndpoint.USEast1);
-        await stormEventsSpcProcess.Run(awsClient, ct);
     }
 
     //private async Task RunSatelliteAwsInventoryProcess(CancellationToken ct)
