@@ -1,7 +1,7 @@
 using olieblind.lib.StormPredictionCenter.Models;
 using olieblind.lib.StormPredictionCenter.Outlooks;
 
-namespace olieblind.test.StormPredictionCenterTests;
+namespace olieblind.test.StormPredictionCenterTests.Outlooks;
 
 public class OutlookProductScriptTests
 {

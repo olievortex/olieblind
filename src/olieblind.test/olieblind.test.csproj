@@ -9,12 +9,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Mesos\meso0170.html" />
     <None Remove="Resources\StormEvents\250105_rpts_filtered.csv" />
     <None Remove="Resources\StormEvents\CsvFiles.html" />
     <None Remove="Resources\StormEvents\StormEvents_Olie.csv.gz" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Resources\Mesos\meso0170.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\StormEvents\250105_rpts_filtered.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -50,7 +54,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="StormPredictionCenterTests\OutlookProductParsingTests\Examples\Case24Nov171630Tests.cs">
+    <Compile Update="StormPredictionCenterTests\Outlooks\OutlookProductParsingTests\Examples\Case24Nov171630Tests.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
   </ItemGroup>

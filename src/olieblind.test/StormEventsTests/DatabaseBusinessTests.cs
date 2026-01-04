@@ -5,6 +5,7 @@ using olieblind.lib.Services;
 using olieblind.lib.StormEvents;
 using olieblind.lib.StormEvents.Models;
 using System.IO.Compression;
+using System.Text;
 
 namespace olieblind.test.StormEventsTests;
 
@@ -16,6 +17,10 @@ public class DatabaseBusinessTests
     private const string GzipText =
         "BEGIN_YEARMONTH,BEGIN_DAY,BEGIN_TIME,END_YEARMONTH,END_DAY,END_TIME,EPISODE_ID,EVENT_ID,STATE,STATE_FIPS,YEAR,MONTH_NAME,EVENT_TYPE,CZ_TYPE,CZ_FIPS,CZ_NAME,WFO,BEGIN_DATE_TIME,CZ_TIMEZONE,END_DATE_TIME,INJURIES_DIRECT,INJURIES_INDIRECT,DEATHS_DIRECT,DEATHS_INDIRECT,DAMAGE_PROPERTY,DAMAGE_CROPS,SOURCE,MAGNITUDE,MAGNITUDE_TYPE,FLOOD_CAUSE,CATEGORY,TOR_F_SCALE,TOR_LENGTH,TOR_WIDTH,TOR_OTHER_WFO,TOR_OTHER_CZ_STATE,TOR_OTHER_CZ_FIPS,TOR_OTHER_CZ_NAME,BEGIN_RANGE,BEGIN_AZIMUTH,BEGIN_LOCATION,END_RANGE,END_AZIMUTH,END_LOCATION,BEGIN_LAT,BEGIN_LON,END_LAT,END_LON,EPISODE_NARRATIVE,EVENT_NARRATIVE,DATA_SOURCE\r\n" +
         "202107,14,1810,202107,14,1810,159428,964226,\"IOWA\",19,2021,\"July\",\"Tornado\",\"C\",19,\"BUCHANAN\",\"DVN\",\"14-JUL-21 18:10:00\",\"CST-6\",\"14-JUL-21 18:10:00\",\"0\",\"0\",\"0\",\"0\",,,\"Emergency Manager\",,,,,\"EFU\",\"0.1\",\"10\",,,,,\"3\",\"S\",\"AURORA\",\"3\",\"S\",\"AURORA\",\"42.58\",\"-91.72\",\"42.58\",\"-91.72\",\"Severe thunderstorms developed ahead of an approaching cold front during the afternoon and evening of Wednesday, July 14.  Some of the storms produced damaging winds and numerous tornadoes.  Brief torrential rainfall was also observed with the stronger storm cells.  The areas that were hit hardest were in Buchanan, Delaware, Benton, Linn, and Jones counties in IA, where a total of 14 tornadoes occurred.  7 of the tornadoes had no visible damage.\",\"Brief touchdown in a field with no visible damage.\",\"CSV\"\r\n";
+    private const string GzipNaNText =
+        "BEGIN_YEARMONTH,BEGIN_DAY,BEGIN_TIME,END_YEARMONTH,END_DAY,END_TIME,EPISODE_ID,EVENT_ID,STATE,STATE_FIPS,YEAR,MONTH_NAME,EVENT_TYPE,CZ_TYPE,CZ_FIPS,CZ_NAME,WFO,BEGIN_DATE_TIME,CZ_TIMEZONE,END_DATE_TIME,INJURIES_DIRECT,INJURIES_INDIRECT,DEATHS_DIRECT,DEATHS_INDIRECT,DAMAGE_PROPERTY,DAMAGE_CROPS,SOURCE,MAGNITUDE,MAGNITUDE_TYPE,FLOOD_CAUSE,CATEGORY,TOR_F_SCALE,TOR_LENGTH,TOR_WIDTH,TOR_OTHER_WFO,TOR_OTHER_CZ_STATE,TOR_OTHER_CZ_FIPS,TOR_OTHER_CZ_NAME,BEGIN_RANGE,BEGIN_AZIMUTH,BEGIN_LOCATION,END_RANGE,END_AZIMUTH,END_LOCATION,BEGIN_LAT,BEGIN_LON,END_LAT,END_LON,EPISODE_NARRATIVE,EVENT_NARRATIVE,DATA_SOURCE\r\n" +
+        "202107,14,1810,202107,14,1810,159428,964226,\"IOWA\",19,2021,\"July\",\"Tornado\",\"C\",19,\"BUCHANAN\",\"DVN\",\"14-JUL-21 18:10:00\",\"CST-6\",\"14-JUL-21 18:10:00\",\"0\",\"0\",\"0\",\"0\",,,\"Emergency Manager\",,,,,\"EFU\",\"0.1\",\"10\",,,,,\"3\",\"S\",\"AURORA\",\"3\",\"S\",\"AURORA\",,,,,\"Severe thunderstorms developed ahead of an approaching cold front during the afternoon and evening of Wednesday, July 14.  Some of the storms produced damaging winds and numerous tornadoes.  Brief torrential rainfall was also observed with the stronger storm cells.  The areas that were hit hardest were in Buchanan, Delaware, Benton, Linn, and Jones counties in IA, where a total of 14 tornadoes occurred.  7 of the tornadoes had no visible damage.\",\"Brief touchdown in a field with no visible damage.\",\"CSV\"\r\n";
+
 
     #region ActivateSummary
 
@@ -143,6 +148,20 @@ public class DatabaseBusinessTests
 
         // Assert
         Assert.That(result, Has.Count.EqualTo(1178));
+    }
+
+    [Test]
+    public void DatabaseParse_Skips_NaN()
+    {
+        // Arrange
+        using var data = new MemoryStream(Encoding.ASCII.GetBytes(GzipNaNText));
+        using var reader = new StreamReader(data);
+
+        // Act
+        var result = DatabaseBusiness.DatabaseParse(reader);
+
+        // Assert
+        Assert.That(result, Has.Count.EqualTo(0));
     }
 
     #endregion
