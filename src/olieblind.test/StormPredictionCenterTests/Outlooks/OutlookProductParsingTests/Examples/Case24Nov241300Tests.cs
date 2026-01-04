@@ -1,6 +1,6 @@
 using olieblind.lib.StormPredictionCenter.Outlooks;
 
-namespace olieblind.test.StormPredictionCenterTests.OutlookProductParsingTests.Examples;
+namespace olieblind.test.StormPredictionCenterTests.Outlooks.OutlookProductParsingTests.Examples;
 
 public class Case24Nov241300Tests
 {

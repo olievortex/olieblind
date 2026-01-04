@@ -6,6 +6,6 @@ public interface IMesoProductParsing
     string GetBody(string html);
     string GetConcerning(string body);
     DateTime GetEffectiveTime(string body);
-    string GetImageName(string html);
+    string? GetImageName(string html);
     string GetNarrative(string body);
 }

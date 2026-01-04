@@ -56,14 +56,15 @@ public class Program
 
         return olieArgs.Command switch
         {
-            OlieArgs.CommandsEnum.DailyStormDownload => await CreateService<CommandDailyStormDownload>().Run(ct),
             OlieArgs.CommandsEnum.DayOneMaps => await CreateService<CommandDayOneMaps>().Run(ct),
             OlieArgs.CommandsEnum.DeleteOldContent => await CreateService<CommandDeleteOldContent>().Run(ct),
             OlieArgs.CommandsEnum.DroughtMonitorVideo => await CreateService<CommandDroughtMonitorVideo>().Run(ct),
             OlieArgs.CommandsEnum.EventsDatabase => await CreateService<CommandEventsDatabase>().Run(olieArgs, ct),
+            OlieArgs.CommandsEnum.EventsSpc => await CreateService<CommandEventsSpc>().Run(olieArgs, ct),
             OlieArgs.CommandsEnum.SpcDayOneVideo => await CreateService<CommandSpcDayOneVideo>().Run(ct),
             OlieArgs.CommandsEnum.SpcDayTwoVideo => await CreateService<CommandSpcDayTwoVideo>().Run(ct),
             OlieArgs.CommandsEnum.SpcDayThreeVideo => await CreateService<CommandSpcDayThreeVideo>().Run(ct),
+            OlieArgs.CommandsEnum.SpcMesos => await CreateService<CommandSpcMesos>().Run(olieArgs, ct),
             OlieArgs.CommandsEnum.ListVoices => await CommandListVoices.Run(ct),
             OlieArgs.CommandsEnum.LoadRadars => await CreateService<CommandLoadRadars>().Run(ct),
             _ => throw new ArgumentException($"The command {olieArgs.Command} is not implemented yet."),
@@ -135,9 +136,11 @@ public class Program
         services.AddScoped<CommandDeleteOldContent>();
         services.AddScoped<CommandDroughtMonitorVideo>();
         services.AddScoped<CommandEventsDatabase>();
+        services.AddScoped<CommandEventsSpc>();
         services.AddScoped<CommandSpcDayOneVideo>();
         services.AddScoped<CommandSpcDayTwoVideo>();
         services.AddScoped<CommandSpcDayThreeVideo>();
+        services.AddScoped<CommandSpcMesos>();
         services.AddScoped<CommandListVoices>();
         services.AddScoped<CommandLoadRadars>();
 

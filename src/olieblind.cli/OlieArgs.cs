@@ -8,14 +8,15 @@ public class OlieArgs
 
     public enum CommandsEnum
     {
-        DailyStormDownload,
         DayOneMaps,
         DeleteOldContent,
         DroughtMonitorVideo,
         EventsDatabase,
+        EventsSpc,
         SpcDayOneVideo,
         SpcDayTwoVideo,
         SpcDayThreeVideo,
+        SpcMesos,
         ListVoices,
         LoadRadars
     }
@@ -28,14 +29,15 @@ public class OlieArgs
 
         Command = command switch
         {
-            "dailystormdownload" => CommandsEnum.DailyStormDownload,
             "dayonemaps" => CommandsEnum.DayOneMaps,
             "deleteoldcontent" => CommandsEnum.DeleteOldContent,
             "droughtmonitorvideo" => CommandsEnum.DroughtMonitorVideo,
             "eventsdatabase" => ReadArgsForEventsDatabase(args),
+            "eventsspc" => ReadArgsForOptionalYear(args, CommandsEnum.EventsSpc),
             "spcdayonevideo" => CommandsEnum.SpcDayOneVideo,
             "spcdaytwovideo" => CommandsEnum.SpcDayTwoVideo,
             "spcdaythreevideo" => CommandsEnum.SpcDayThreeVideo,
+            "spcmesos" => ReadArgsForOptionalYear(args, CommandsEnum.SpcMesos),
             "listvoices" => CommandsEnum.ListVoices,
             "loadradars" => CommandsEnum.LoadRadars,
             _ => throw new ArgumentException($"Unknown command {command}")
@@ -53,5 +55,26 @@ public class OlieArgs
         StrArg1 = args[2];
 
         return CommandsEnum.EventsDatabase;
+    }
+
+    private CommandsEnum ReadArgsForOptionalYear(string[] args, CommandsEnum command)
+    {
+        const string usage = "Usage: dotnet olieblind.cli.dll [eventsspc|spcmesos] [year|blank for current year]";
+
+        if (args.Length < 2)
+        {
+            IntArg1 = DateTime.UtcNow.Year;
+        }
+        else if (args.Length == 2)
+        {
+            if (!int.TryParse(args[1], out var year)) throw new ArgumentException(usage);
+            IntArg1 = year;
+        }
+        else
+        {
+            throw new ArgumentException(usage);
+        }
+
+        return command;
     }
 }

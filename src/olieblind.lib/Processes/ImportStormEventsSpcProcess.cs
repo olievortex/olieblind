@@ -1,5 +1,6 @@
 using Amazon.S3;
 using olieblind.data.Entities;
+using olieblind.lib.Processes.Interfaces;
 using olieblind.lib.Radar.Interfaces;
 using olieblind.lib.StormEvents.Interfaces;
 using olieblind.lib.StormEvents.Models;
@@ -9,23 +10,16 @@ namespace olieblind.lib.Processes;
 public class ImportStormEventsSpcProcess(
     ISpcProcess spc,
     ISpcSource spcSource,
-    IRadarBusiness radarBusiness)
+    IRadarBusiness radarBusiness) : IImportStormEventsSpcProcess
 {
     private List<RadarSiteEntity> _radarSites = [];
     private readonly List<RadarInventoryEntity> _radarInventory = [];
-    private readonly List<int> _years = [2025, 2026];
 
-    public async Task Run(AmazonS3Client client, CancellationToken ct)
+    public async Task Run(int year, AmazonS3Client client, CancellationToken ct)
     {
         _radarSites = await radarBusiness.GetPrimaryRadarSites(ct);
 
-        foreach (var year in _years) await ProcessStormReportsForYearAsync(year, client, ct);
-    }
-
-    public async Task ProcessStormReportsForYearAsync(int year, AmazonS3Client client, CancellationToken ct)
-    {
-        var (start, stop, inventoryYear) =
-            await spc.GetInventoryByYear(year, ct);
+        var (start, stop, inventoryYear) = await spc.GetInventoryByYear(year, ct);
         var cutoff = DateTime.UtcNow.AddDays(-2).Date;
 
         for (var day = start; day <= stop; day++)

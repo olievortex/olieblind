@@ -1,7 +1,7 @@
 using olieblind.lib.StormPredictionCenter.Models;
 using olieblind.lib.StormPredictionCenter.Outlooks;
 
-namespace olieblind.test.StormPredictionCenterTests.OutlookProductParsingTests;
+namespace olieblind.test.StormPredictionCenterTests.Outlooks.OutlookProductParsingTests;
 
 public class CategorizeLineTests
 {

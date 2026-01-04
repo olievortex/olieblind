@@ -11,6 +11,7 @@ using olieblind.lib.Services.Speech;
 using olieblind.lib.StormEvents;
 using olieblind.lib.StormEvents.Interfaces;
 using olieblind.lib.StormPredictionCenter.Interfaces;
+using olieblind.lib.StormPredictionCenter.Mesos;
 using olieblind.lib.StormPredictionCenter.Outlooks;
 using olieblind.lib.Video;
 using System.Diagnostics.CodeAnalysis;
@@ -107,6 +108,9 @@ public static class OlieCommon
         services.AddScoped<IDatabaseProcess, DatabaseProcess>();
         services.AddScoped<IDroughtMonitor, DroughtMonitor.DroughtMonitor>();
         services.AddScoped<IDroughtMonitorScripting, DroughtMonitorScripting>();
+        services.AddScoped<IMesoProductParsing, MesoProductParsing>();
+        services.AddScoped<IMesoProductProcess, MesoProductProcess>();
+        services.AddScoped<IMesoProductSource, MesoProductSource>();
         services.AddScoped<IMySqlMaintenance, MySqlMaintenance>();
         services.AddScoped<INorthAmericanMesoscale, NorthAmericanMesoscale>();
         services.AddScoped<IOutlookProduct, OutlookProduct>();
@@ -114,6 +118,9 @@ public static class OlieCommon
         services.AddScoped<IOutlookProductScript, OutlookProductScript>();
         services.AddScoped<IRadarBusiness, RadarBusiness>();
         services.AddScoped<IRadarSource, RadarSource>();
+        services.AddScoped<ISpcBusiness, SpcBusiness>();
+        services.AddScoped<ISpcProcess, SpcProcess>();
+        services.AddScoped<ISpcSource, SpcSource>();
 
         #endregion
 
@@ -124,6 +131,8 @@ public static class OlieCommon
         services.AddScoped<ICreateSpcOutlookVideoProcess, CreateSpcOutlookVideoProcess>();
         services.AddScoped<IDeleteOldContentProcess, DeleteOldContentProcess>();
         services.AddScoped<IImportStormEventsDatabaseProcess, ImportStormEventsDatabaseProcess>();
+        services.AddScoped<IImportStormEventsSpcProcess, ImportStormEventsSpcProcess>();
+        services.AddScoped<ISpcMesosProcess, SpcMesosProcess>();
 
         #endregion
     }

@@ -239,7 +239,7 @@ public class DailySummaryBusinessTests
     #endregion
 
     #region GetSevereByYear
-    
+
     [Test]
     public async Task GetSevereByYear_NotImplemented()
     {
