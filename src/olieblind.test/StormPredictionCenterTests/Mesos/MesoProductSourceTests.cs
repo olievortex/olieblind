@@ -155,45 +155,7 @@ public class MesoProductSourceTests
         var result = await testable.GetLatestIdForYear(year, ct);
 
         // Assert
-        Assert.That(result, Is.EqualTo(0));
-    }
-
-    #endregion
-
-    #region UpdateCosmos
-
-    [Test]
-    public async Task UpdateCosmosAsync_DoesNothing_NoChange()
-    {
-        // Arrange
-        var ct = CancellationToken.None;
-        var ows = new Mock<IOlieWebService>();
-        var cosmos = new Mock<IMyRepository>();
-        var testable = new MesoProductSource(ows.Object, cosmos.Object);
-        var entity = new SpcMesoProductEntity();
-
-        // Act
-        await testable.UpdateCosmos(entity, string.Empty, string.Empty, ct);
-
-        // Assert
-        cosmos.Verify(v => v.SpcMesoProductUpdate(entity, ct), Times.Never);
-    }
-
-    [Test]
-    public async Task UpdateCosmosAsync_CompletesSteps_ValidParameters()
-    {
-        // Arrange
-        var ct = CancellationToken.None;
-        var ows = new Mock<IOlieWebService>();
-        var cosmos = new Mock<IMyRepository>();
-        var testable = new MesoProductSource(ows.Object, cosmos.Object);
-        var entity = new SpcMesoProductEntity();
-
-        // Act
-        await testable.UpdateCosmos(entity, "dillon", "tiffany", ct);
-
-        // Assert
-        cosmos.Verify(v => v.SpcMesoProductUpdate(entity, ct), Times.Exactly(1));
+        Assert.That(result, Is.Zero);
     }
 
     #endregion

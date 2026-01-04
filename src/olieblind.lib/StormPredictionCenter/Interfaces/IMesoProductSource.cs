@@ -9,6 +9,4 @@ public interface IMesoProductSource
     Task DownloadImage(string imageName, SpcMesoProductEntity product, string goldPath, CancellationToken ct);
 
     Task<int> GetLatestIdForYear(int year, CancellationToken ct);
-
-    Task UpdateCosmos(SpcMesoProductEntity existing, string areasAffected, string concerning, CancellationToken ct);
 }

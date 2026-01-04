@@ -1,8 +1,10 @@
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 
 namespace olieblind.data.Entities;
 
+[PrimaryKey(nameof(Id), nameof(EffectiveDate))]
 public class StormEventsReportEntity
 {
     [MaxLength(320)] public string Id { get; init; } = string.Empty;

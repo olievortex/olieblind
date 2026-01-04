@@ -4,22 +4,21 @@ using olieblind.lib.Services;
 
 namespace olieblind.cli;
 
-public class CommandDailyStormDownload(
-    ILogger<CommandDailyStormDownload> logger,
-    IOlieConfig config,
-    ISpcMesosProcess spcMesosProcess)
+public class CommandSpcMesos(ILogger<CommandSpcMesos> logger, IOlieConfig config, ISpcMesosProcess spcMesosProcess)
 {
-    private const string LoggerName = $"olieblind.cli {nameof(CommandDailyStormDownload)}";
+    private const string LoggerName = $"olieblind.cli {nameof(CommandSpcMesos)}";
 
-    public async Task<int> Run(CancellationToken ct)
+    public async Task<int> Run(OlieArgs args, CancellationToken ct)
     {
+        var year = args.IntArg1;
+
         try
         {
             Console.WriteLine($"{LoggerName} triggered");
             logger.LogInformation("{loggerName} triggered", LoggerName);
 
             //await RunSatelliteAwsInventoryProcess(ct);
-            await RunSpcMesosProcess(ct);
+            await spcMesosProcess.Run(year, config.VideoPath, ct);
 
             return 0;
         }
@@ -38,12 +37,4 @@ public class CommandDailyStormDownload(
     //    var process = new SatelliteInventoryProcess(stormyBusiness, satelliteProcess, satelliteSource);
     //    await process.RunAsync(client, ct);
     //}
-
-    private async Task RunSpcMesosProcess(CancellationToken ct)
-    {
-        var year = DateTime.UtcNow.Year;
-        var goldPath = config.VideoPath;
-
-        await spcMesosProcess.Run(year, false, goldPath, ct);
-    }
 }

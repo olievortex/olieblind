@@ -16,6 +16,7 @@ public class OlieArgs
         SpcDayOneVideo,
         SpcDayTwoVideo,
         SpcDayThreeVideo,
+        SpcMesos,
         ListVoices,
         LoadRadars
     }
@@ -32,10 +33,11 @@ public class OlieArgs
             "deleteoldcontent" => CommandsEnum.DeleteOldContent,
             "droughtmonitorvideo" => CommandsEnum.DroughtMonitorVideo,
             "eventsdatabase" => ReadArgsForEventsDatabase(args),
-            "eventsspc" => ReadArgsForEventsSpc(args),
+            "eventsspc" => ReadArgsForOptionalYear(args, CommandsEnum.EventsSpc),
             "spcdayonevideo" => CommandsEnum.SpcDayOneVideo,
             "spcdaytwovideo" => CommandsEnum.SpcDayTwoVideo,
             "spcdaythreevideo" => CommandsEnum.SpcDayThreeVideo,
+            "spcmesos" => ReadArgsForOptionalYear(args, CommandsEnum.SpcMesos),
             "listvoices" => CommandsEnum.ListVoices,
             "loadradars" => CommandsEnum.LoadRadars,
             _ => throw new ArgumentException($"Unknown command {command}")
@@ -55,9 +57,9 @@ public class OlieArgs
         return CommandsEnum.EventsDatabase;
     }
 
-    private CommandsEnum ReadArgsForEventsSpc(string[] args)
+    private CommandsEnum ReadArgsForOptionalYear(string[] args, CommandsEnum command)
     {
-        const string usage = "Usage: dotnet olieblind.cli.dll eventsspc [year|blank for current year]";
+        const string usage = "Usage: dotnet olieblind.cli.dll [eventsspc|spcmesos] [year|blank for current year]";
 
         if (args.Length < 2)
         {
@@ -73,6 +75,6 @@ public class OlieArgs
             throw new ArgumentException(usage);
         }
 
-        return CommandsEnum.EventsSpc;
+        return command;
     }
 }

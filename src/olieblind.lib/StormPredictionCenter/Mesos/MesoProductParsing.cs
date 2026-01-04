@@ -59,12 +59,12 @@ public partial class MesoProductParsing : IMesoProductParsing
         return OlieCommon.ParseSpcEffectiveDate(lines[2]);
     }
 
-    public string GetImageName(string html)
+    public string? GetImageName(string html)
     {
         var match = MesoImageRegex().Match(html);
 
         if (!match.Success)
-            throw new ApplicationException("Unable to get image name");
+            return null;
 
         return match.Value;
     }

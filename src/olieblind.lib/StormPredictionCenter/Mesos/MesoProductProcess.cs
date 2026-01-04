@@ -32,19 +32,4 @@ public class MesoProductProcess(IMesoProductSource source, IMesoProductParsing p
 
         return true;
     }
-
-    public async Task<bool> Update(int year, int index, CancellationToken ct)
-    {
-        var entity = await repo.SpcMesoProductGet(year, index, ct);
-        if (entity is null) return false;
-
-        var body = parse.GetBody(entity.Html);
-
-        var updatedAreasAffected = parse.GetAreasAffected(body);
-        var updatedConcerning = parse.GetConcerning(body);
-
-        await source.UpdateCosmos(entity, updatedAreasAffected, updatedConcerning, ct);
-
-        return true;
-    }
 }

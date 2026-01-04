@@ -68,47 +68,4 @@ public class MesoProductProcessTests
     }
 
     #endregion
-
-    #region Update
-
-    [Test]
-    public async Task UpdateAsync_ShortCircuit_NoRecord()
-    {
-        // Arrange
-        const int year = 2023;
-        const int index = 253;
-        var ct = CancellationToken.None;
-        var source = new Mock<IMesoProductSource>();
-        var repo = new Mock<IMyRepository>();
-        var testable = new MesoProductProcess(source.Object, null!, repo.Object);
-
-        // Act
-        var result = await testable.Update(year, index, ct);
-
-        // Assert
-        Assert.That(result, Is.False);
-    }
-
-    [Test]
-    public async Task UpdateAsync_CompletesSteps_ExistingRecord()
-    {
-        // Arrange
-        const int year = 2023;
-        const int index = 253;
-        var entity = new SpcMesoProductEntity();
-        var ct = CancellationToken.None;
-        var source = new Mock<IMesoProductSource>();
-        var repo = new Mock<IMyRepository>();
-        repo.Setup(s => s.SpcMesoProductGet(year, index, ct)).ReturnsAsync(entity);
-        var parse = new Mock<IMesoProductParsing>();
-        var testable = new MesoProductProcess(source.Object, parse.Object, repo.Object);
-
-        // Act
-        var result = await testable.Update(year, index, ct);
-
-        // Assert
-        Assert.That(result, Is.True);
-    }
-
-    #endregion
 }
