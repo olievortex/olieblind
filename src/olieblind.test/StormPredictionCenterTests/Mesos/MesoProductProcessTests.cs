@@ -21,7 +21,7 @@ public class MesoProductProcessTests
         var testable = new MesoProductProcess(source.Object, null!, null!);
 
         // Act
-        var result = await testable.Download(year, index, null!, ct);
+        var result = await testable.Download(year, index, string.Empty, string.Empty, ct);
 
         // Assert
         Assert.That(result, Is.False);
@@ -53,7 +53,7 @@ public class MesoProductProcessTests
         var testable = new MesoProductProcess(source.Object, parse.Object, repo.Object);
 
         // Act
-        var result = await testable.Download(year, index, null!, ct);
+        var result = await testable.Download(year, index, string.Empty, string.Empty, ct);
 
         // Assert
         using (Assert.EnterMultipleScope())

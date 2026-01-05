@@ -87,7 +87,7 @@ public class MesoProductSourceTests
         };
 
         // Act
-        await testable.DownloadImage(string.Empty, product, null!, ct);
+        await testable.DownloadImage(string.Empty, product, string.Empty, string.Empty, ct);
 
         // Assert
         cosmos.Verify(v => v.SpcMesoProductUpdate(product, ct), Times.Never);
@@ -107,7 +107,7 @@ public class MesoProductSourceTests
         };
 
         // Act
-        await testable.DownloadImage(string.Empty, product, null!, ct);
+        await testable.DownloadImage(string.Empty, product, string.Empty, string.Empty, ct);
 
         // Assert
         using (Assert.EnterMultipleScope())
