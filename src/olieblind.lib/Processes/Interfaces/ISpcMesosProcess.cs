@@ -2,5 +2,5 @@
 
 public interface ISpcMesosProcess
 {
-    Task Run(int year, string goldPath, CancellationToken ct);
+    Task Run(int year, string goldPath, string goldUrl, CancellationToken ct);
 }

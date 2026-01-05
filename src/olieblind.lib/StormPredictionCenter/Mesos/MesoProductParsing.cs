@@ -101,7 +101,7 @@ public partial class MesoProductParsing : IMesoProductParsing
     [GeneratedRegex(@"\<pre\>([\W\w]*)\<\/pre\>")]
     private static partial Regex BodyRegex();
 
-    [GeneratedRegex(@"Concerning\.\.\.([\w\W]*)Valid", RegexOptions.IgnoreCase)]
+    [GeneratedRegex(@"Concerning\.\.\.([\w\W]*?)Valid", RegexOptions.IgnoreCase)]
     private static partial Regex ConcerningRegex();
 
     [GeneratedRegex(@"\<.*?\>")]

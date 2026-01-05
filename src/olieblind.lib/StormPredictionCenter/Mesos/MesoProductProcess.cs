@@ -6,7 +6,7 @@ namespace olieblind.lib.StormPredictionCenter.Mesos;
 
 public class MesoProductProcess(IMesoProductSource source, IMesoProductParsing parse, IMyRepository repo) : IMesoProductProcess
 {
-    public async Task<bool> Download(int year, int index, string goldPath, CancellationToken ct)
+    public async Task<bool> Download(int year, int index, string goldPath, string goldUrl, CancellationToken ct)
     {
         var html = await source.DownloadHtml(year, index, ct);
         if (html is null) return false;
@@ -28,7 +28,7 @@ public class MesoProductProcess(IMesoProductSource source, IMesoProductParsing p
         };
 
         await repo.SpcMesoProductCreate(entity, ct);
-        await source.DownloadImage(parse.GetImageName(html), entity, goldPath, ct);
+        await source.DownloadImage(parse.GetImageName(html), entity, goldPath, goldUrl, ct);
 
         return true;
     }

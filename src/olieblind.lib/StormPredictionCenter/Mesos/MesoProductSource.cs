@@ -22,19 +22,20 @@ public class MesoProductSource(IOlieWebService ows, IMyRepository repo) : IMesoP
         return html;
     }
 
-    public async Task DownloadImage(string? imageName, SpcMesoProductEntity product, string goldPath, CancellationToken ct)
+    public async Task DownloadImage(string? imageName, SpcMesoProductEntity product, string goldPath, string goldUrl, CancellationToken ct)
     {
         if (product.GraphicUrl is not null || imageName is null) return;
 
         var dt = product.EffectiveTime;
         var url = $"{BaseUrl}{dt.Year}/{imageName}";
-        var blobFileName = $"{goldPath}/gold/spc/meso/{dt.Year}/{dt.Month}/{imageName}";
+        var blobFileName = $"{goldPath}/spc/meso/{dt.Year}/{dt.Month}/{imageName}";
+        var blobUrl = $"{goldUrl}/spc/meso/{dt.Year}/{dt.Month}/{imageName}";
 
         var image = await ows.ApiGetBytes(url, ct);
         ows.FileMakeDirectory(blobFileName);
         await ows.FileWriteAllBytes(blobFileName, image, ct);
 
-        product.GraphicUrl = blobFileName;
+        product.GraphicUrl = blobUrl;
         product.Timestamp = DateTime.UtcNow;
         await repo.SpcMesoProductUpdate(product, ct);
     }

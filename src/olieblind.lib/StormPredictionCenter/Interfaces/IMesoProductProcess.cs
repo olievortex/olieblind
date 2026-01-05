@@ -2,5 +2,5 @@
 
 public interface IMesoProductProcess
 {
-    Task<bool> Download(int year, int index, string goldPath, CancellationToken ct);
+    Task<bool> Download(int year, int index, string goldPath, string goldUrl, CancellationToken ct);
 }

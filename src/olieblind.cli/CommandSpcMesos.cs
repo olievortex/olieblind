@@ -11,6 +11,8 @@ public class CommandSpcMesos(ILogger<CommandSpcMesos> logger, IOlieConfig config
     public async Task<int> Run(OlieArgs args, CancellationToken ct)
     {
         var year = args.IntArg1;
+        var goldPath = $"{config.VideoPath}/gold";
+        var goldUrl = $"{config.BaseVideoUrl}/gold";
 
         try
         {
@@ -18,7 +20,7 @@ public class CommandSpcMesos(ILogger<CommandSpcMesos> logger, IOlieConfig config
             logger.LogInformation("{loggerName} triggered", LoggerName);
 
             //await RunSatelliteAwsInventoryProcess(ct);
-            await spcMesosProcess.Run(year, config.VideoPath, ct);
+            await spcMesosProcess.Run(year, goldPath, goldUrl, ct);
 
             return 0;
         }
