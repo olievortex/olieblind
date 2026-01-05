@@ -6,7 +6,7 @@ using System.Net;
 
 namespace olieblind.lib.StormPredictionCenter.Mesos;
 
-public class MesoProductSource(IOlieWebService ows, IMyRepository repo) : IMesoProductSource
+public class MesoProductSource(IOlieWebService ows, IMyRepository repo, IOlieImageService ois) : IMesoProductSource
 {
     private const string BaseUrl = "https://www.spc.noaa.gov/products/md/";
 
@@ -28,12 +28,10 @@ public class MesoProductSource(IOlieWebService ows, IMyRepository repo) : IMesoP
 
         var dt = product.EffectiveTime;
         var url = $"{BaseUrl}{dt.Year}/{imageName}";
-        var blobFileName = $"{goldPath}/spc/meso/{dt.Year}/{dt.Month}/{imageName}";
-        var blobUrl = $"{goldUrl}/spc/meso/{dt.Year}/{dt.Month}/{imageName}";
-
         var image = await ows.ApiGetBytes(url, ct);
-        ows.FileMakeDirectory(blobFileName);
-        await ows.FileWriteAllBytes(blobFileName, image, ct);
+
+        var blobFileName = await ois.SafeConvert(image, $"{goldPath}/spc/meso/{dt.Year}/{dt.Month}/{imageName}", ".gif", ct);
+        var blobUrl = blobFileName.Replace(goldPath, goldUrl);
 
         product.GraphicUrl = blobUrl;
         product.Timestamp = DateTime.UtcNow;

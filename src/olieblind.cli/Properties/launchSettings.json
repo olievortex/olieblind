@@ -1,7 +1,7 @@
 ﻿{
   "profiles": {
     "OlievortexRed.Cli": {
-      "commandLineArgs": "spcmesos 2025",
+      "commandLineArgs": "spcmesos 2026",
       "commandName": "Project"
     }
   }

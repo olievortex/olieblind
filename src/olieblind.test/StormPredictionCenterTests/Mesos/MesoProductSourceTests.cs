@@ -22,7 +22,8 @@ public class MesoProductSourceTests
         ows.Setup(s => s.ApiGet(It.IsAny<string>(), null, ct))
             .ReturnsAsync((HttpStatusCode.NoContent, null, string.Empty));
         var cosmos = new Mock<IMyRepository>();
-        var testable = new MesoProductSource(ows.Object, cosmos.Object);
+        var ois = new Mock<IOlieImageService>();
+        var testable = new MesoProductSource(ows.Object, cosmos.Object, ois.Object);
 
         // Act, Assert
         Assert.ThrowsAsync<ApplicationException>(() => testable.DownloadHtml(year, index, ct));
@@ -39,7 +40,8 @@ public class MesoProductSourceTests
         ows.Setup(s => s.ApiGet(It.IsAny<string>(), null, ct))
             .ReturnsAsync((HttpStatusCode.NotFound, null, string.Empty));
         var cosmos = new Mock<IMyRepository>();
-        var testable = new MesoProductSource(ows.Object, cosmos.Object);
+        var ois = new Mock<IOlieImageService>();
+        var testable = new MesoProductSource(ows.Object, cosmos.Object, ois.Object);
 
         // Act
         var result = await testable.DownloadHtml(year, index, ct);
@@ -60,7 +62,8 @@ public class MesoProductSourceTests
         ows.Setup(s => s.ApiGet(It.IsAny<string>(), null, ct))
             .ReturnsAsync((HttpStatusCode.OK, null, html));
         var cosmos = new Mock<IMyRepository>();
-        var testable = new MesoProductSource(ows.Object, cosmos.Object);
+        var ois = new Mock<IOlieImageService>();
+        var testable = new MesoProductSource(ows.Object, cosmos.Object, ois.Object);
 
         // Act
         var result = await testable.DownloadHtml(year, index, ct);
@@ -80,7 +83,8 @@ public class MesoProductSourceTests
         var ct = CancellationToken.None;
         var ows = new Mock<IOlieWebService>();
         var cosmos = new Mock<IMyRepository>();
-        var testable = new MesoProductSource(ows.Object, cosmos.Object);
+        var ois = new Mock<IOlieImageService>();
+        var testable = new MesoProductSource(ows.Object, cosmos.Object, ois.Object);
         var product = new SpcMesoProductEntity
         {
             GraphicUrl = Guid.NewGuid().ToString()
@@ -100,7 +104,8 @@ public class MesoProductSourceTests
         var ct = CancellationToken.None;
         var ows = new Mock<IOlieWebService>();
         var cosmos = new Mock<IMyRepository>();
-        var testable = new MesoProductSource(ows.Object, cosmos.Object);
+        var ois = new Mock<IOlieImageService>();
+        var testable = new MesoProductSource(ows.Object, cosmos.Object, ois.Object);
         var product = new SpcMesoProductEntity
         {
             EffectiveTime = new DateTime(2021, 7, 18)
@@ -129,7 +134,8 @@ public class MesoProductSourceTests
         var ct = CancellationToken.None;
         var ows = new Mock<IOlieWebService>();
         var cosmos = new Mock<IMyRepository>();
-        var testable = new MesoProductSource(ows.Object, cosmos.Object);
+        var ois = new Mock<OlieImageService>();
+        var testable = new MesoProductSource(ows.Object, cosmos.Object, ois.Object);
         var entity = new SpcMesoProductEntity { Id = 5 };
         cosmos.Setup(s => s.SpcMesoProductGetLatest(year, ct))
             .ReturnsAsync(entity);
@@ -149,7 +155,8 @@ public class MesoProductSourceTests
         var ct = CancellationToken.None;
         var ows = new Mock<IOlieWebService>();
         var cosmos = new Mock<IMyRepository>();
-        var testable = new MesoProductSource(ows.Object, cosmos.Object);
+        var ois = new Mock<IOlieImageService>();
+        var testable = new MesoProductSource(ows.Object, cosmos.Object, ois.Object);
 
         // Act
         var result = await testable.GetLatestIdForYear(year, ct);
