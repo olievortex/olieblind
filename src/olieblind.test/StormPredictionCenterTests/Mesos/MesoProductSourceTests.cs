@@ -105,6 +105,8 @@ public class MesoProductSourceTests
         var ows = new Mock<IOlieWebService>();
         var cosmos = new Mock<IMyRepository>();
         var ois = new Mock<IOlieImageService>();
+        ois.Setup(s => s.SafeConvert(It.IsAny<byte[]>(), It.IsAny<string>(), It.IsAny<string>(), ct))
+            .ReturnsAsync(Guid.NewGuid().ToString());
         var testable = new MesoProductSource(ows.Object, cosmos.Object, ois.Object);
         var product = new SpcMesoProductEntity
         {
@@ -112,7 +114,7 @@ public class MesoProductSourceTests
         };
 
         // Act
-        await testable.DownloadImage(string.Empty, product, string.Empty, string.Empty, ct);
+        await testable.DownloadImage(string.Empty, product, "meow", "bark", ct);
 
         // Assert
         using (Assert.EnterMultipleScope())
