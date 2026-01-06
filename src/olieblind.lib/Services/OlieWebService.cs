@@ -258,6 +258,29 @@ public class OlieWebService(IHttpClientFactory httpClientFactory) : IOlieWebServ
         await blobClient.UploadAsync(localFileName, headers, cancellationToken: ct);
     }
 
+    public async Task BlobUploadText(BlobContainerClient client, string blobName, string text, CancellationToken ct)
+    {
+        var blobClient = client.GetBlobClient(blobName);
+        var contentType = "application/octet-stream";
+        var extension = Path.GetExtension(blobName);
+
+        if (extension.Equals(".html", StringComparison.OrdinalIgnoreCase)) contentType = "text/html";
+        if (extension.Equals(".gif", StringComparison.OrdinalIgnoreCase)) contentType = "image/gif";
+        if (extension.Equals(".mp4", StringComparison.OrdinalIgnoreCase)) contentType = "video/mp4";
+
+        var options = new BlobUploadOptions()
+        {
+            HttpHeaders = new BlobHttpHeaders
+            {
+                CacheControl = "public, max-age=604800",
+                ContentType = contentType
+            }
+        };
+
+        var data = new BinaryData(text);
+        await blobClient.UploadAsync(data, options, cancellationToken: ct);
+    }
+
     #endregion
 
     #region File

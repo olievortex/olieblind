@@ -167,7 +167,7 @@ public class MyRepository(MyContext context) : IMyRepository
         return await context.SpcMesoProducts
             .AsNoTracking()
             .Where(w =>
-                w.EffectiveDate.StartsWith($"{year}-") &&
+                w.EffectiveTime.Year == year &&
                 w.Id == index)
             .SingleOrDefaultAsync(ct);
     }
@@ -176,7 +176,7 @@ public class MyRepository(MyContext context) : IMyRepository
     {
         return await context.SpcMesoProducts
             .AsNoTracking()
-            .Where(w => w.EffectiveDate.StartsWith($"{year}-"))
+            .Where(w => w.EffectiveTime.Year == year)
             .OrderByDescending(o => o.Id)
             .FirstOrDefaultAsync(ct);
     }

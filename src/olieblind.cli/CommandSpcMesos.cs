@@ -1,3 +1,7 @@
+using Amazon;
+using Amazon.Runtime;
+using Amazon.S3;
+using Azure.Storage.Blobs;
 using Microsoft.Extensions.Logging;
 using olieblind.lib.Processes.Interfaces;
 using olieblind.lib.Services;
@@ -11,8 +15,7 @@ public class CommandSpcMesos(ILogger<CommandSpcMesos> logger, IOlieConfig config
     public async Task<int> Run(OlieArgs args, CancellationToken ct)
     {
         var year = args.IntArg1;
-        var goldPath = $"{config.VideoPath}/gold";
-        var goldUrl = $"{config.BaseVideoUrl}/gold";
+        var goldPath = $"{config.VideoPath}";
 
         try
         {
@@ -20,7 +23,11 @@ public class CommandSpcMesos(ILogger<CommandSpcMesos> logger, IOlieConfig config
             logger.LogInformation("{loggerName} triggered", LoggerName);
 
             //await RunSatelliteAwsInventoryProcess(ct);
-            await spcMesosProcess.Run(year, goldPath, goldUrl, ct);
+
+            var awsClient = new AmazonS3Client(new AnonymousAWSCredentials(), RegionEndpoint.USEast1);
+            var blobClient = new BlobContainerClient(new Uri(config.BlobBronzeContainerUri), config.Credential);
+
+            await spcMesosProcess.Run(year, goldPath, blobClient, ct);
 
             return 0;
         }
