@@ -12,7 +12,7 @@ public class MesoProductSourceTests
     #region DownloadHtml
 
     [Test]
-    public void DownloadHtmlAsync_ThrowsException_NotContent()
+    public void DownloadHtml_ThrowsException_NotContent()
     {
         // Arrange
         const int year = 2021;
@@ -30,7 +30,7 @@ public class MesoProductSourceTests
     }
 
     [Test]
-    public async Task DownloadHtmlAsync_Null_NotFound()
+    public async Task DownloadHtml_Null_NotFound()
     {
         // Arrange
         const int year = 2021;
@@ -51,7 +51,7 @@ public class MesoProductSourceTests
     }
 
     [Test]
-    public async Task DownloadHtmlAsync_Completes_Ok()
+    public async Task DownloadHtml_Completes_Ok()
     {
         // Arrange
         const int year = 2021;
@@ -74,10 +74,10 @@ public class MesoProductSourceTests
 
     #endregion
 
-    #region DownloadImage
+    #region StoreImage
 
     [Test]
-    public async Task DownloadImageAsync_ShortCircuits_AlreadyDownloaded()
+    public async Task StoreImage_ShortCircuits_AlreadyDownloaded()
     {
         // Arrange
         var ct = CancellationToken.None;
@@ -91,22 +91,23 @@ public class MesoProductSourceTests
         };
 
         // Act
-        await testable.DownloadImage(string.Empty, product, string.Empty, string.Empty, ct);
+        var result = await testable.StoreImage(string.Empty, product, string.Empty, ct);
 
         // Assert
-        cosmos.Verify(v => v.SpcMesoProductUpdate(product, ct), Times.Never);
+        Assert.That(result, Is.Null);
     }
 
     [Test]
-    public async Task DownloadImageAsync_Completes_NotDownloaded()
+    public async Task StoreImage_Completes_NotDownloaded()
     {
         // Arrange
+        var expected = Guid.NewGuid().ToString();
         var ct = CancellationToken.None;
         var ows = new Mock<IOlieWebService>();
         var cosmos = new Mock<IMyRepository>();
         var ois = new Mock<IOlieImageService>();
         ois.Setup(s => s.SafeConvert(It.IsAny<byte[]>(), It.IsAny<string>(), It.IsAny<string>(), ct))
-            .ReturnsAsync(Guid.NewGuid().ToString());
+            .ReturnsAsync(expected);
         var testable = new MesoProductSource(ows.Object, cosmos.Object, ois.Object);
         var product = new SpcMesoProductEntity
         {
@@ -114,14 +115,35 @@ public class MesoProductSourceTests
         };
 
         // Act
-        await testable.DownloadImage(string.Empty, product, "meow", "bark", ct);
+        var result = await testable.StoreImage(string.Empty, product, "meow", ct);
 
         // Assert
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(product.GraphicUrl, Is.Not.Null);
-            Assert.That(product.Timestamp, Is.Not.EqualTo(DateTime.MinValue));
-        }
+        Assert.That(result, Is.EqualTo(expected));
+    }
+
+    #endregion
+
+    #region StoreHtml
+
+    [Test]
+    public async Task StoreImage_UploadsBlob_ValidParameters()
+    {
+        // Arrange
+        const int index = 42;
+        var html = Guid.NewGuid().ToString();
+        var effectiveTime = new DateTime(2021, 7, 18);
+        var expected = "bronze/spc/meso/2021/7/md0042.html";
+        var ct = CancellationToken.None;
+        var ows = new Mock<IOlieWebService>();
+        var cosmos = new Mock<IMyRepository>();
+        var ois = new Mock<IOlieImageService>();
+        var testable = new MesoProductSource(ows.Object, cosmos.Object, ois.Object);
+
+        // Act
+        var result = await testable.StoreHtml(index, html, effectiveTime, null!, ct);
+
+        // Assert
+        Assert.That(result, Is.EqualTo(expected));
     }
 
     #endregion
@@ -129,7 +151,7 @@ public class MesoProductSourceTests
     #region GetLatestIdForYear
 
     [Test]
-    public async Task GetLatestIdForYearAsync_CompletesSteps_ValidParameters()
+    public async Task GetLatestIdForYear_CompletesSteps_ValidParameters()
     {
         // Arrange
         const int year = 2023;
@@ -150,7 +172,7 @@ public class MesoProductSourceTests
     }
 
     [Test]
-    public async Task GetLatestIdForYearAsync_Zero_NoRecord()
+    public async Task GetLatestIdForYear_Zero_NoRecord()
     {
         // Arrange
         const int year = 2023;

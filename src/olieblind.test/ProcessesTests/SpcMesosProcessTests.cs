@@ -15,17 +15,17 @@ public class SpcMesosProcessTests
         const int year = 2021;
         var ct = CancellationToken.None;
         var process = new Mock<IMesoProductProcess>();
-        process.SetupSequence(s => s.Download(year, It.IsAny<int>(), string.Empty, string.Empty, ct))
+        process.SetupSequence(s => s.Download(year, It.IsAny<int>(), string.Empty, null!, ct))
             .ReturnsAsync(true)
             .ReturnsAsync(false);
         var source = new Mock<IMesoProductSource>();
         var testable = new SpcMesosProcess(process.Object, source.Object);
 
         // Act
-        await testable.Run(year, string.Empty, string.Empty, ct);
+        await testable.Run(year, string.Empty, null!, ct);
 
         // Assert
-        process.Verify(v => v.Download(year, It.IsAny<int>(), string.Empty, string.Empty, ct),
+        process.Verify(v => v.Download(year, It.IsAny<int>(), string.Empty, null!, ct),
             Times.Exactly(2));
     }
 
