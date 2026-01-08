@@ -1,4 +1,5 @@
 using olieblind.data.Enums;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace olieblind.data.Entities;
@@ -12,3 +13,14 @@ public class SatelliteAwsInventoryEntity
 
     public DateTime Timestamp { get; init; }
 }
+
+//-- olieblind_dev.SatelliteAwsInventories definition
+
+//CREATE TABLE "SatelliteAwsInventories" (
+//  "Id" varchar(36) NOT NULL,
+//  "EffectiveDate" varchar(32) NOT NULL,
+//  "Channel" int NOT NULL,
+//  "DayPart" int NOT NULL,
+//  "Timestamp" datetime NOT NULL,
+//  PRIMARY KEY("Id","EffectiveDate","Channel","DayPart")
+//);

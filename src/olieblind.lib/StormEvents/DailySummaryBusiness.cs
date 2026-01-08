@@ -82,11 +82,6 @@ public class DailySummaryBusiness(IMyRepository repo) : IDailySummaryBusiness
         throw new NotImplementedException();
     }
 
-    public Task<List<StormEventsDailySummaryEntity>> GetSevereByYear(int year, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
-
     public Task UpdateCosmos(StormEventsDailySummaryEntity stormSummary, CancellationToken ct)
     {
         throw new NotImplementedException();
@@ -97,33 +92,33 @@ public class DailySummaryBusiness(IMyRepository repo) : IDailySummaryBusiness
     //    return await cosmos.StormEventsDailySummaryListMissingPostersForYear(year, ct);
     //}
 
-    //public async Task<List<StormEventsDailySummaryEntity>> GetSevereByYearAsync(int year, CancellationToken ct)
-    //{
-    //    var entities = await cosmos.StormEventsDailySummaryListSevereForYear(year, ct);
+    public async Task<List<StormEventsDailySummaryEntity>> GetSevereByYear(int year, CancellationToken ct)
+    {
+        var entities = await repo.StormEventsDailySummaryListByYear(year, ct);
 
-    //    var selector = entities
-    //        .GroupBy(g => new
-    //        {
-    //            g.Id,
-    //            g.Year
-    //        })
-    //        .Select(s => new
-    //        {
-    //            s.Key.Id,
-    //            s.Key.Year,
-    //            Timestamp = s.Max(m => m.Timestamp)
-    //        })
-    //        .ToList();
+        var selector = entities
+            .GroupBy(g => new
+            {
+                g.Id,
+                g.Year
+            })
+            .Select(s => new
+            {
+                s.Key.Id,
+                s.Key.Year,
+                Timestamp = s.Max(m => m.Timestamp)
+            })
+            .ToList();
 
-    //    var top = entities
-    //        .Join(selector,
-    //            o => new { o.Id, o.Year, o.Timestamp },
-    //            i => i,
-    //            (o, _) => o)
-    //        .ToList();
+        var top = entities
+            .Join(selector,
+                o => new { o.Id, o.Year, o.Timestamp },
+                i => i,
+                (o, _) => o)
+            .ToList();
 
-    //    return top;
-    //}
+        return top;
+    }
 
     //public async Task UpdateCosmosAsync(StormEventsDailySummaryEntity stormSummary, CancellationToken ct)
     //{

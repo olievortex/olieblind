@@ -15,7 +15,7 @@ public interface ISatelliteProcess
     Task<SatelliteAwsProductEntity?> GetSatelliteProductIncompleteAsync(StormEventsDailySummaryEntity summary,
         CancellationToken ct);
 
-    Task ProcessMissingDayAsync(int year, string missingDay, int satellite, int channel,
+    Task ProcessMissingDay(int year, string missingDay, int satellite, int channel,
         DayPartsEnum dayPart, IAmazonS3 client, CancellationToken ct);
 
     Task<bool> Source1080Async(int year, SatelliteAwsProductEntity satellite, Func<int, Task> delayFunc,

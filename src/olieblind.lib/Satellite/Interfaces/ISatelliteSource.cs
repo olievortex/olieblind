@@ -21,9 +21,6 @@ public interface ISatelliteSource
 
     DateTime GetEffectiveStop(DateTime effectiveDate, DayPartsEnum dayPart);
 
-    Task<List<SatelliteAwsInventoryEntity>> GetInventoryByYearAsync(int year, int channel, DayPartsEnum dayPart,
-        CancellationToken ct);
-
     string GetPath(DateTime effectiveDate, string metal);
 
     Task<SatelliteAwsProductEntity?> GetProductPosterAsync(string effectiveDate, DateTime eventTime,

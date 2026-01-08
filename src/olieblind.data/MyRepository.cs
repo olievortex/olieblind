@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using olieblind.data.Entities;
+using olieblind.data.Enums;
 using System.Diagnostics.CodeAnalysis;
 
 namespace olieblind.data;
@@ -154,6 +155,27 @@ public class MyRepository(MyContext context) : IMyRepository
 
     #endregion
 
+    #region SatelliteAwsInventory
+
+    public async Task SatelliteAwsInventoryCreate(SatelliteAwsInventoryEntity entity, CancellationToken ct)
+    {
+        await context.SatelliteAwsInventories.AddAsync(entity, ct);
+        await context.SaveChangesAsync(ct);
+    }
+
+    public async Task<List<SatelliteAwsInventoryEntity>> SatelliteAwsInventoryListByYear(int year, int channel,
+        DayPartsEnum dayPart, CancellationToken ct)
+    {
+        return await context.SatelliteAwsInventories
+            .Where(w =>
+                w.EffectiveDate.StartsWith($"{year}-") &&
+                w.Channel == channel &&
+                w.DayPart == dayPart)
+            .ToListAsync(ct);
+    }
+
+    #endregion
+
     #region SpcMesoProduct
 
     public async Task SpcMesoProductCreate(SpcMesoProductEntity entity, CancellationToken ct)
@@ -245,14 +267,12 @@ public class MyRepository(MyContext context) : IMyRepository
     //        .ToListAsync(ct);
     //}
 
-    //public async Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryListSevereForYear(int year,
-    //    CancellationToken ct)
-    //{
-    //    return await context.StormEventsDailySummary
-    //        .Where(w =>
-    //            w.Year == year)
-    //        .ToListAsync(ct);
-    //}
+    public async Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryListByYear(int year, CancellationToken ct)
+    {
+        return await context.StormEventsDailySummaries
+            .Where(w => w.Year == year)
+            .ToListAsync(ct);
+    }
 
     public async Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryGet(string effectiveDate, int year, CancellationToken ct)
     {

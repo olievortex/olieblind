@@ -1,4 +1,5 @@
 ﻿using olieblind.data.Entities;
+using olieblind.data.Enums;
 
 namespace olieblind.data;
 
@@ -58,6 +59,14 @@ public interface IMyRepository
 
     #endregion
 
+    #region SatelliteAwsInventory
+
+    Task SatelliteAwsInventoryCreate(SatelliteAwsInventoryEntity entity, CancellationToken ct);
+
+    Task<List<SatelliteAwsInventoryEntity>> SatelliteAwsInventoryListByYear(int year, int channel, DayPartsEnum dayPart, CancellationToken ct);
+
+    #endregion
+
     #region SpcMesoProduct
 
     Task SpcMesoProductCreate(SpcMesoProductEntity entity, CancellationToken ct);
@@ -98,14 +107,7 @@ public interface IMyRepository
     //        .ToListAsync(ct);
     //}
 
-    //public async Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryListSevereForYear(int year,
-    //    CancellationToken ct)
-    //{
-    //    return await context.StormEventsDailySummary
-    //        .Where(w =>
-    //            w.Year == year)
-    //        .ToListAsync(ct);
-    //}
+    Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryListByYear(int year, CancellationToken ct);
 
     Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryGet(string effectiveDate, int year, CancellationToken ct);
 
