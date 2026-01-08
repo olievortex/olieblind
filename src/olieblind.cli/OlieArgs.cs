@@ -13,6 +13,7 @@ public class OlieArgs
         DroughtMonitorVideo,
         EventsDatabase,
         EventsSpc,
+        SatelliteInventory,
         SpcDayOneVideo,
         SpcDayTwoVideo,
         SpcDayThreeVideo,
@@ -34,6 +35,7 @@ public class OlieArgs
             "droughtmonitorvideo" => CommandsEnum.DroughtMonitorVideo,
             "eventsdatabase" => ReadArgsForEventsDatabase(args),
             "eventsspc" => ReadArgsForOptionalYear(args, CommandsEnum.EventsSpc),
+            "satelliteinventory" => ReadArgsForOptionalYear(args, CommandsEnum.SatelliteInventory),
             "spcdayonevideo" => CommandsEnum.SpcDayOneVideo,
             "spcdaytwovideo" => CommandsEnum.SpcDayTwoVideo,
             "spcdaythreevideo" => CommandsEnum.SpcDayThreeVideo,
@@ -59,7 +61,7 @@ public class OlieArgs
 
     private CommandsEnum ReadArgsForOptionalYear(string[] args, CommandsEnum command)
     {
-        const string usage = "Usage: dotnet olieblind.cli.dll [eventsspc|spcmesos] [year|blank for current year]";
+        const string usage = "Usage: dotnet olieblind.cli.dll [command_name] [year|blank for current year]";
 
         if (args.Length < 2)
         {

@@ -1,31 +1,26 @@
-using Amazon;
+﻿using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
-using Azure.Storage.Blobs;
 using Microsoft.Extensions.Logging;
 using olieblind.lib.Processes.Interfaces;
-using olieblind.lib.Services;
 
 namespace olieblind.cli;
 
-public class CommandSpcMesos(ILogger<CommandSpcMesos> logger, IOlieConfig config, ISpcMesosProcess spcMesosProcess)
+public class CommandSatelliteInventory(ILogger<CommandSatelliteInventory> logger, ISatelliteInventoryProcess process)
 {
-    private const string LoggerName = $"olieblind.cli {nameof(CommandSpcMesos)}";
+    private const string LoggerName = $"olieblind.cli {nameof(CommandSatelliteInventory)}";
 
     public async Task<int> Run(OlieArgs args, CancellationToken ct)
     {
         var year = args.IntArg1;
-        var goldPath = $"{config.VideoPath}";
 
         try
         {
             Console.WriteLine($"{LoggerName} triggered");
             logger.LogInformation("{loggerName} triggered", LoggerName);
 
-            var awsClient = new AmazonS3Client(new AnonymousAWSCredentials(), RegionEndpoint.USEast1);
-            var blobClient = new BlobContainerClient(new Uri(config.BlobBronzeContainerUri), config.Credential);
-
-            await spcMesosProcess.Run(year, goldPath, blobClient, ct);
+            using var client = new AmazonS3Client(new AnonymousAWSCredentials(), RegionEndpoint.USEast1);
+            await process.Run(year, client, ct);
 
             return 0;
         }
