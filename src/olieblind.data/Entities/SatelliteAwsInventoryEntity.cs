@@ -1,9 +1,10 @@
+using Microsoft.EntityFrameworkCore;
 using olieblind.data.Enums;
-using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace olieblind.data.Entities;
 
+[PrimaryKey(nameof(Id), nameof(EffectiveDate), nameof(Channel), nameof(DayPart))]
 public class SatelliteAwsInventoryEntity
 {
     [MaxLength(36)] public string Id { get; init; } = string.Empty; // AWS Bucket

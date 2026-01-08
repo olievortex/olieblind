@@ -67,9 +67,9 @@ public class SatelliteProcess(ISatelliteAwsBusiness awsBusiness, ISatelliteIemBu
             : await awsBusiness.ListKeys(missingDay, satellite, channel, dayPart, client, ct);
         if (result is null || result.Keys.Length == 0) return;
 
-        await source.AddProductsToCosmosAsync(result.Keys, missingDay, result.Bucket, channel, dayPart,
+        await source.AddProductsToCosmos(result.Keys, missingDay, result.Bucket, channel, dayPart,
             result.GetScanTimeFunc, ct);
-        await source.AddInventoryToCosmosAsync(missingDay, result.Bucket, channel, dayPart, ct);
+        await source.AddInventoryToCosmos(missingDay, result.Bucket, channel, dayPart, ct);
     }
 
     //public async Task<bool> Source1080Async(int year, SatelliteAwsProductEntity satellite, Func<int, Task> delayFunc,

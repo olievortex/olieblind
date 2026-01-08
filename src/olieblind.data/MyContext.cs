@@ -13,6 +13,7 @@ public class MyContext(DbContextOptions<MyContext> options) : DbContext(options)
     public virtual DbSet<RadarInventoryEntity> RadarInventories { get; set; }
     public virtual DbSet<RadarSiteEntity> RadarSites { get; set; }
     public virtual DbSet<SatelliteAwsInventoryEntity> SatelliteAwsInventories { get; set; }
+    public virtual DbSet<SatelliteAwsProductEntity> SatelliteAwsProducts { get; set; }
     public virtual DbSet<SpcMesoProductEntity> SpcMesoProducts { get; set; }
     public virtual DbSet<StormEventsDailyDetailEntity> StormEventsDailyDetails { get; set; }
     public virtual DbSet<StormEventsDailySummaryEntity> StormEventsDailySummaries { get; set; }

@@ -1,6 +1,7 @@
 ﻿using Azure.Identity;
 using Azure.Messaging.ServiceBus;
 using Azure.Storage.Blobs;
+using olieblind.data;
 using olieblind.data.Entities;
 using olieblind.data.Enums;
 using olieblind.lib.Satellite.Interfaces;
@@ -8,18 +9,8 @@ using SixLabors.ImageSharp;
 
 namespace olieblind.lib.Satellite;
 
-public class SatelliteSource : ISatelliteSource
+public class SatelliteSource(IMyRepository repo) : ISatelliteSource
 {
-    public Task AddInventoryToCosmosAsync(string effectiveDate, string bucket, int channel, DayPartsEnum dayPart, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task AddProductsToCosmosAsync(string[] keys, string effectiveDate, string bucket, int channel, DayPartsEnum dayPart, Func<string, DateTime> getScanTimeFunc, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
-
     public string GetPath(DateTime effectiveDate, string metal)
     {
         throw new NotImplementedException();
@@ -54,48 +45,53 @@ public class SatelliteSource : ISatelliteSource
     {
         throw new NotImplementedException();
     }
-    //public async Task AddInventoryToCosmosAsync(string effectiveDate, string bucket, int channel, DayPartsEnum dayPart,
-    //   CancellationToken ct)
-    //{
-    //    var entity = new SatelliteAwsInventoryEntity
-    //    {
-    //        Id = bucket,
-    //        EffectiveDate = effectiveDate,
 
-    //        Channel = channel,
-    //        DayPart = dayPart,
-    //        Timestamp = DateTime.UtcNow
-    //    };
+    public async Task AddInventoryToCosmos(string effectiveDate, string bucket, int channel, DayPartsEnum dayPart,
+       CancellationToken ct)
+    {
+        var entity = new SatelliteAwsInventoryEntity
+        {
+            Id = bucket,
+            EffectiveDate = effectiveDate,
 
-    //    await cosmos.SatelliteAwsInventoryCreateAsync(entity, ct);
-    //}
+            Channel = channel,
+            DayPart = dayPart,
+            Timestamp = DateTime.UtcNow
+        };
 
-    //public async Task AddProductsToCosmosAsync(string[] keys, string effectiveDate, string bucket, int channel,
-    //    DayPartsEnum dayPart, Func<string, DateTime> getScanTimeFunc, CancellationToken ct)
-    //{
-    //    foreach (var key in keys)
-    //    {
-    //        var entity = new SatelliteAwsProductEntity
-    //        {
-    //            Id = Path.GetFileName(key),
-    //            EffectiveDate = effectiveDate,
+        await repo.SatelliteAwsInventoryCreate(entity, ct);
+    }
 
-    //            BucketName = bucket,
-    //            Channel = channel,
-    //            DayPart = dayPart,
-    //            Path1080 = null,
-    //            PathPoster = null,
-    //            PathSource = null,
-    //            ScanTime = getScanTimeFunc(key),
-    //            Timestamp = DateTime.UtcNow,
-    //            TimeTaken1080 = 0,
-    //            TimeTakenDownload = 0,
-    //            TimeTakenPoster = 0
-    //        };
+    public async Task AddProductsToCosmos(string[] keys, string effectiveDate, string bucket, int channel,
+        DayPartsEnum dayPart, Func<string, DateTime> getScanTimeFunc, CancellationToken ct)
+    {
+        var items = new List<SatelliteAwsProductEntity>();
 
-    //        await cosmos.SatelliteAwsProductCreateAsync(entity, ct);
-    //    }
-    //}
+        foreach (var key in keys)
+        {
+            var entity = new SatelliteAwsProductEntity
+            {
+                Id = Path.GetFileName(key),
+                EffectiveDate = effectiveDate,
+
+                BucketName = bucket,
+                Channel = channel,
+                DayPart = dayPart,
+                Path1080 = null,
+                PathPoster = null,
+                PathSource = null,
+                ScanTime = getScanTimeFunc(key),
+                Timestamp = DateTime.UtcNow,
+                TimeTaken1080 = 0,
+                TimeTakenDownload = 0,
+                TimeTakenPoster = 0
+            };
+
+            items.Add(entity);
+        }
+
+        await repo.SatelliteAwsProductCreate(items, ct);
+    }
 
     public DateTime GetEffectiveDate(string value)
     {
