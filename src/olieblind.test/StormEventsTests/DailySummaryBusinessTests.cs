@@ -246,32 +246,4 @@ public class DailySummaryBusinessTests
     }
 
     #endregion
-
-    #region UpdateCosmos
-
-    [Test]
-    public async Task UpdateCosmos_NotImplemented()
-    {
-        var testable = new DailySummaryBusiness(null!);
-        Assert.Throws<NotImplementedException>(() => testable.UpdateCosmos(null!, CancellationToken.None));
-    }
-
-    //[Test]
-    //public async Task UpdateCosmosAsync_CompletesAllSteps_ValidParameters()
-    //{
-    //    // Arrange
-    //    var cosmos = new Mock<ICosmosRepository>();
-    //    var testable = new DailySummaryBusiness(cosmos.Object);
-    //    var ct = CancellationToken.None;
-    //    var product = new StormEventsDailySummaryEntity();
-
-    //    // Act
-    //    await testable.UpdateCosmosAsync(product, ct);
-
-    //    // Assert
-    //    cosmos.Verify(v => v.StormEventsDailySummaryUpdateAsync(product, ct),
-    //        Times.Exactly(1));
-    //}
-
-    #endregion
 }

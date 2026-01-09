@@ -1,5 +1,4 @@
-﻿using Azure.Identity;
-using Azure.Messaging.ServiceBus;
+﻿using Azure.Messaging.ServiceBus;
 using Azure.Storage.Blobs;
 using olieblind.data;
 using olieblind.data.Entities;
@@ -7,33 +6,13 @@ using olieblind.data.Enums;
 using olieblind.lib.Satellite.Interfaces;
 using olieblind.lib.Services;
 using SixLabors.ImageSharp;
+using System.Diagnostics;
 
 namespace olieblind.lib.Satellite;
 
-public class SatelliteSource(IMyRepository repo, IOlieWebService ows) : ISatelliteSource
+public class SatelliteSource(IMyRepository repo, IOlieWebService ows, IOlieImageService ois) : ISatelliteSource
 {
-    public string GetPath(DateTime effectiveDate, string metal)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<List<SatelliteAwsProductEntity>> GetProductListAsync(string effectiveDate, string bucketName, int channel, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<List<SatelliteAwsProductEntity>> GetProductListNoPosterAsync(CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task MakePoster(SatelliteAwsProductEntity satellite, Point finalSize, BlobContainerClient goldClient, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task AddInventoryToDatabase(string effectiveDate, string bucket, int channel, DayPartsEnum dayPart,
-       CancellationToken ct)
+    public async Task AddInventoryToDatabase(string effectiveDate, string bucket, int channel, DayPartsEnum dayPart, CancellationToken ct)
     {
         var entity = new SatelliteAwsInventoryEntity
         {
@@ -110,13 +89,13 @@ public class SatelliteSource(IMyRepository repo, IOlieWebService ows) : ISatelli
         };
     }
 
-    //public string GetPath(DateTime effectiveDate, string metal)
-    //{
-    //    var pathDate = effectiveDate.ToString("yyyy/MM/dd");
-    //    var path = $"{metal}/aws/satellite/{pathDate}";
+    public string GetPath(DateTime effectiveDate, string metal)
+    {
+        var pathDate = effectiveDate.ToString("yyyy/MM/dd");
+        var path = $"{metal}/aws/satellite/{pathDate}";
 
-    //    return path;
-    //}
+        return path;
+    }
 
     public async Task<SatelliteAwsProductEntity?> GetMarqueeSatelliteProduct(string effectiveDate, DateTime eventTime, CancellationToken ct)
     {
@@ -127,51 +106,40 @@ public class SatelliteSource(IMyRepository repo, IOlieWebService ows) : ISatelli
         return result;
     }
 
-    //public async Task<List<SatelliteAwsProductEntity>> GetProductListAsync(string effectiveDate, string bucketName,
-    //    int channel, CancellationToken ct)
-    //{
-    //    return await cosmos.SatelliteAwsProductListAsync(effectiveDate, bucketName, channel, ct);
-    //}
+    public async Task MakeThumbnail(SatelliteAwsProductEntity satellite, Point finalSize, BlobContainerClient goldClient, CancellationToken ct)
+    {
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
 
-    //public async Task<List<SatelliteAwsProductEntity>> GetProductListNoPosterAsync(CancellationToken ct)
-    //{
-    //    return await cosmos.SatelliteAwsProductListNoPosterAsync(ct);
-    //}
+        // Sanity check
+        if (satellite.PathPoster is not null) return;
+        if (satellite.Path1080 is null) throw new NullReferenceException($"Missing Path1080 for {satellite.Id}");
 
-    //public async Task MakePosterAsync(SatelliteAwsProductEntity satellite, Point finalSize,
-    //    BlobContainerClient goldClient, CancellationToken ct)
-    //{
-    //    var stopwatch = new Stopwatch();
-    //    stopwatch.Start();
+        // Download full sized image
+        var filename1080 = OlieCommon.CreateLocalTmpPath(".png");
+        await ows.BlobDownloadFile(goldClient, satellite.Path1080, filename1080, ct);
+        var bytes = await ows.FileReadAllBytes(filename1080, ct);
 
-    //    // Sanity check
-    //    if (satellite.PathPoster is not null) return;
-    //    if (satellite.Path1080 is null) throw new NullReferenceException($"Missing Path1080 for {satellite.Id}");
+        // Convert to poster image
+        var filenamePoster = OlieCommon.CreateLocalTmpPath(".png");
+        var finalSizePoint = new System.Drawing.Point(finalSize.X, finalSize.Y);
+        var resizedBytes = await ois.Resize(bytes, finalSizePoint, ct);
+        await ows.FileWriteAllBytes(filenamePoster, resizedBytes, ct);
 
-    //    // Download full sized image
-    //    var filename1080 = CommonProcess.CreateLocalTmpPath(".png");
-    //    await ows.BlobDownloadFileAsync(goldClient, satellite.Path1080, filename1080, ct);
-    //    var bytes = await ows.FileReadAllBytes(filename1080, ct);
+        // Save to blob storage
+        var blobPoster = satellite.Path1080.Replace(".png", "_poster.png");
+        await ows.BlobUploadFile(goldClient, blobPoster, filenamePoster, ct);
 
-    //    // Convert to poster image
-    //    var filenamePoster = CommonProcess.CreateLocalTmpPath(".png");
-    //    var resizedBytes = await ois.ResizeAsync(bytes, finalSize, ct);
-    //    await ows.FileWriteAllBytesAsync(filenamePoster, resizedBytes, ct);
+        // Update CosmosDb
+        satellite.PathPoster = blobPoster;
+        satellite.Timestamp = DateTime.UtcNow;
+        satellite.TimeTakenPoster = (int)stopwatch.Elapsed.TotalSeconds;
+        await repo.SatelliteAwsProductUpdate(satellite, ct);
 
-    //    // Save to blob storage
-    //    var blobPoster = satellite.Path1080.Replace(".png", "_poster.png");
-    //    await ows.BlobUploadFileAsync(goldClient, blobPoster, filenamePoster, ct);
-
-    //    // Update CosmosDb
-    //    satellite.PathPoster = blobPoster;
-    //    satellite.Timestamp = DateTime.UtcNow;
-    //    satellite.TimeTakenPoster = (int)stopwatch.Elapsed.TotalSeconds;
-    //    await cosmos.SatelliteAwsProductUpdateAsync(satellite, ct);
-
-    //    // Cleanup
-    //    ows.FileDelete(filename1080);
-    //    ows.FileDelete(filenamePoster);
-    //}
+        // Cleanup
+        ows.FileDelete(filename1080);
+        ows.FileDelete(filenamePoster);
+    }
 
     public async Task MessagePurple(SatelliteAwsProductEntity satellite, ServiceBusSender sender, CancellationToken ct)
     {

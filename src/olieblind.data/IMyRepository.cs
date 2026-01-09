@@ -71,40 +71,11 @@ public interface IMyRepository
 
     Task SatelliteAwsProductCreate(List<SatelliteAwsProductEntity> entity, CancellationToken ct);
 
-    //public async Task<SatelliteAwsProductEntity> SatelliteAwsProductGetAsync(string id, string effectiveDate,
-    //    CancellationToken ct)
-    //{
-    //    return await context.SatelliteAwsProduct
-    //        .Where(w => w.Id == id &&
-    //                    w.EffectiveDate == effectiveDate)
-    //        .SingleAsync(ct);
-    //}
-
     Task<SatelliteAwsProductEntity?> SatelliteAwsProductGetLastPoster(string effectiveDate, CancellationToken ct);
 
     Task<SatelliteAwsProductEntity?> SatelliteAwsProductGetPoster(string effectiveDate, DateTime eventTime, CancellationToken ct);
 
-    //public async Task<List<SatelliteAwsProductEntity>> SatelliteAwsProductListAsync(string effectiveDate,
-    //    string bucketName, int channel, CancellationToken ct)
-    //{
-    //    return await context.SatelliteAwsProduct
-    //        .Where(w =>
-    //            w.EffectiveDate == effectiveDate &&
-    //            w.BucketName == bucketName &&
-    //            w.Channel == channel)
-    //        .OrderBy(o => o.ScanTime)
-    //        .ToListAsync(ct);
-    //}
-
-    //public async Task<List<SatelliteAwsProductEntity>> SatelliteAwsProductListNoPosterAsync(CancellationToken ct)
-    //{
-    //    return await context.SatelliteAwsProduct
-    //        .Where(w =>
-    //            w.Path1080 != null &&
-    //            w.PathPoster == null)
-    //        .OrderBy(o => o.ScanTime)
-    //        .ToListAsync(ct);
-    //}
+    Task<List<SatelliteAwsProductEntity>> SatelliteAwsProductListNoPoster(CancellationToken ct);
 
     Task SatelliteAwsProductUpdate(SatelliteAwsProductEntity entity, CancellationToken ct);
 

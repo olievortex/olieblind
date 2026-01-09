@@ -9,7 +9,7 @@ namespace olieblind.lib.Satellite.Interfaces;
 
 public interface ISatelliteProcess
 {
-    Task CreatePoster(SatelliteAwsProductEntity satellite, StormEventsDailySummaryEntity summary,
+    Task CreateThumbnailAndUpdateDailySummary(SatelliteAwsProductEntity satellite, StormEventsDailySummaryEntity summary,
         Point finalSize, BlobContainerClient goldClient, CancellationToken ct);
 
     Task<SatelliteAwsProductEntity?> GetMarqueeSatelliteProduct(StormEventsDailySummaryEntity summary,
@@ -21,6 +21,5 @@ public interface ISatelliteProcess
     Task DownloadSatelliteFile(int year, SatelliteAwsProductEntity satellite, Func<int, Task> delayFunc,
         ServiceBusSender sender, BlobContainerClient blobClient, IAmazonS3 awsClient, CancellationToken ct);
 
-    Task Update1080(SatelliteAwsProductEntity satellite, StormEventsDailySummaryEntity summary,
-        CancellationToken ct);
+    Task UpdateDailySummary(SatelliteAwsProductEntity satellite, StormEventsDailySummaryEntity summary, CancellationToken ct);
 }

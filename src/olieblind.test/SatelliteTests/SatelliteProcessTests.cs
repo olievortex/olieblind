@@ -1,64 +1,83 @@
 ﻿using Moq;
+using olieblind.data;
 using olieblind.data.Entities;
 using olieblind.data.Enums;
 using olieblind.lib.Satellite;
 using olieblind.lib.Satellite.Interfaces;
 using olieblind.lib.Satellite.Models;
-using olieblind.lib.StormEvents.Interfaces;
+using SixLabors.ImageSharp;
 
 namespace olieblind.test.SatelliteTests;
 
 public class SatelliteProcessTests
 {
-    //#region CreatePoster
+    #region CreateThumbnailAndUpdateDailySummary
 
-    //[Test]
-    //public async Task CreatePosterAsync_DoesNothing_PosterAlreadyCreated()
-    //{
-    //    // Arrange
-    //    var awsBusiness = new Mock<ISatelliteAwsBusiness>();
-    //    var summaryBusiness = new Mock<IDailySummaryBusiness>();
-    //    var testable = new SatelliteProcess(null!, awsBusiness.Object, null!, summaryBusiness.Object);
-    //    var ct = CancellationToken.None;
-    //    var finalSize = new Point(128, 128);
-    //    var summary = new StormEventsDailySummaryEntity
-    //    {
-    //        SatellitePath1080 = "a",
-    //        SatellitePathPoster = "b"
-    //    };
+    [Test]
+    public async Task CreateThumbnailAndUpdateDailySummary_DoesNothing_AlreadyCreated()
+    {
+        // Arrange
+        var awsBusiness = new Mock<ISatelliteAwsBusiness>();
+        var repo = new Mock<IMyRepository>();
+        var testable = new SatelliteProcess(awsBusiness.Object, null!, null!, repo.Object);
+        var ct = CancellationToken.None;
+        var finalSize = new Point(128, 128);
+        var summary = new StormEventsDailySummaryEntity
+        {
+            SatellitePath1080 = "a",
+            SatellitePathPoster = "b"
+        };
 
-    //    // Act
-    //    await testable.CreatePosterAsync(null!, summary, finalSize, null!, ct);
+        // Act
+        await testable.CreateThumbnailAndUpdateDailySummary(null!, summary, finalSize, null!, ct);
 
-    //    // Assert
-    //    summaryBusiness.Verify(v => v.UpdateCosmosAsync(summary, ct), Times.Never);
-    //}
+        // Assert
+        repo.Verify(v => v.StormEventsDailySummaryUpdate(summary, ct), Times.Never);
+    }
 
-    //[Test]
-    //public async Task CreatePosterAsync_CreatesPoster_NoPoster()
-    //{
-    //    // Arrange
-    //    var awsBusiness = new Mock<ISatelliteAwsBusiness>();
-    //    var summaryBusiness = new Mock<IDailySummaryBusiness>();
-    //    var source = new Mock<ISatelliteSource>();
-    //    var testable = new SatelliteProcess(source.Object, awsBusiness.Object, null!, summaryBusiness.Object);
-    //    var ct = CancellationToken.None;
-    //    var finalSize = new Point(128, 128);
-    //    var summary = new StormEventsDailySummaryEntity
-    //    {
-    //        SatellitePath1080 = "a"
-    //    };
-    //    var satellite = new SatelliteAwsProductEntity();
+    [Test]
+    public async Task CreateThumbnailAndUpdateDailySummary_DoesNothing_MarqueeMissing()
+    {
+        // Arrange
+        var awsBusiness = new Mock<ISatelliteAwsBusiness>();
+        var repo = new Mock<IMyRepository>();
+        var testable = new SatelliteProcess(awsBusiness.Object, null!, null!, repo.Object);
+        var ct = CancellationToken.None;
+        var finalSize = new Point(128, 128);
+        var summary = new StormEventsDailySummaryEntity();
 
-    //    // Act
-    //    await testable.CreatePosterAsync(satellite, summary, finalSize, null!, ct);
+        // Act
+        await testable.CreateThumbnailAndUpdateDailySummary(null!, summary, finalSize, null!, ct);
 
-    //    // Assert
-    //    source.Verify(v => v.MakePosterAsync(satellite, finalSize, null!, ct),
-    //        Times.Exactly(1));
-    //}
+        // Assert
+        repo.Verify(v => v.StormEventsDailySummaryUpdate(summary, ct), Times.Never);
+    }
 
-    //#endregion
+    [Test]
+    public async Task CreateThumbnailAndUpdateDailySummary_CreatesPoster_NoPoster()
+    {
+        // Arrange
+        var awsBusiness = new Mock<ISatelliteAwsBusiness>();
+        var repo = new Mock<IMyRepository>();
+        var source = new Mock<ISatelliteSource>();
+        var testable = new SatelliteProcess(awsBusiness.Object, null!, source.Object, repo.Object);
+        var ct = CancellationToken.None;
+        var finalSize = new Point(128, 128);
+        var summary = new StormEventsDailySummaryEntity
+        {
+            SatellitePath1080 = "a"
+        };
+        var satellite = new SatelliteAwsProductEntity();
+
+        // Act
+        await testable.CreateThumbnailAndUpdateDailySummary(satellite, summary, finalSize, null!, ct);
+
+        // Assert
+        source.Verify(v => v.MakeThumbnail(satellite, finalSize, null!, ct),
+            Times.Exactly(1));
+    }
+
+    #endregion
 
     #region GetMarqueeSatelliteProduct
 
@@ -66,7 +85,7 @@ public class SatelliteProcessTests
     public async Task GetMarqueeSatelliteProduct_Null_NoHeadlineEvent()
     {
         // Arrange
-        var testable = new SatelliteProcess(null!, null!, null!);
+        var testable = new SatelliteProcess(null!, null!, null!, null!);
         var ct = CancellationToken.None;
         var summary = new StormEventsDailySummaryEntity();
 
@@ -81,7 +100,7 @@ public class SatelliteProcessTests
     public async Task GetMarqueeSatelliteProduct_Null_IsComplete()
     {
         // Arrange
-        var testable = new SatelliteProcess(null!, null!, null!);
+        var testable = new SatelliteProcess(null!, null!, null!, null!);
         var ct = CancellationToken.None;
         var summary = new StormEventsDailySummaryEntity
         {
@@ -102,7 +121,7 @@ public class SatelliteProcessTests
     {
         // Arrange
         var source = new Mock<ISatelliteSource>();
-        var testable = new SatelliteProcess(null!, null!, source.Object);
+        var testable = new SatelliteProcess(null!, null!, source.Object, null!);
         var ct = CancellationToken.None;
         var time = new DateTime(2021, 7, 18, 18, 0, 0);
         var summary = new StormEventsDailySummaryEntity
@@ -137,7 +156,7 @@ public class SatelliteProcessTests
         const DayPartsEnum dayPart = DayPartsEnum.Afternoon;
         var source = new Mock<ISatelliteSource>();
         var awsBusiness = new Mock<ISatelliteAwsBusiness>();
-        var testable = new SatelliteProcess(awsBusiness.Object, null!, source.Object);
+        var testable = new SatelliteProcess(awsBusiness.Object, null!, source.Object, null!);
 
         // Act
         await testable.ProcessMissingDay(year, missingDay, satellite, channel, dayPart, null!, ct);
@@ -166,7 +185,7 @@ public class SatelliteProcessTests
                 Keys = ["a, b"],
                 GetScanTimeFunc = null!
             });
-        var testable = new SatelliteProcess(awsBusiness.Object, null!, source.Object);
+        var testable = new SatelliteProcess(awsBusiness.Object, null!, source.Object, null!);
 
         // Act
         await testable.ProcessMissingDay(year, missingDay, satellite, channel, dayPart, null!, ct);
@@ -194,7 +213,7 @@ public class SatelliteProcessTests
                 Keys = ["a, b"],
                 GetScanTimeFunc = null!
             });
-        var testable = new SatelliteProcess(null!, iemBusiness.Object, source.Object);
+        var testable = new SatelliteProcess(null!, iemBusiness.Object, source.Object, null!);
 
         // Act
         await testable.ProcessMissingDay(year, missingDay, satellite, channel, dayPart, null!, ct);
@@ -215,7 +234,7 @@ public class SatelliteProcessTests
         const int year = 2021;
         var awsBusiness = new Mock<ISatelliteAwsBusiness>();
         var source = new Mock<ISatelliteSource>();
-        var testable = new SatelliteProcess(awsBusiness.Object, null!, source.Object);
+        var testable = new SatelliteProcess(awsBusiness.Object, null!, source.Object, null!);
         var ct = CancellationToken.None;
 
         // Act
@@ -234,7 +253,7 @@ public class SatelliteProcessTests
         const int year = 2011;
         var iemBusiness = new Mock<ISatelliteIemBusiness>();
         var source = new Mock<ISatelliteSource>();
-        var testable = new SatelliteProcess(null!, iemBusiness.Object, source.Object);
+        var testable = new SatelliteProcess(null!, iemBusiness.Object, source.Object, null!);
         var ct = CancellationToken.None;
 
         // Act
@@ -247,52 +266,51 @@ public class SatelliteProcessTests
 
     #endregion
 
-    //#region Update1080
+    #region UpdateDailySummary
 
-    //[Test]
-    //public async Task Update1080Async_DoesNothing_AlreadyUpdated()
-    //{
-    //    // Arrange
-    //    var awsBusiness = new Mock<ISatelliteAwsBusiness>();
-    //    var summaryBusiness = new Mock<IDailySummaryBusiness>();
-    //    var source = new Mock<ISatelliteSource>();
-    //    var testable = new SatelliteProcess(source.Object, awsBusiness.Object, null!, summaryBusiness.Object);
-    //    var ct = CancellationToken.None;
-    //    source.Setup(s => s.MessagePurpleAsync(null!, null!, ct))
-    //        .ReturnsAsync(true);
-    //    var summary = new StormEventsDailySummaryEntity();
-    //    var satellite = new SatelliteAwsProductEntity();
+    [Test]
+    public async Task UpdateDailySummary_DoesNothing_AlreadyUpdated()
+    {
+        // Arrange
+        var awsBusiness = new Mock<ISatelliteAwsBusiness>();
+        var source = new Mock<ISatelliteSource>();
+        var repo = new Mock<IMyRepository>();
+        var testable = new SatelliteProcess(awsBusiness.Object, null!, source.Object, repo.Object);
+        var ct = CancellationToken.None;
+        var summary = new StormEventsDailySummaryEntity()
+        {
+            SatellitePath1080 = "a"
+        };
+        var satellite = new SatelliteAwsProductEntity();
 
-    //    // Act
-    //    await testable.Update1080Async(satellite, summary, ct);
+        // Act
+        await testable.UpdateDailySummary(satellite, summary, ct);
 
-    //    // Assert
-    //    summaryBusiness.Verify(v => v.UpdateCosmosAsync(summary, ct), Times.Never);
-    //}
+        // Assert
+        repo.Verify(v => v.StormEventsDailySummaryUpdate(summary, ct), Times.Never);
+    }
 
-    //[Test]
-    //public async Task Update1080Async_CompletesAllSteps_ValidParameters()
-    //{
-    //    // Arrange
-    //    var awsBusiness = new Mock<ISatelliteAwsBusiness>();
-    //    var summaryBusiness = new Mock<IDailySummaryBusiness>();
-    //    var source = new Mock<ISatelliteSource>();
-    //    var testable = new SatelliteProcess(source.Object, awsBusiness.Object, null!, summaryBusiness.Object);
-    //    var ct = CancellationToken.None;
-    //    source.Setup(s => s.MessagePurpleAsync(null!, null!, ct))
-    //        .ReturnsAsync(true);
-    //    var summary = new StormEventsDailySummaryEntity();
-    //    var satellite = new SatelliteAwsProductEntity
-    //    {
-    //        Path1080 = "a"
-    //    };
+    [Test]
+    public async Task UpdateDailySummary_CompletesAllSteps_ValidParameters()
+    {
+        // Arrange
+        var awsBusiness = new Mock<ISatelliteAwsBusiness>();
+        var repo = new Mock<IMyRepository>();
+        var source = new Mock<ISatelliteSource>();
+        var testable = new SatelliteProcess(awsBusiness.Object, null!, source.Object, repo.Object);
+        var ct = CancellationToken.None;
+        var summary = new StormEventsDailySummaryEntity();
+        var satellite = new SatelliteAwsProductEntity
+        {
+            Path1080 = "a"
+        };
 
-    //    // Act
-    //    await testable.Update1080Async(satellite, summary, ct);
+        // Act
+        await testable.UpdateDailySummary(satellite, summary, ct);
 
-    //    // Assert
-    //    Assert.That(summary.SatellitePath1080, Is.EqualTo("a"));
-    //}
+        // Assert
+        Assert.That(summary.SatellitePath1080, Is.EqualTo("a"));
+    }
 
-    //#endregion
+    #endregion
 }

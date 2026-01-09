@@ -184,15 +184,6 @@ public class MyRepository(MyContext context) : IMyRepository
         await context.SaveChangesAsync(ct);
     }
 
-    //public async Task<SatelliteAwsProductEntity> SatelliteAwsProductGetAsync(string id, string effectiveDate,
-    //    CancellationToken ct)
-    //{
-    //    return await context.SatelliteAwsProduct
-    //        .Where(w => w.Id == id &&
-    //                    w.EffectiveDate == effectiveDate)
-    //        .SingleAsync(ct);
-    //}
-
     public async Task<SatelliteAwsProductEntity?> SatelliteAwsProductGetLastPoster(string effectiveDate, CancellationToken ct)
     {
         return await context.SatelliteAwsProducts
@@ -210,27 +201,15 @@ public class MyRepository(MyContext context) : IMyRepository
             .FirstOrDefaultAsync(ct);
     }
 
-    //public async Task<List<SatelliteAwsProductEntity>> SatelliteAwsProductListAsync(string effectiveDate,
-    //    string bucketName, int channel, CancellationToken ct)
-    //{
-    //    return await context.SatelliteAwsProduct
-    //        .Where(w =>
-    //            w.EffectiveDate == effectiveDate &&
-    //            w.BucketName == bucketName &&
-    //            w.Channel == channel)
-    //        .OrderBy(o => o.ScanTime)
-    //        .ToListAsync(ct);
-    //}
-
-    //public async Task<List<SatelliteAwsProductEntity>> SatelliteAwsProductListNoPosterAsync(CancellationToken ct)
-    //{
-    //    return await context.SatelliteAwsProduct
-    //        .Where(w =>
-    //            w.Path1080 != null &&
-    //            w.PathPoster == null)
-    //        .OrderBy(o => o.ScanTime)
-    //        .ToListAsync(ct);
-    //}
+    public async Task<List<SatelliteAwsProductEntity>> SatelliteAwsProductListNoPoster(CancellationToken ct)
+    {
+        return await context.SatelliteAwsProducts
+            .Where(w =>
+                w.Path1080 != null &&
+                w.PathPoster == null)
+            .OrderBy(o => o.ScanTime)
+            .ToListAsync(ct);
+    }
 
     public async Task SatelliteAwsProductUpdate(SatelliteAwsProductEntity entity, CancellationToken ct)
     {
