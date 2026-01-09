@@ -106,11 +106,7 @@ public interface IMyRepository
     //        .ToListAsync(ct);
     //}
 
-    //public async Task SatelliteAwsProductUpdateAsync(SatelliteAwsProductEntity entity, CancellationToken ct)
-    //{
-    //    context.SatelliteAwsProduct.Update(entity);
-    //    await context.SaveChangesAsync(ct);
-    //}
+    Task SatelliteAwsProductUpdate(SatelliteAwsProductEntity entity, CancellationToken ct);
 
     #endregion
 

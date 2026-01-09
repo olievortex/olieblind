@@ -3,16 +3,13 @@ using Azure.Messaging.ServiceBus;
 using Azure.Storage.Blobs;
 using olieblind.data;
 using olieblind.lib.Satellite.Interfaces;
-using olieblind.lib.StormEvents.Interfaces;
 using SixLabors.ImageSharp;
-using static Azure.Core.HttpHeader;
 
 namespace olieblind.lib.Processes;
 
-public class SatellitePosterProcess(
+public class SatelliteMarqueeProcess(
     ISatelliteProcess satelliteProcess,
     ISatelliteSource satelliteSource,
-    IDailySummaryBusiness summaryBusiness,
     IMyRepository repo)
 {
     private readonly Point _finalSize = new(1246, 540);
@@ -43,7 +40,7 @@ public class SatellitePosterProcess(
             var satellite = await satelliteProcess.GetMarqueeSatelliteProduct(missingPoster, ct);
             if (satellite is null) continue;
 
-            await satelliteProcess.Source1080(year, satellite, delayFunc, sender, bronzeClient, awsClient, ct);
+            await satelliteProcess.DownloadSatelliteFile(year, satellite, delayFunc, sender, bronzeClient, awsClient, ct);
             await satelliteProcess.Update1080(satellite, missingPoster, ct);
             await satelliteProcess.CreatePoster(satellite, missingPoster, _finalSize, goldClient, ct);
         }

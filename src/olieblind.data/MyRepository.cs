@@ -232,11 +232,11 @@ public class MyRepository(MyContext context) : IMyRepository
     //        .ToListAsync(ct);
     //}
 
-    //public async Task SatelliteAwsProductUpdateAsync(SatelliteAwsProductEntity entity, CancellationToken ct)
-    //{
-    //    context.SatelliteAwsProduct.Update(entity);
-    //    await context.SaveChangesAsync(ct);
-    //}
+    public async Task SatelliteAwsProductUpdate(SatelliteAwsProductEntity entity, CancellationToken ct)
+    {
+        context.SatelliteAwsProducts.Update(entity);
+        await context.SaveChangesAsync(ct);
+    }
 
     #endregion
 

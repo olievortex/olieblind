@@ -16,11 +16,6 @@ public class SatelliteProcess(ISatelliteAwsBusiness awsBusiness, ISatelliteIemBu
         throw new NotImplementedException();
     }
 
-    public Task Source1080(int year, SatelliteAwsProductEntity satellite, Func<int, Task> delayFunc, ServiceBusSender sender, BlobContainerClient blobClient, IAmazonS3 awsClient, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
-
     public Task Update1080(SatelliteAwsProductEntity satellite, StormEventsDailySummaryEntity summary, CancellationToken ct)
     {
         throw new NotImplementedException();
@@ -65,16 +60,16 @@ public class SatelliteProcess(ISatelliteAwsBusiness awsBusiness, ISatelliteIemBu
         await source.AddInventoryToDatabase(missingDay, result.Bucket, channel, dayPart, ct);
     }
 
-    //public async Task<bool> Source1080Async(int year, SatelliteAwsProductEntity satellite, Func<int, Task> delayFunc,
-    //    ServiceBusSender sender, BlobContainerClient blobClient, IAmazonS3 awsClient, CancellationToken ct)
-    //{
-    //    if (year < Goes16)
-    //        await iemBusiness.DownloadAsync(satellite, delayFunc, blobClient, ct);
-    //    else
-    //        await awsBusiness.DownloadAsync(satellite, delayFunc, blobClient, awsClient, ct);
+    public async Task DownloadSatelliteFile(int year, SatelliteAwsProductEntity satellite, Func<int, Task> delayFunc,
+        ServiceBusSender sender, BlobContainerClient blobClient, IAmazonS3 awsClient, CancellationToken ct)
+    {
+        if (year < Goes16)
+            await iemBusiness.Download(satellite, delayFunc, blobClient, ct);
+        else
+            await awsBusiness.Download(satellite, delayFunc, blobClient, awsClient, ct);
 
-    //    return await source.MessagePurpleAsync(satellite, sender, ct);
-    //}
+        await source.MessagePurple(satellite, sender, ct);
+    }
 
     //public async Task Update1080Async(SatelliteAwsProductEntity satellite, StormEventsDailySummaryEntity summary,
     //    CancellationToken ct)

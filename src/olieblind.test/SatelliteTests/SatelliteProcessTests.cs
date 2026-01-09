@@ -206,49 +206,46 @@ public class SatelliteProcessTests
 
     #endregion
 
-    //#region Source1080
+    #region DownloadSatelliteFile
 
-    //[Test]
-    //public async Task Source1080Async_AwsProcess_ValidParameters()
-    //{
-    //    // Arrange
-    //    const int year = 2021;
-    //    var awsBusiness = new Mock<ISatelliteAwsBusiness>();
-    //    var source = new Mock<ISatelliteSource>();
-    //    var testable = new SatelliteProcess(source.Object, awsBusiness.Object, null!, null!);
-    //    var ct = CancellationToken.None;
+    [Test]
+    public async Task DownloadSatelliteFile_AwsProcess_ValidParameters()
+    {
+        // Arrange
+        const int year = 2021;
+        var awsBusiness = new Mock<ISatelliteAwsBusiness>();
+        var source = new Mock<ISatelliteSource>();
+        var testable = new SatelliteProcess(awsBusiness.Object, null!, source.Object);
+        var ct = CancellationToken.None;
 
-    //    // Act
-    //    await testable.Source1080Async(year, null!, null!, null!, null!, null!, ct);
+        // Act
+        await testable.DownloadSatelliteFile(year, null!, null!, null!, null!, null!, ct);
 
-    //    // Assert
-    //    awsBusiness.Verify(v => v.DownloadAsync(It.IsAny<SatelliteAwsProductEntity>(),
-    //            It.IsAny<Func<int, Task>>(), It.IsAny<BlobContainerClient>(), It.IsAny<IAmazonS3>(), ct),
-    //        Times.Exactly(1));
-    //}
+        // Assert
+        awsBusiness.Verify(v => v.Download(It.IsAny<SatelliteAwsProductEntity>(),
+                It.IsAny<Func<int, Task>>(), null!, null!, ct),
+            Times.Once);
+    }
 
-    //[Test]
-    //public async Task Source1080Async_IemProcess_ValidParameters()
-    //{
-    //    // Arrange
-    //    const int year = 2011;
-    //    var iemBusiness = new Mock<ISatelliteIemBusiness>();
-    //    var source = new Mock<ISatelliteSource>();
-    //    var testable = new SatelliteProcess(source.Object, null!, iemBusiness.Object, null!);
-    //    var ct = CancellationToken.None;
-    //    source.Setup(s => s.MessagePurpleAsync(null!, null!, ct))
-    //        .ReturnsAsync(true);
+    [Test]
+    public async Task DownloadSatelliteFile_IemProcess_ValidParameters()
+    {
+        // Arrange
+        const int year = 2011;
+        var iemBusiness = new Mock<ISatelliteIemBusiness>();
+        var source = new Mock<ISatelliteSource>();
+        var testable = new SatelliteProcess(null!, iemBusiness.Object, source.Object);
+        var ct = CancellationToken.None;
 
-    //    // Act
-    //    await testable.Source1080Async(year, null!, null!, null!, null!, null!, ct);
+        // Act
+        await testable.DownloadSatelliteFile(year, null!, null!, null!, null!, null!, ct);
 
-    //    // Assert
-    //    iemBusiness.Verify(v => v.DownloadAsync(It.IsAny<SatelliteAwsProductEntity>(),
-    //            It.IsAny<Func<int, Task>>(), It.IsAny<BlobContainerClient>(), ct),
-    //        Times.Exactly(1));
-    //}
+        // Assert
+        iemBusiness.Verify(v => v.Download(It.IsAny<SatelliteAwsProductEntity>(), It.IsAny<Func<int, Task>>(), null!, ct),
+            Times.Exactly(1));
+    }
 
-    //#endregion
+    #endregion
 
     //#region Update1080
 

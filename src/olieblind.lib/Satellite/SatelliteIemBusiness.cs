@@ -1,50 +1,55 @@
 ﻿using Azure.Storage.Blobs;
+using olieblind.data;
 using olieblind.data.Entities;
 using olieblind.data.Enums;
 using olieblind.lib.Satellite.Interfaces;
 using olieblind.lib.Satellite.Models;
+using olieblind.lib.Services;
+using System.Diagnostics;
 
 namespace olieblind.lib.Satellite;
 
-public class SatelliteIemBusiness(ISatelliteSource source, ISatelliteIemSource iemSource) : ISatelliteIemBusiness
+public class SatelliteIemBusiness(ISatelliteSource source, ISatelliteIemSource iemSource, IOlieWebService ows, IMyRepository repo) : ISatelliteIemBusiness
 {
-    //public async Task DownloadAsync(SatelliteAwsProductEntity product, Func<int, Task> delayFunc,
-    //BlobContainerClient blobClient, CancellationToken ct)
-    //{
-    //    if (product.PathSource is not null) return;
+    public async Task Download(SatelliteAwsProductEntity product, Func<int, Task> delayFunc, BlobContainerClient blobClient, CancellationToken ct)
+    {
+        if (product.PathSource is not null) return;
 
-    //    var stopwatch = new Stopwatch();
-    //    stopwatch.Start();
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
 
-    //    var effectiveDate = source.GetEffectiveDate(product.EffectiveDate);
-    //    var filename = Path.GetFileName(product.Id);
-    //    var blobName = $"{source.GetPath(effectiveDate, "bronze")}/{filename}";
-    //    var localFilename = CommonProcess.CreateLocalTmpPath(".tif");
-    //    var key = $"{iemSource.GetPrefix(product.ScanTime)}{filename}";
-    //    var attempt = 1;
+        var effectiveDate = source.GetEffectiveDate(product.EffectiveDate);
+        var filename = Path.GetFileName(product.Id);
+        var blobName = $"{source.GetPath(effectiveDate, "bronze")}/{filename}";
+        var localFilename = OlieCommon.CreateLocalTmpPath(".tif");
+        var key = $"{iemSource.GetPrefix(product.ScanTime)}{filename}";
+        var attempt = 0;
 
-    //    while (true)
-    //        try
-    //        {
-    //            var data = await ows.ApiGetBytesAsync(key, ct);
-    //            await ows.FileWriteAllBytesAsync(localFilename, data, ct);
-    //            break;
-    //        }
-    //        catch (Exception)
-    //        {
-    //            if (attempt >= 3) throw;
+        while (true)
+        {
+            try
+            {
+                var data = await ows.ApiGetBytes(key, ct);
+                await ows.FileWriteAllBytes(localFilename, data, ct);
+                break;
+            }
+            catch (Exception)
+            {
+                attempt++;
+                if (attempt > 2) throw;
+            }
 
-    //            await delayFunc(attempt++);
-    //        }
+            await delayFunc(attempt);
+        }
 
-    //    await ows.BlobUploadFileAsync(blobClient, blobName, localFilename, ct);
-    //    ows.FileDelete(localFilename);
+        await ows.BlobUploadFile(blobClient, blobName, localFilename, ct);
+        ows.FileDelete(localFilename);
 
-    //    product.PathSource = blobName;
-    //    product.TimeTakenDownload = (int)stopwatch.Elapsed.TotalSeconds;
-    //    product.Timestamp = DateTime.UtcNow;
-    //    await cosmos.SatelliteAwsProductUpdateAsync(product, ct);
-    //}
+        product.PathSource = blobName;
+        product.TimeTakenDownload = (int)stopwatch.Elapsed.TotalSeconds;
+        product.Timestamp = DateTime.UtcNow;
+        await repo.SatelliteAwsProductUpdate(product, ct);
+    }
 
     public async Task<AwsKeysModel?> ListKeys(string dayValue, int channel, DayPartsEnum dayPart,
         CancellationToken ct)
@@ -76,10 +81,5 @@ public class SatelliteIemBusiness(ISatelliteSource source, ISatelliteIemSource i
             Keys = [.. keys.OrderBy(o => o)],
             GetScanTimeFunc = v => iemSource.GetScanTimeFromKey(effectiveDate, v)
         };
-    }
-
-    public Task Download(SatelliteAwsProductEntity product, Func<int, Task> delayFunc, BlobContainerClient blobClient, CancellationToken ct)
-    {
-        throw new NotImplementedException();
     }
 }

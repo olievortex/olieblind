@@ -4,6 +4,7 @@ using olieblind.data.Entities;
 using olieblind.data.Enums;
 using olieblind.lib.Satellite;
 using olieblind.lib.Satellite.Interfaces;
+using olieblind.lib.Services;
 
 namespace olieblind.test.SatelliteTests;
 
@@ -22,7 +23,7 @@ public class SatelliteSourceTests
         var repo = new Mock<IMyRepository>();
         repo.Setup(s => s.SatelliteAwsInventoryCreate(It.IsAny<SatelliteAwsInventoryEntity>(), ct))
             .Callback((SatelliteAwsInventoryEntity e, CancellationToken _) => entity = e);
-        var testable = new SatelliteSource(repo.Object);
+        var testable = new SatelliteSource(repo.Object, null!);
         var effectiveDate = Guid.NewGuid().ToString();
         var bucket = Guid.NewGuid().ToString();
 
@@ -58,7 +59,7 @@ public class SatelliteSourceTests
         var repo = new Mock<IMyRepository>();
         repo.Setup(s => s.SatelliteAwsProductCreate(It.IsAny<List<SatelliteAwsProductEntity>>(), ct))
             .Callback((List<SatelliteAwsProductEntity> e, CancellationToken _) => entity = e[0]);
-        var testable = new SatelliteSource(repo.Object);
+        var testable = new SatelliteSource(repo.Object, null!);
         const string key = "OR_ABI-L1b-RadC-M3C01_G16_s20170600202497_e20170600205270_c20170600205311.nc";
         var effectiveDate = Guid.NewGuid().ToString();
         var bucket = Guid.NewGuid().ToString();
@@ -95,7 +96,7 @@ public class SatelliteSourceTests
     {
         // Arrange
         const string effectiveDate = "2010-07-21";
-        var testable = new SatelliteSource(null!);
+        var testable = new SatelliteSource(null!, null!);
 
         // Act
         var result = testable.GetEffectiveDate(effectiveDate);
@@ -114,7 +115,7 @@ public class SatelliteSourceTests
         // Arrange
         var effectiveDate = new DateTime(2021, 5, 18);
         var expected = new DateTime(2021, 5, 18, 6, 0, 0);
-        var testable = new SatelliteSource(null!);
+        var testable = new SatelliteSource(null!, null!);
 
         // Act
         var result = testable.GetEffectiveStart(effectiveDate, DayPartsEnum.Owl);
@@ -129,7 +130,7 @@ public class SatelliteSourceTests
         // Arrange
         var effectiveDate = new DateTime(2021, 5, 18);
         var expected = new DateTime(2021, 5, 18, 12, 0, 0);
-        var testable = new SatelliteSource(null!);
+        var testable = new SatelliteSource(null!, null!);
 
         // Act
         var result = testable.GetEffectiveStart(effectiveDate, DayPartsEnum.Morning);
@@ -144,7 +145,7 @@ public class SatelliteSourceTests
         // Arrange
         var effectiveDate = new DateTime(2021, 5, 18);
         var expected = new DateTime(2021, 5, 18, 18, 0, 0);
-        var testable = new SatelliteSource(null!);
+        var testable = new SatelliteSource(null!, null!);
 
         // Act
         var result = testable.GetEffectiveStart(effectiveDate, DayPartsEnum.Afternoon);
@@ -159,7 +160,7 @@ public class SatelliteSourceTests
         // Arrange
         var effectiveDate = new DateTime(2021, 5, 18);
         var expected = new DateTime(2021, 5, 19);
-        var testable = new SatelliteSource(null!);
+        var testable = new SatelliteSource(null!, null!);
 
         // Act
         var result = testable.GetEffectiveStart(effectiveDate, DayPartsEnum.Night);
@@ -178,7 +179,7 @@ public class SatelliteSourceTests
         // Arrange
         var effectiveDate = new DateTime(2021, 5, 18);
         var expected = new DateTime(2021, 5, 18, 11, 0, 0);
-        var testable = new SatelliteSource(null!);
+        var testable = new SatelliteSource(null!, null!);
 
         // Act
         var result = testable.GetEffectiveStop(effectiveDate, DayPartsEnum.Owl);
@@ -193,7 +194,7 @@ public class SatelliteSourceTests
         // Arrange
         var effectiveDate = new DateTime(2021, 5, 18);
         var expected = new DateTime(2021, 5, 18, 17, 0, 0);
-        var testable = new SatelliteSource(null!);
+        var testable = new SatelliteSource(null!, null!);
 
         // Act
         var result = testable.GetEffectiveStop(effectiveDate, DayPartsEnum.Morning);
@@ -208,7 +209,7 @@ public class SatelliteSourceTests
         // Arrange
         var effectiveDate = new DateTime(2021, 5, 18);
         var expected = new DateTime(2021, 5, 18, 23, 0, 0);
-        var testable = new SatelliteSource(null!);
+        var testable = new SatelliteSource(null!, null!);
 
         // Act
         var result = testable.GetEffectiveStop(effectiveDate, DayPartsEnum.Afternoon);
@@ -223,7 +224,7 @@ public class SatelliteSourceTests
         // Arrange
         var effectiveDate = new DateTime(2021, 5, 18);
         var expected = new DateTime(2021, 5, 19, 5, 0, 0);
-        var testable = new SatelliteSource(null!);
+        var testable = new SatelliteSource(null!, null!);
 
         // Act
         var result = testable.GetEffectiveStop(effectiveDate, DayPartsEnum.Night);
@@ -311,7 +312,7 @@ public class SatelliteSourceTests
     {
         // Arrange
         var repo = new Mock<IMyRepository>();
-        var testable = new SatelliteSource(repo.Object);
+        var testable = new SatelliteSource(repo.Object, null!);
         var ct = CancellationToken.None;
         const string effectiveDate = "2021-05-18";
         var eventTime = new DateTime(2021, 5, 18, 18, 0, 0);
@@ -387,46 +388,66 @@ public class SatelliteSourceTests
 
     //#endregion
 
-    //#region MessagePurple
+    #region MessagePurple
 
-    //[Test]
-    //public async Task MessagePurpleAsync_False_MissingPath()
-    //{
-    //    // Arrange
-    //    var ows = new Mock<IOlieWebServices>();
-    //    var cosmos = new Mock<ICosmosRepository>();
-    //    var testable = new SatelliteSource(ows.Object, cosmos.Object, null!);
-    //    var satellite = new SatelliteAwsProductEntity();
-    //    var ct = CancellationToken.None;
+    [Test]
+    public async Task MessagePurpleAsync_ShortCircuit_Missing1080Path()
+    {
+        // Arrange
+        var ows = new Mock<IOlieWebService>();
+        var testable = new SatelliteSource(null!, ows.Object);
+        var satellite = new SatelliteAwsProductEntity();
+        var ct = CancellationToken.None;
 
-    //    // Act
-    //    var result = await testable.MessagePurpleAsync(satellite, null!, ct);
+        // Act
+        await testable.MessagePurple(satellite, null!, ct);
 
-    //    // Assert
-    //    Assert.That(result, Is.False);
-    //}
+        // Assert
+        ows.Verify(v => v.ServiceBusSendJson(null!, satellite, ct),
+            Times.Never());
+    }
 
-    //[Test]
-    //public async Task MessagePurpleAsync_True_ValidParameters()
-    //{
-    //    // Arrange
-    //    var ows = new Mock<IOlieWebServices>();
-    //    var cosmos = new Mock<ICosmosRepository>();
-    //    var testable = new SatelliteSource(ows.Object, cosmos.Object, null!);
-    //    var satellite = new SatelliteAwsProductEntity
-    //    {
-    //        PathSource = "meow"
-    //    };
-    //    var ct = CancellationToken.None;
+    [Test]
+    public async Task MessagePurpleAsync_ShortCircuit_AlreadyProcessed()
+    {
+        // Arrange
+        var ows = new Mock<IOlieWebService>();
+        var testable = new SatelliteSource(null!, ows.Object);
+        var satellite = new SatelliteAwsProductEntity()
+        {
+            Path1080 = "meow"
+        };
+        var ct = CancellationToken.None;
 
-    //    // Act
-    //    var result = await testable.MessagePurpleAsync(satellite, null!, ct);
+        // Act
+        await testable.MessagePurple(satellite, null!, ct);
 
-    //    // Assert
-    //    Assert.That(result, Is.True);
-    //}
+        // Assert
+        ows.Verify(v => v.ServiceBusSendJson(null!, satellite, ct),
+            Times.Never());
+    }
 
-    //#endregion
+    [Test]
+    public async Task MessagePurpleAsync_SendsMessage_ValidParameters()
+    {
+        // Arrange
+        var ows = new Mock<IOlieWebService>();
+        var testable = new SatelliteSource(null!, ows.Object);
+        var satellite = new SatelliteAwsProductEntity
+        {
+            PathSource = "meow"
+        };
+        var ct = CancellationToken.None;
+
+        // Act
+        await testable.MessagePurple(satellite, null!, ct);
+
+        // Assert
+        ows.Verify(v => v.ServiceBusSendJson(null!, satellite, ct),
+            Times.Once());
+    }
+
+    #endregion
 
     //#region Start1080Container
 

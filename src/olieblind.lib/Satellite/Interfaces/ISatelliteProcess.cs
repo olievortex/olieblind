@@ -18,7 +18,7 @@ public interface ISatelliteProcess
     Task ProcessMissingDay(int year, string missingDay, int satellite, int channel,
         DayPartsEnum dayPart, IAmazonS3 client, CancellationToken ct);
 
-    Task Source1080(int year, SatelliteAwsProductEntity satellite, Func<int, Task> delayFunc,
+    Task DownloadSatelliteFile(int year, SatelliteAwsProductEntity satellite, Func<int, Task> delayFunc,
         ServiceBusSender sender, BlobContainerClient blobClient, IAmazonS3 awsClient, CancellationToken ct);
 
     Task Update1080(SatelliteAwsProductEntity satellite, StormEventsDailySummaryEntity summary,

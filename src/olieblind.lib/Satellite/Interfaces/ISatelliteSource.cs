@@ -33,5 +33,5 @@ public interface ISatelliteSource
     Task MakePoster(SatelliteAwsProductEntity satellite, Point finalSize, BlobContainerClient goldClient,
         CancellationToken ct);
 
-    Task<bool> MessagePurpleAsync(SatelliteAwsProductEntity satellite, ServiceBusSender sender, CancellationToken ct);
+    Task MessagePurple(SatelliteAwsProductEntity satellite, ServiceBusSender sender, CancellationToken ct);
 }

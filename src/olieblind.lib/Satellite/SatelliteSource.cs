@@ -5,11 +5,12 @@ using olieblind.data;
 using olieblind.data.Entities;
 using olieblind.data.Enums;
 using olieblind.lib.Satellite.Interfaces;
+using olieblind.lib.Services;
 using SixLabors.ImageSharp;
 
 namespace olieblind.lib.Satellite;
 
-public class SatelliteSource(IMyRepository repo) : ISatelliteSource
+public class SatelliteSource(IMyRepository repo, IOlieWebService ows) : ISatelliteSource
 {
     public string GetPath(DateTime effectiveDate, string metal)
     {
@@ -27,11 +28,6 @@ public class SatelliteSource(IMyRepository repo) : ISatelliteSource
     }
 
     public Task MakePoster(SatelliteAwsProductEntity satellite, Point finalSize, BlobContainerClient goldClient, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<bool> MessagePurpleAsync(SatelliteAwsProductEntity satellite, ServiceBusSender sender, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
@@ -177,12 +173,10 @@ public class SatelliteSource(IMyRepository repo) : ISatelliteSource
     //    ows.FileDelete(filenamePoster);
     //}
 
-    //public async Task<bool> MessagePurpleAsync(SatelliteAwsProductEntity satellite, ServiceBusSender sender,
-    //    CancellationToken ct)
-    //{
-    //    if (satellite.Path1080 is not null || satellite.PathSource is null) return false;
+    public async Task MessagePurple(SatelliteAwsProductEntity satellite, ServiceBusSender sender, CancellationToken ct)
+    {
+        if (satellite.Path1080 is not null || satellite.PathSource is null) return;
 
-    //    await ows.ServiceBusSendJsonAsync(sender, satellite, ct);
-    //    return true;
-    //}
+        await ows.ServiceBusSendJson(sender, satellite, ct);
+    }
 }
