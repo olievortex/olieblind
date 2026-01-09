@@ -16,12 +16,12 @@ public class SatelliteProcess(ISatelliteAwsBusiness awsBusiness, ISatelliteIemBu
     private const int Goes16 = 2018;
 
     public async Task CreateThumbnailAndUpdateDailySummary(SatelliteAwsProductEntity satellite, StormEventsDailySummaryEntity summary,
-        Point finalSize, BlobContainerClient goldClient, CancellationToken ct)
+        Point finalSize, string goldPath, CancellationToken ct)
     {
         if (summary.SatellitePath1080 is not null && summary.SatellitePathPoster is null)
         {
             if (satellite.PathPoster is null)
-                await source.MakeThumbnail(satellite, finalSize, goldClient, ct);
+                await source.MakeThumbnail(satellite, finalSize, goldPath, ct);
 
             summary.SatellitePathPoster = satellite.PathPoster;
             await repo.StormEventsDailySummaryUpdate(summary, ct);

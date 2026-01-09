@@ -16,23 +16,23 @@ public class SatelliteMarqueeProcess(
     private readonly Point _finalSize = new(1246, 540);
 
     public async Task Run(int year, ServiceBusSender sender, Func<int, Task> delayFunc,
-        BlobContainerClient bronzeClient, BlobContainerClient goldClient, IAmazonS3 awsClient,
+        BlobContainerClient bronzeClient, string goldPath, IAmazonS3 awsClient,
         CancellationToken ct)
     {
-        await AnnualProcess(year, delayFunc, sender, bronzeClient, goldClient, awsClient, ct);
-        await AdhocProcess(goldClient, ct);
+        await AnnualProcess(year, delayFunc, sender, bronzeClient, goldPath, awsClient, ct);
+        await AdhocProcess(goldPath, ct);
     }
 
-    private async Task AdhocProcess(BlobContainerClient goldClient, CancellationToken ct)
+    private async Task AdhocProcess(string goldPath, CancellationToken ct)
     {
         var missingPosters = await repo.SatelliteAwsProductListNoPoster(ct);
 
         foreach (var missingPoster in missingPosters)
-            await satelliteSource.MakeThumbnail(missingPoster, _finalSize, goldClient, ct);
+            await satelliteSource.MakeThumbnail(missingPoster, _finalSize, goldPath, ct);
     }
 
     public async Task AnnualProcess(int year, Func<int, Task> delayFunc, ServiceBusSender sender,
-        BlobContainerClient bronzeClient, BlobContainerClient goldClient, IAmazonS3 awsClient, CancellationToken ct)
+        BlobContainerClient bronzeClient, string goldPath, IAmazonS3 awsClient, CancellationToken ct)
     {
         var missingPosters = await repo.StormEventsDailySummaryListMissingPostersForYear(year, ct);
 
@@ -43,7 +43,7 @@ public class SatelliteMarqueeProcess(
 
             await satelliteProcess.DownloadSatelliteFile(year, satellite, delayFunc, sender, bronzeClient, awsClient, ct);
             await satelliteProcess.UpdateDailySummary(satellite, missingPoster, ct);
-            await satelliteProcess.CreateThumbnailAndUpdateDailySummary(satellite, missingPoster, _finalSize, goldClient, ct);
+            await satelliteProcess.CreateThumbnailAndUpdateDailySummary(satellite, missingPoster, _finalSize, goldPath, ct);
         }
     }
 }

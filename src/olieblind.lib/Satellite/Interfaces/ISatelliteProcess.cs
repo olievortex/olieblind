@@ -10,7 +10,7 @@ namespace olieblind.lib.Satellite.Interfaces;
 public interface ISatelliteProcess
 {
     Task CreateThumbnailAndUpdateDailySummary(SatelliteAwsProductEntity satellite, StormEventsDailySummaryEntity summary,
-        Point finalSize, BlobContainerClient goldClient, CancellationToken ct);
+        Point finalSize, string goldPath, CancellationToken ct);
 
     Task<SatelliteAwsProductEntity?> GetMarqueeSatelliteProduct(StormEventsDailySummaryEntity summary,
         CancellationToken ct);

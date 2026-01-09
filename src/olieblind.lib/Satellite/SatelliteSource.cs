@@ -1,5 +1,4 @@
 ﻿using Azure.Messaging.ServiceBus;
-using Azure.Storage.Blobs;
 using olieblind.data;
 using olieblind.data.Entities;
 using olieblind.data.Enums;
@@ -106,7 +105,7 @@ public class SatelliteSource(IMyRepository repo, IOlieWebService ows, IOlieImage
         return result;
     }
 
-    public async Task MakeThumbnail(SatelliteAwsProductEntity satellite, Point finalSize, BlobContainerClient goldClient, CancellationToken ct)
+    public async Task MakeThumbnail(SatelliteAwsProductEntity satellite, Point finalSize, string goldPath, CancellationToken ct)
     {
         var stopwatch = new Stopwatch();
         stopwatch.Start();
@@ -116,29 +115,20 @@ public class SatelliteSource(IMyRepository repo, IOlieWebService ows, IOlieImage
         if (satellite.Path1080 is null) throw new NullReferenceException($"Missing Path1080 for {satellite.Id}");
 
         // Download full sized image
-        var filename1080 = OlieCommon.CreateLocalTmpPath(".png");
-        await ows.BlobDownloadFile(goldClient, satellite.Path1080, filename1080, ct);
+        var filename1080 = $"{goldPath}/{satellite.Path1080}";
         var bytes = await ows.FileReadAllBytes(filename1080, ct);
 
         // Convert to poster image
-        var filenamePoster = OlieCommon.CreateLocalTmpPath(".png");
+        var filenamePoster = filename1080.Replace(".png", "_poster.png");
         var finalSizePoint = new System.Drawing.Point(finalSize.X, finalSize.Y);
         var resizedBytes = await ois.Resize(bytes, finalSizePoint, ct);
         await ows.FileWriteAllBytes(filenamePoster, resizedBytes, ct);
 
-        // Save to blob storage
-        var blobPoster = satellite.Path1080.Replace(".png", "_poster.png");
-        await ows.BlobUploadFile(goldClient, blobPoster, filenamePoster, ct);
-
         // Update CosmosDb
-        satellite.PathPoster = blobPoster;
+        satellite.PathPoster = satellite.Path1080.Replace(".png", "_poster.png");
         satellite.Timestamp = DateTime.UtcNow;
         satellite.TimeTakenPoster = (int)stopwatch.Elapsed.TotalSeconds;
         await repo.SatelliteAwsProductUpdate(satellite, ct);
-
-        // Cleanup
-        ows.FileDelete(filename1080);
-        ows.FileDelete(filenamePoster);
     }
 
     public async Task MessagePurple(SatelliteAwsProductEntity satellite, ServiceBusSender sender, CancellationToken ct)

@@ -23,7 +23,7 @@ public interface ISatelliteSource
 
     Task<SatelliteAwsProductEntity?> GetMarqueeSatelliteProduct(string effectiveDate, DateTime eventTime, CancellationToken ct);
 
-    Task MakeThumbnail(SatelliteAwsProductEntity satellite, Point finalSize, BlobContainerClient goldClient, CancellationToken ct);
+    Task MakeThumbnail(SatelliteAwsProductEntity satellite, Point finalSize, string goldPath, CancellationToken ct);
 
     Task MessagePurple(SatelliteAwsProductEntity satellite, ServiceBusSender sender, CancellationToken ct);
 }

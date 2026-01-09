@@ -7,6 +7,6 @@ namespace olieblind.lib.Processes.Interfaces;
 public interface ISatelliteMarqueeProcess
 {
     Task Run(int year, ServiceBusSender sender, Func<int, Task> delayFunc,
-        BlobContainerClient bronzeClient, BlobContainerClient goldClient, IAmazonS3 awsClient,
+        BlobContainerClient bronzeClient, string goldPath, IAmazonS3 awsClient,
         CancellationToken ct);
 }
