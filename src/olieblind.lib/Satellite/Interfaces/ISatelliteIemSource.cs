@@ -2,7 +2,7 @@ namespace olieblind.lib.Satellite.Interfaces;
 
 public interface ISatelliteIemSource
 {
-    Task<List<string>> IemListAsync(string url, CancellationToken ct);
+    Task<List<string>> IemList(string url, CancellationToken ct);
 
     int GetChannelFromKey(string value);
 

@@ -6,7 +6,7 @@ using olieblind.lib.Satellite.Models;
 
 namespace olieblind.lib.Satellite;
 
-public class SatelliteIemBusiness : ISatelliteIemBusiness
+public class SatelliteIemBusiness(ISatelliteSource source, ISatelliteIemSource iemSource) : ISatelliteIemBusiness
 {
     //public async Task DownloadAsync(SatelliteAwsProductEntity product, Func<int, Task> delayFunc,
     //BlobContainerClient blobClient, CancellationToken ct)
@@ -46,43 +46,39 @@ public class SatelliteIemBusiness : ISatelliteIemBusiness
     //    await cosmos.SatelliteAwsProductUpdateAsync(product, ct);
     //}
 
-    //public async Task<AwsKeysModel?> ListKeysAsync(string dayValue, int channel, DayPartsEnum dayPart,
-    //    CancellationToken ct)
-    //{
-    //    const string bucket = "IEM";
-
-    //    var keys = new List<string>();
-
-    //    var effectiveDate = source.GetEffectiveDate(dayValue);
-    //    if (effectiveDate < new DateTime(2010, 1, 1)) return null;
-
-    //    var start = source.GetEffectiveStart(effectiveDate, dayPart);
-    //    var stop = source.GetEffectiveStop(effectiveDate, dayPart);
-    //    start = start.AddMinutes(-start.Minute);
-    //    stop = stop.AddMinutes(-stop.Minute).AddHours(1);
-
-    //    var url = iemSource.GetPrefix(effectiveDate);
-    //    var listFiles = await iemSource.IemListAsync(url, ct);
-
-    //    keys.AddRange(listFiles
-    //        .Where(item =>
-    //            channel == iemSource.GetChannelFromKey(item) &&
-    //            iemSource.GetScanTimeFromKey(effectiveDate, item) >= start &&
-    //            iemSource.GetScanTimeFromKey(effectiveDate, item) < stop));
-
-    //    return new AwsKeysModel
-    //    {
-    //        Bucket = bucket,
-    //        Keys = keys.OrderBy(o => o).ToArray(),
-    //        GetScanTimeFunc = v => iemSource.GetScanTimeFromKey(effectiveDate, v)
-    //    };
-    //}
-    public Task DownloadAsync(SatelliteAwsProductEntity product, Func<int, Task> delayFunc, BlobContainerClient blobClient, CancellationToken ct)
+    public async Task<AwsKeysModel?> ListKeys(string dayValue, int channel, DayPartsEnum dayPart,
+        CancellationToken ct)
     {
-        throw new NotImplementedException();
+        const string bucket = "IEM";
+
+        var keys = new List<string>();
+
+        var effectiveDate = source.GetEffectiveDate(dayValue);
+        if (effectiveDate < new DateTime(2010, 1, 1)) return null;
+
+        var start = source.GetEffectiveStart(effectiveDate, dayPart);
+        var stop = source.GetEffectiveStop(effectiveDate, dayPart);
+        start = start.AddMinutes(-start.Minute);
+        stop = stop.AddMinutes(-stop.Minute).AddHours(1);
+
+        var url = iemSource.GetPrefix(effectiveDate);
+        var listFiles = await iemSource.IemList(url, ct);
+
+        keys.AddRange(listFiles
+            .Where(item =>
+                channel == iemSource.GetChannelFromKey(item) &&
+                iemSource.GetScanTimeFromKey(effectiveDate, item) >= start &&
+                iemSource.GetScanTimeFromKey(effectiveDate, item) < stop));
+
+        return new AwsKeysModel
+        {
+            Bucket = bucket,
+            Keys = [.. keys.OrderBy(o => o)],
+            GetScanTimeFunc = v => iemSource.GetScanTimeFromKey(effectiveDate, v)
+        };
     }
 
-    public Task<AwsKeysModel?> ListKeysAsync(string dayValue, int channel, DayPartsEnum dayPart, CancellationToken ct)
+    public Task Download(SatelliteAwsProductEntity product, Func<int, Task> delayFunc, BlobContainerClient blobClient, CancellationToken ct)
     {
         throw new NotImplementedException();
     }

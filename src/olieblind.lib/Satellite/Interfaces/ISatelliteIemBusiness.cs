@@ -7,8 +7,8 @@ namespace olieblind.lib.Satellite.Interfaces;
 
 public interface ISatelliteIemBusiness
 {
-    Task DownloadAsync(SatelliteAwsProductEntity product, Func<int, Task> delayFunc,
+    Task Download(SatelliteAwsProductEntity product, Func<int, Task> delayFunc,
         BlobContainerClient blobClient, CancellationToken ct);
 
-    Task<AwsKeysModel?> ListKeysAsync(string dayValue, int channel, DayPartsEnum dayPart, CancellationToken ct);
+    Task<AwsKeysModel?> ListKeys(string dayValue, int channel, DayPartsEnum dayPart, CancellationToken ct);
 }

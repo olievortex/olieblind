@@ -79,7 +79,7 @@ public class SatelliteAwsBusiness(ISatelliteSource source, ISatelliteAwsSource a
         };
     }
 
-    public Task DownloadAsync(SatelliteAwsProductEntity product, Func<int, Task> delayFunc, BlobContainerClient blobClient, IAmazonS3 awsClient, CancellationToken ct)
+    public Task Download(SatelliteAwsProductEntity product, Func<int, Task> delayFunc, BlobContainerClient blobClient, IAmazonS3 awsClient, CancellationToken ct)
     {
         throw new NotImplementedException();
     }

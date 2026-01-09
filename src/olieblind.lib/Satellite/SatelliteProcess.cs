@@ -63,7 +63,7 @@ public class SatelliteProcess(ISatelliteAwsBusiness awsBusiness, ISatelliteIemBu
         DayPartsEnum dayPart, IAmazonS3 client, CancellationToken ct)
     {
         var result = year < Goes16
-            ? await iemBusiness.ListKeysAsync(missingDay, channel, dayPart, ct)
+            ? await iemBusiness.ListKeys(missingDay, channel, dayPart, ct)
             : await awsBusiness.ListKeys(missingDay, satellite, channel, dayPart, client, ct);
         if (result is null || result.Keys.Length == 0) return;
 

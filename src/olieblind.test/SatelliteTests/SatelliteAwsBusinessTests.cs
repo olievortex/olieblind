@@ -1,6 +1,4 @@
-using Amazon.S3;
 using Moq;
-using olieblind.data;
 using olieblind.data.Enums;
 using olieblind.lib.Satellite;
 using olieblind.lib.Satellite.Interfaces;
@@ -80,6 +78,13 @@ public class SatelliteAwsBusinessTests
     //{
     //    return Task.CompletedTask;
     //}
+
+    [Test]
+    public void Download_NotImplemented()
+    {
+        var testable = new SatelliteAwsBusiness(null!, null!, null!);
+        Assert.Throws<NotImplementedException>(() => testable.Download(null!, null!, null!, null!, CancellationToken.None));
+    }
 
     //#endregion
 
