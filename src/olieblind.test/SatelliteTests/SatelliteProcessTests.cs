@@ -1,8 +1,10 @@
 ﻿using Moq;
+using olieblind.data.Entities;
 using olieblind.data.Enums;
 using olieblind.lib.Satellite;
 using olieblind.lib.Satellite.Interfaces;
 using olieblind.lib.Satellite.Models;
+using olieblind.lib.StormEvents.Interfaces;
 
 namespace olieblind.test.SatelliteTests;
 
@@ -58,74 +60,68 @@ public class SatelliteProcessTests
 
     //#endregion
 
-    //#region GetSatelliteProductIncomplete
+    #region GetMarqueeSatelliteProduct
 
-    //[Test]
-    //public async Task GetSatelliteProductIncompleteAsync_Null_NoHeadlineEvent()
-    //{
-    //    // Arrange
-    //    var awsBusiness = new Mock<ISatelliteAwsBusiness>();
-    //    var summaryBusiness = new Mock<IDailySummaryBusiness>();
-    //    var testable = new SatelliteProcess(null!, awsBusiness.Object, null!, summaryBusiness.Object);
-    //    var ct = CancellationToken.None;
-    //    var summary = new StormEventsDailySummaryEntity();
+    [Test]
+    public async Task GetMarqueeSatelliteProduct_Null_NoHeadlineEvent()
+    {
+        // Arrange
+        var testable = new SatelliteProcess(null!, null!, null!);
+        var ct = CancellationToken.None;
+        var summary = new StormEventsDailySummaryEntity();
 
-    //    // Act
-    //    var result = await testable.GetSatelliteProductIncompleteAsync(summary, ct);
+        // Act
+        var result = await testable.GetMarqueeSatelliteProduct(summary, ct);
 
-    //    // Assert
-    //    Assert.That(result, Is.Null);
-    //}
+        // Assert
+        Assert.That(result, Is.Null);
+    }
 
-    //[Test]
-    //public async Task GetSatelliteProductIncompleteAsync_Null_IsComplete()
-    //{
-    //    // Arrange
-    //    var awsBusiness = new Mock<ISatelliteAwsBusiness>();
-    //    var summaryBusiness = new Mock<IDailySummaryBusiness>();
-    //    var testable = new SatelliteProcess(null!, awsBusiness.Object, null!, summaryBusiness.Object);
-    //    var ct = CancellationToken.None;
-    //    var summary = new StormEventsDailySummaryEntity
-    //    {
-    //        HeadlineEventTime = new DateTime(2021, 7, 18),
-    //        SatellitePathPoster = "a",
-    //        SatellitePath1080 = "b"
-    //    };
+    [Test]
+    public async Task GetMarqueeSatelliteProduct_Null_IsComplete()
+    {
+        // Arrange
+        var testable = new SatelliteProcess(null!, null!, null!);
+        var ct = CancellationToken.None;
+        var summary = new StormEventsDailySummaryEntity
+        {
+            HeadlineEventTime = new DateTime(2021, 7, 18),
+            SatellitePathPoster = "a",
+            SatellitePath1080 = "b"
+        };
 
-    //    // Act
-    //    var result = await testable.GetSatelliteProductIncompleteAsync(summary, ct);
+        // Act
+        var result = await testable.GetMarqueeSatelliteProduct(summary, ct);
 
-    //    // Assert
-    //    Assert.That(result, Is.Null);
-    //}
+        // Assert
+        Assert.That(result, Is.Null);
+    }
 
-    //[Test]
-    //public async Task GetSatelliteProductIncompleteAsync_CompletesAllSteps_ValidParameters()
-    //{
-    //    // Arrange
-    //    var awsBusiness = new Mock<ISatelliteAwsBusiness>();
-    //    var summaryBusiness = new Mock<IDailySummaryBusiness>();
-    //    var source = new Mock<ISatelliteSource>();
-    //    var testable = new SatelliteProcess(source.Object, awsBusiness.Object, null!, summaryBusiness.Object);
-    //    var ct = CancellationToken.None;
-    //    var time = new DateTime(2021, 7, 18, 18, 0, 0);
-    //    var summary = new StormEventsDailySummaryEntity
-    //    {
-    //        Id = "2021-07-18",
-    //        HeadlineEventTime = time
-    //    };
-    //    var expected = new SatelliteAwsProductEntity();
-    //    source.Setup(s => s.GetProductPosterAsync("2021-07-18", time, ct))
-    //        .ReturnsAsync(expected);
+    [Test]
+    public async Task GetMarqueeSatelliteProduct_CompletesAllSteps_ValidParameters()
+    {
+        // Arrange
+        var source = new Mock<ISatelliteSource>();
+        var testable = new SatelliteProcess(null!, null!, source.Object);
+        var ct = CancellationToken.None;
+        var time = new DateTime(2021, 7, 18, 18, 0, 0);
+        var summary = new StormEventsDailySummaryEntity
+        {
+            Id = "2021-07-18",
+            HeadlineEventTime = time
+        };
+        var expected = new SatelliteAwsProductEntity();
+        source.Setup(s => s.GetMarqueeSatelliteProduct("2021-07-18", time, ct))
+            .ReturnsAsync(expected);
 
-    //    // Act
-    //    var result = await testable.GetSatelliteProductIncompleteAsync(summary, ct);
+        // Act
+        var result = await testable.GetMarqueeSatelliteProduct(summary, ct);
 
-    //    // Assert
-    //    Assert.That(result, Is.EqualTo(expected));
-    //}
+        // Assert
+        Assert.That(result, Is.EqualTo(expected));
+    }
 
-    //#endregion
+    #endregion
 
     #region ProcessMissingDay
 

@@ -26,22 +26,12 @@ public class SatelliteSource(IMyRepository repo) : ISatelliteSource
         throw new NotImplementedException();
     }
 
-    public Task<SatelliteAwsProductEntity?> GetProductPosterAsync(string effectiveDate, DateTime eventTime, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task MakePosterAsync(SatelliteAwsProductEntity satellite, Point finalSize, BlobContainerClient goldClient, CancellationToken ct)
+    public Task MakePoster(SatelliteAwsProductEntity satellite, Point finalSize, BlobContainerClient goldClient, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
 
     public Task<bool> MessagePurpleAsync(SatelliteAwsProductEntity satellite, ServiceBusSender sender, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task Start1080ContainersAsync(DefaultAzureCredential credential, int instanceLimit, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
@@ -132,15 +122,14 @@ public class SatelliteSource(IMyRepository repo) : ISatelliteSource
     //    return path;
     //}
 
-    //public async Task<SatelliteAwsProductEntity?> GetProductPosterAsync(string effectiveDate, DateTime eventTime,
-    //    CancellationToken ct)
-    //{
-    //    var result =
-    //        await cosmos.SatelliteAwsProductGetPosterAsync(effectiveDate, eventTime, ct) ??
-    //        await cosmos.SatelliteAwsProductGetLastPosterAsync(effectiveDate, ct);
+    public async Task<SatelliteAwsProductEntity?> GetMarqueeSatelliteProduct(string effectiveDate, DateTime eventTime, CancellationToken ct)
+    {
+        var result =
+            await repo.SatelliteAwsProductGetPoster(effectiveDate, eventTime, ct) ??
+            await repo.SatelliteAwsProductGetLastPoster(effectiveDate, ct);
 
-    //    return result;
-    //}
+        return result;
+    }
 
     //public async Task<List<SatelliteAwsProductEntity>> GetProductListAsync(string effectiveDate, string bucketName,
     //    int channel, CancellationToken ct)
@@ -195,19 +184,5 @@ public class SatelliteSource(IMyRepository repo) : ISatelliteSource
 
     //    await ows.ServiceBusSendJsonAsync(sender, satellite, ct);
     //    return true;
-    //}
-
-    //public async Task Start1080ContainersAsync(DefaultAzureCredential credential, int instanceLimit,
-    //    CancellationToken ct)
-    //{
-    //    var startInfo = new ContainerStartInfo
-    //    {
-    //        Credential = credential,
-    //        ContainerGroupNameStart = "olievortex-purple-",
-    //        ResourceGroupName = "rg-container",
-    //        SubscriptionId = "/subscriptions/bfc1fbca-c3f0-48a2-9263-9ebb68c8ed96"
-    //    };
-
-    //    await ows.StartContainerGroupsAsync(startInfo, instanceLimit, ct);
     //}
 }

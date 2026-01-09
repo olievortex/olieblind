@@ -304,31 +304,29 @@ public class SatelliteSourceTests
 
     //#endregion
 
-    //#region GetProductPoster
+    #region GetMarqueeSatelliteProduct
 
-    //[Test]
-    //public async Task GetProductPosterAsync_CompletesAllSteps_ValidParameters()
-    //{
-    //    // Arrange
-    //    var ows = new Mock<IOlieWebServices>();
-    //    var ois = new Mock<IOlieImageServices>();
-    //    var cosmos = new Mock<ICosmosRepository>();
-    //    var testable = new SatelliteSource(ows.Object, cosmos.Object, ois.Object);
-    //    var ct = CancellationToken.None;
-    //    const string effectiveDate = "2021-05-18";
-    //    var eventTime = new DateTime(2021, 5, 18, 18, 0, 0);
-    //    var expected = new SatelliteAwsProductEntity();
-    //    cosmos.Setup(s => s.SatelliteAwsProductGetPosterAsync(effectiveDate, eventTime, ct))
-    //        .ReturnsAsync(expected);
+    [Test]
+    public async Task GetMarqueeSatelliteProduct_CompletesAllSteps_ValidParameters()
+    {
+        // Arrange
+        var repo = new Mock<IMyRepository>();
+        var testable = new SatelliteSource(repo.Object);
+        var ct = CancellationToken.None;
+        const string effectiveDate = "2021-05-18";
+        var eventTime = new DateTime(2021, 5, 18, 18, 0, 0);
+        var expected = new SatelliteAwsProductEntity();
+        repo.Setup(s => s.SatelliteAwsProductGetPoster(effectiveDate, eventTime, ct))
+            .ReturnsAsync(expected);
 
-    //    // Act
-    //    var result = await testable.GetProductPosterAsync(effectiveDate, eventTime, ct);
+        // Act
+        var result = await testable.GetMarqueeSatelliteProduct(effectiveDate, eventTime, ct);
 
-    //    // Assert
-    //    Assert.That(result, Is.EqualTo(expected));
-    //}
+        // Assert
+        Assert.That(result, Is.EqualTo(expected));
+    }
 
-    //#endregion
+    #endregion
 
     //#region MakePoster
 

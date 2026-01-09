@@ -211,36 +211,6 @@ public class DailySummaryBusinessTests
 
     #endregion
 
-    #region GetMissingPostersByYear
-
-    [Test]
-    public async Task GetMissingPostersByYear_NotImplemented()
-    {
-        var testable = new DailySummaryBusiness(null!);
-        Assert.Throws<NotImplementedException>(() => testable.GetMissingPostersByYear(1991, CancellationToken.None));
-    }
-
-    //[Test]
-    //public async Task GetMissingPostersByYearAsync_CompletesAllSteps_ValidParameters()
-    //{
-    //    // Arrange
-    //    var cosmos = new Mock<ICosmosRepository>();
-    //    var testable = new DailySummaryBusiness(cosmos.Object);
-    //    var expected = new List<StormEventsDailySummaryEntity>();
-    //    const int year = 2021;
-    //    var ct = CancellationToken.None;
-    //    cosmos.Setup(s => s.StormEventsDailySummaryListMissingPostersForYear(year, ct))
-    //        .ReturnsAsync(expected);
-
-    //    // Act
-    //    var result = await testable.GetMissingPostersByYearAsync(year, ct);
-
-    //    // Assert
-    //    Assert.That(result, Is.EqualTo(expected));
-    //}
-
-    #endregion
-
     #region GetSevereByYear
 
     [Test]

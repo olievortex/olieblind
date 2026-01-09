@@ -80,24 +80,9 @@ public interface IMyRepository
     //        .SingleAsync(ct);
     //}
 
-    //public async Task<SatelliteAwsProductEntity?> SatelliteAwsProductGetLastPosterAsync(string effectiveDate,
-    //    CancellationToken ct)
-    //{
-    //    return await context.SatelliteAwsProduct
-    //        .Where(w => w.EffectiveDate == effectiveDate)
-    //        .OrderByDescending(o => o.ScanTime)
-    //        .FirstOrDefaultAsync(ct);
-    //}
+    Task<SatelliteAwsProductEntity?> SatelliteAwsProductGetLastPoster(string effectiveDate, CancellationToken ct);
 
-    //public async Task<SatelliteAwsProductEntity?> SatelliteAwsProductGetPosterAsync(string effectiveDate,
-    //    DateTime eventTime, CancellationToken ct)
-    //{
-    //    return await context.SatelliteAwsProduct
-    //        .Where(w => w.EffectiveDate == effectiveDate &&
-    //                    w.ScanTime >= eventTime)
-    //        .OrderBy(o => o.ScanTime)
-    //        .FirstOrDefaultAsync(ct);
-    //}
+    Task<SatelliteAwsProductEntity?> SatelliteAwsProductGetPoster(string effectiveDate, DateTime eventTime, CancellationToken ct);
 
     //public async Task<List<SatelliteAwsProductEntity>> SatelliteAwsProductListAsync(string effectiveDate,
     //    string bucketName, int channel, CancellationToken ct)
@@ -155,19 +140,7 @@ public interface IMyRepository
 
     Task StormEventsDailySummaryCreate(StormEventsDailySummaryEntity entity, CancellationToken ct);
 
-    //public async Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryListMissingPostersForYear(int year,
-    //    CancellationToken ct)
-    //{
-    //    return await context.StormEventsDailySummary
-    //        .Where(w =>
-    //            w.Year == year &&
-    //            w.HeadlineEventTime != null &&
-    //            // ReSharper disable once EntityFramework.UnsupportedServerSideFunctionCall
-    //            (EF.Functions.CoalesceUndefined(w.SatellitePath1080, null) == null ||
-    //             // ReSharper disable once EntityFramework.UnsupportedServerSideFunctionCall
-    //             EF.Functions.CoalesceUndefined(w.SatellitePathPoster, null) == null))
-    //        .ToListAsync(ct);
-    //}
+    Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryListMissingPostersForYear(int year, CancellationToken ct);
 
     Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryListByYear(int year, CancellationToken ct);
 

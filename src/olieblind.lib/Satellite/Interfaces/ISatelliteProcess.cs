@@ -9,18 +9,18 @@ namespace olieblind.lib.Satellite.Interfaces;
 
 public interface ISatelliteProcess
 {
-    Task CreatePosterAsync(SatelliteAwsProductEntity satellite, StormEventsDailySummaryEntity summary,
+    Task CreatePoster(SatelliteAwsProductEntity satellite, StormEventsDailySummaryEntity summary,
         Point finalSize, BlobContainerClient goldClient, CancellationToken ct);
 
-    Task<SatelliteAwsProductEntity?> GetSatelliteProductIncompleteAsync(StormEventsDailySummaryEntity summary,
+    Task<SatelliteAwsProductEntity?> GetMarqueeSatelliteProduct(StormEventsDailySummaryEntity summary,
         CancellationToken ct);
 
     Task ProcessMissingDay(int year, string missingDay, int satellite, int channel,
         DayPartsEnum dayPart, IAmazonS3 client, CancellationToken ct);
 
-    Task<bool> Source1080Async(int year, SatelliteAwsProductEntity satellite, Func<int, Task> delayFunc,
+    Task Source1080(int year, SatelliteAwsProductEntity satellite, Func<int, Task> delayFunc,
         ServiceBusSender sender, BlobContainerClient blobClient, IAmazonS3 awsClient, CancellationToken ct);
 
-    Task Update1080Async(SatelliteAwsProductEntity satellite, StormEventsDailySummaryEntity summary,
+    Task Update1080(SatelliteAwsProductEntity satellite, StormEventsDailySummaryEntity summary,
         CancellationToken ct);
 }

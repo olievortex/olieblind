@@ -11,22 +11,17 @@ namespace olieblind.lib.Satellite;
 public class SatelliteProcess(ISatelliteAwsBusiness awsBusiness, ISatelliteIemBusiness iemBusiness,
     ISatelliteSource source) : ISatelliteProcess
 {
-    public Task CreatePosterAsync(SatelliteAwsProductEntity satellite, StormEventsDailySummaryEntity summary, Point finalSize, BlobContainerClient goldClient, CancellationToken ct)
+    public Task CreatePoster(SatelliteAwsProductEntity satellite, StormEventsDailySummaryEntity summary, Point finalSize, BlobContainerClient goldClient, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
 
-    public Task<SatelliteAwsProductEntity?> GetSatelliteProductIncompleteAsync(StormEventsDailySummaryEntity summary, CancellationToken ct)
+    public Task Source1080(int year, SatelliteAwsProductEntity satellite, Func<int, Task> delayFunc, ServiceBusSender sender, BlobContainerClient blobClient, IAmazonS3 awsClient, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> Source1080Async(int year, SatelliteAwsProductEntity satellite, Func<int, Task> delayFunc, ServiceBusSender sender, BlobContainerClient blobClient, IAmazonS3 awsClient, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task Update1080Async(SatelliteAwsProductEntity satellite, StormEventsDailySummaryEntity summary, CancellationToken ct)
+    public Task Update1080(SatelliteAwsProductEntity satellite, StormEventsDailySummaryEntity summary, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
@@ -47,17 +42,15 @@ public class SatelliteProcess(ISatelliteAwsBusiness awsBusiness, ISatelliteIemBu
     //    }
     //}
 
-    //public async Task<SatelliteAwsProductEntity?> GetSatelliteProductIncompleteAsync(
-    //    StormEventsDailySummaryEntity summary, CancellationToken ct)
-    //{
-    //    if (summary.HeadlineEventTime is null) return null;
-    //    if (summary.SatellitePathPoster is not null && summary.SatellitePath1080 is not null) return null;
+    public async Task<SatelliteAwsProductEntity?> GetMarqueeSatelliteProduct(StormEventsDailySummaryEntity summary, CancellationToken ct)
+    {
+        if (summary.HeadlineEventTime is null) return null;
+        if (summary.SatellitePathPoster is not null && summary.SatellitePath1080 is not null) return null;
 
-    //    var satellite = await source.GetProductPosterAsync(summary.Id, summary.HeadlineEventTime.Value,
-    //        ct);
+        var satellite = await source.GetMarqueeSatelliteProduct(summary.Id, summary.HeadlineEventTime.Value, ct);
 
-    //    return satellite;
-    //}
+        return satellite;
+    }
 
     public async Task ProcessMissingDay(int year, string missingDay, int satellite, int channel,
         DayPartsEnum dayPart, IAmazonS3 client, CancellationToken ct)

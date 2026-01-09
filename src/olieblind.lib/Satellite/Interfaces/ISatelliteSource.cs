@@ -23,18 +23,15 @@ public interface ISatelliteSource
 
     string GetPath(DateTime effectiveDate, string metal);
 
-    Task<SatelliteAwsProductEntity?> GetProductPosterAsync(string effectiveDate, DateTime eventTime,
-        CancellationToken ct);
+    Task<SatelliteAwsProductEntity?> GetMarqueeSatelliteProduct(string effectiveDate, DateTime eventTime, CancellationToken ct);
 
     Task<List<SatelliteAwsProductEntity>> GetProductListAsync(string effectiveDate, string bucketName,
         int channel, CancellationToken ct);
 
     Task<List<SatelliteAwsProductEntity>> GetProductListNoPosterAsync(CancellationToken ct);
 
-    Task MakePosterAsync(SatelliteAwsProductEntity satellite, Point finalSize, BlobContainerClient goldClient,
+    Task MakePoster(SatelliteAwsProductEntity satellite, Point finalSize, BlobContainerClient goldClient,
         CancellationToken ct);
 
     Task<bool> MessagePurpleAsync(SatelliteAwsProductEntity satellite, ServiceBusSender sender, CancellationToken ct);
-
-    Task Start1080ContainersAsync(DefaultAzureCredential credential, int instanceLimit, CancellationToken ct);
 }

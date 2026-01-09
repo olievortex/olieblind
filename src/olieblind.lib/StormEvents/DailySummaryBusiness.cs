@@ -77,20 +77,10 @@ public class DailySummaryBusiness(IMyRepository repo) : IDailySummaryBusiness
         return $"{prefix}{model.Effective:u}";
     }
 
-    public Task<List<StormEventsDailySummaryEntity>> GetMissingPostersByYear(int year, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
-
     public Task UpdateCosmos(StormEventsDailySummaryEntity stormSummary, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
-
-    //public async Task<List<StormEventsDailySummaryEntity>> GetMissingPostersByYearAsync(int year, CancellationToken ct)
-    //{
-    //    return await cosmos.StormEventsDailySummaryListMissingPostersForYear(year, ct);
-    //}
 
     public async Task<List<StormEventsDailySummaryEntity>> GetSevereByYear(int year, CancellationToken ct)
     {
