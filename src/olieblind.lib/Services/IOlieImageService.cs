@@ -10,4 +10,6 @@ public interface IOlieImageService
 
     Task CreateMp4FromImagesAndAudio(List<string> imagesIn, double imageDuration, string audioIn,
         string mp4Out, string ffmpegPath, string ffmpegCodec, CancellationToken ct);
+
+    Task<string> SafeConvert(byte[] sourceImage, string fallbackPath, string extension, CancellationToken ct);
 }

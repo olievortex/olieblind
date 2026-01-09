@@ -47,6 +47,8 @@ public interface IOlieWebService
 
     Task BlobUploadFile(BlobContainerClient client, string fileName, string localFileName, CancellationToken ct);
 
+    Task BlobUploadText(BlobContainerClient client, string blobName, string text, CancellationToken ct);
+
     #endregion
 
     #region File

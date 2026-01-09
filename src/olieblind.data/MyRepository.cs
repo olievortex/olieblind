@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using olieblind.data.Entities;
+using olieblind.data.Enums;
 using System.Diagnostics.CodeAnalysis;
 
 namespace olieblind.data;
@@ -154,6 +155,93 @@ public class MyRepository(MyContext context) : IMyRepository
 
     #endregion
 
+    #region SatelliteAwsInventory
+
+    public async Task SatelliteAwsInventoryCreate(SatelliteAwsInventoryEntity entity, CancellationToken ct)
+    {
+        await context.SatelliteAwsInventories.AddAsync(entity, ct);
+        await context.SaveChangesAsync(ct);
+    }
+
+    public async Task<List<SatelliteAwsInventoryEntity>> SatelliteAwsInventoryListByYear(int year, int channel,
+        DayPartsEnum dayPart, CancellationToken ct)
+    {
+        return await context.SatelliteAwsInventories
+            .Where(w =>
+                w.EffectiveDate.StartsWith($"{year}-") &&
+                w.Channel == channel &&
+                w.DayPart == dayPart)
+            .ToListAsync(ct);
+    }
+
+    #endregion
+
+    #region SatelliteAwsProduct
+
+    public async Task SatelliteAwsProductCreate(List<SatelliteAwsProductEntity> entity, CancellationToken ct)
+    {
+        context.SatelliteAwsProducts.AddRange(entity);
+        await context.SaveChangesAsync(ct);
+    }
+
+    //public async Task<SatelliteAwsProductEntity> SatelliteAwsProductGetAsync(string id, string effectiveDate,
+    //    CancellationToken ct)
+    //{
+    //    return await context.SatelliteAwsProduct
+    //        .Where(w => w.Id == id &&
+    //                    w.EffectiveDate == effectiveDate)
+    //        .SingleAsync(ct);
+    //}
+
+    //public async Task<SatelliteAwsProductEntity?> SatelliteAwsProductGetLastPosterAsync(string effectiveDate,
+    //    CancellationToken ct)
+    //{
+    //    return await context.SatelliteAwsProduct
+    //        .Where(w => w.EffectiveDate == effectiveDate)
+    //        .OrderByDescending(o => o.ScanTime)
+    //        .FirstOrDefaultAsync(ct);
+    //}
+
+    //public async Task<SatelliteAwsProductEntity?> SatelliteAwsProductGetPosterAsync(string effectiveDate,
+    //    DateTime eventTime, CancellationToken ct)
+    //{
+    //    return await context.SatelliteAwsProduct
+    //        .Where(w => w.EffectiveDate == effectiveDate &&
+    //                    w.ScanTime >= eventTime)
+    //        .OrderBy(o => o.ScanTime)
+    //        .FirstOrDefaultAsync(ct);
+    //}
+
+    //public async Task<List<SatelliteAwsProductEntity>> SatelliteAwsProductListAsync(string effectiveDate,
+    //    string bucketName, int channel, CancellationToken ct)
+    //{
+    //    return await context.SatelliteAwsProduct
+    //        .Where(w =>
+    //            w.EffectiveDate == effectiveDate &&
+    //            w.BucketName == bucketName &&
+    //            w.Channel == channel)
+    //        .OrderBy(o => o.ScanTime)
+    //        .ToListAsync(ct);
+    //}
+
+    //public async Task<List<SatelliteAwsProductEntity>> SatelliteAwsProductListNoPosterAsync(CancellationToken ct)
+    //{
+    //    return await context.SatelliteAwsProduct
+    //        .Where(w =>
+    //            w.Path1080 != null &&
+    //            w.PathPoster == null)
+    //        .OrderBy(o => o.ScanTime)
+    //        .ToListAsync(ct);
+    //}
+
+    //public async Task SatelliteAwsProductUpdateAsync(SatelliteAwsProductEntity entity, CancellationToken ct)
+    //{
+    //    context.SatelliteAwsProduct.Update(entity);
+    //    await context.SaveChangesAsync(ct);
+    //}
+
+    #endregion
+
     #region SpcMesoProduct
 
     public async Task SpcMesoProductCreate(SpcMesoProductEntity entity, CancellationToken ct)
@@ -167,7 +255,7 @@ public class MyRepository(MyContext context) : IMyRepository
         return await context.SpcMesoProducts
             .AsNoTracking()
             .Where(w =>
-                w.EffectiveDate.StartsWith($"{year}-") &&
+                w.EffectiveTime.Year == year &&
                 w.Id == index)
             .SingleOrDefaultAsync(ct);
     }
@@ -176,7 +264,7 @@ public class MyRepository(MyContext context) : IMyRepository
     {
         return await context.SpcMesoProducts
             .AsNoTracking()
-            .Where(w => w.EffectiveDate.StartsWith($"{year}-"))
+            .Where(w => w.EffectiveTime.Year == year)
             .OrderByDescending(o => o.Id)
             .FirstOrDefaultAsync(ct);
     }
@@ -245,14 +333,12 @@ public class MyRepository(MyContext context) : IMyRepository
     //        .ToListAsync(ct);
     //}
 
-    //public async Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryListSevereForYear(int year,
-    //    CancellationToken ct)
-    //{
-    //    return await context.StormEventsDailySummary
-    //        .Where(w =>
-    //            w.Year == year)
-    //        .ToListAsync(ct);
-    //}
+    public async Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryListByYear(int year, CancellationToken ct)
+    {
+        return await context.StormEventsDailySummaries
+            .Where(w => w.Year == year)
+            .ToListAsync(ct);
+    }
 
     public async Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryGet(string effectiveDate, int year, CancellationToken ct)
     {

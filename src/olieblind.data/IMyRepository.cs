@@ -1,4 +1,5 @@
 ﻿using olieblind.data.Entities;
+using olieblind.data.Enums;
 
 namespace olieblind.data;
 
@@ -58,6 +59,76 @@ public interface IMyRepository
 
     #endregion
 
+    #region SatelliteAwsInventory
+
+    Task SatelliteAwsInventoryCreate(SatelliteAwsInventoryEntity entity, CancellationToken ct);
+
+    Task<List<SatelliteAwsInventoryEntity>> SatelliteAwsInventoryListByYear(int year, int channel, DayPartsEnum dayPart, CancellationToken ct);
+
+    #endregion
+
+    #region SatelliteAwsProduct
+
+    Task SatelliteAwsProductCreate(List<SatelliteAwsProductEntity> entity, CancellationToken ct);
+
+    //public async Task<SatelliteAwsProductEntity> SatelliteAwsProductGetAsync(string id, string effectiveDate,
+    //    CancellationToken ct)
+    //{
+    //    return await context.SatelliteAwsProduct
+    //        .Where(w => w.Id == id &&
+    //                    w.EffectiveDate == effectiveDate)
+    //        .SingleAsync(ct);
+    //}
+
+    //public async Task<SatelliteAwsProductEntity?> SatelliteAwsProductGetLastPosterAsync(string effectiveDate,
+    //    CancellationToken ct)
+    //{
+    //    return await context.SatelliteAwsProduct
+    //        .Where(w => w.EffectiveDate == effectiveDate)
+    //        .OrderByDescending(o => o.ScanTime)
+    //        .FirstOrDefaultAsync(ct);
+    //}
+
+    //public async Task<SatelliteAwsProductEntity?> SatelliteAwsProductGetPosterAsync(string effectiveDate,
+    //    DateTime eventTime, CancellationToken ct)
+    //{
+    //    return await context.SatelliteAwsProduct
+    //        .Where(w => w.EffectiveDate == effectiveDate &&
+    //                    w.ScanTime >= eventTime)
+    //        .OrderBy(o => o.ScanTime)
+    //        .FirstOrDefaultAsync(ct);
+    //}
+
+    //public async Task<List<SatelliteAwsProductEntity>> SatelliteAwsProductListAsync(string effectiveDate,
+    //    string bucketName, int channel, CancellationToken ct)
+    //{
+    //    return await context.SatelliteAwsProduct
+    //        .Where(w =>
+    //            w.EffectiveDate == effectiveDate &&
+    //            w.BucketName == bucketName &&
+    //            w.Channel == channel)
+    //        .OrderBy(o => o.ScanTime)
+    //        .ToListAsync(ct);
+    //}
+
+    //public async Task<List<SatelliteAwsProductEntity>> SatelliteAwsProductListNoPosterAsync(CancellationToken ct)
+    //{
+    //    return await context.SatelliteAwsProduct
+    //        .Where(w =>
+    //            w.Path1080 != null &&
+    //            w.PathPoster == null)
+    //        .OrderBy(o => o.ScanTime)
+    //        .ToListAsync(ct);
+    //}
+
+    //public async Task SatelliteAwsProductUpdateAsync(SatelliteAwsProductEntity entity, CancellationToken ct)
+    //{
+    //    context.SatelliteAwsProduct.Update(entity);
+    //    await context.SaveChangesAsync(ct);
+    //}
+
+    #endregion
+
     #region SpcMesoProduct
 
     Task SpcMesoProductCreate(SpcMesoProductEntity entity, CancellationToken ct);
@@ -98,14 +169,7 @@ public interface IMyRepository
     //        .ToListAsync(ct);
     //}
 
-    //public async Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryListSevereForYear(int year,
-    //    CancellationToken ct)
-    //{
-    //    return await context.StormEventsDailySummary
-    //        .Where(w =>
-    //            w.Year == year)
-    //        .ToListAsync(ct);
-    //}
+    Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryListByYear(int year, CancellationToken ct);
 
     Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryGet(string effectiveDate, int year, CancellationToken ct);
 

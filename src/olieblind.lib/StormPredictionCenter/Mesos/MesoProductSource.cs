@@ -1,3 +1,4 @@
+using Azure.Storage.Blobs;
 using olieblind.data;
 using olieblind.data.Entities;
 using olieblind.lib.Services;
@@ -6,7 +7,7 @@ using System.Net;
 
 namespace olieblind.lib.StormPredictionCenter.Mesos;
 
-public class MesoProductSource(IOlieWebService ows, IMyRepository repo) : IMesoProductSource
+public class MesoProductSource(IOlieWebService ows, IMyRepository repo, IOlieImageService ois) : IMesoProductSource
 {
     private const string BaseUrl = "https://www.spc.noaa.gov/products/md/";
 
@@ -22,21 +23,28 @@ public class MesoProductSource(IOlieWebService ows, IMyRepository repo) : IMesoP
         return html;
     }
 
-    public async Task DownloadImage(string? imageName, SpcMesoProductEntity product, string goldPath, CancellationToken ct)
+    public async Task<string?> StoreImage(string? imageName, SpcMesoProductEntity product, string goldPath, CancellationToken ct)
     {
-        if (product.GraphicUrl is not null || imageName is null) return;
+        if (product.GraphicUrl is not null || imageName is null) return null;
 
         var dt = product.EffectiveTime;
         var url = $"{BaseUrl}{dt.Year}/{imageName}";
-        var blobFileName = $"{goldPath}/gold/spc/meso/{dt.Year}/{dt.Month}/{imageName}";
-
         var image = await ows.ApiGetBytes(url, ct);
-        ows.FileMakeDirectory(blobFileName);
-        await ows.FileWriteAllBytes(blobFileName, image, ct);
 
-        product.GraphicUrl = blobFileName;
-        product.Timestamp = DateTime.UtcNow;
-        await repo.SpcMesoProductUpdate(product, ct);
+        var imageFileName = await ois.SafeConvert(image, $"{goldPath}/gold/spc/meso/{dt.Year}/{dt.Month}/{imageName}", ".gif", ct);
+
+        var imageUrl = imageFileName.Replace(goldPath, string.Empty);
+        imageUrl = imageUrl.TrimStart('/');
+
+        return imageUrl;
+    }
+
+    public async Task<string> StoreHtml(int index, string html, DateTime effectiveDate, BlobContainerClient bronze, CancellationToken ct)
+    {
+        var blobPath = $"bronze/spc/meso/{effectiveDate.Year}/{effectiveDate.Month}/md{index:D4}.html";
+        await ows.BlobUploadText(bronze, blobPath, html, ct);
+
+        return blobPath;
     }
 
     public async Task<int> GetLatestIdForYear(int year, CancellationToken ct)

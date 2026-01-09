@@ -6,6 +6,8 @@ using olieblind.lib.Processes;
 using olieblind.lib.Processes.Interfaces;
 using olieblind.lib.Radar;
 using olieblind.lib.Radar.Interfaces;
+using olieblind.lib.Satellite;
+using olieblind.lib.Satellite.Interfaces;
 using olieblind.lib.Services;
 using olieblind.lib.Services.Speech;
 using olieblind.lib.StormEvents;
@@ -104,6 +106,7 @@ public static class OlieCommon
 
         #region Business Dependencies
 
+        services.AddScoped<IDailySummaryBusiness, DailySummaryBusiness>();
         services.AddScoped<IDatabaseBusiness, DatabaseBusiness>();
         services.AddScoped<IDatabaseProcess, DatabaseProcess>();
         services.AddScoped<IDroughtMonitor, DroughtMonitor.DroughtMonitor>();
@@ -118,6 +121,12 @@ public static class OlieCommon
         services.AddScoped<IOutlookProductScript, OutlookProductScript>();
         services.AddScoped<IRadarBusiness, RadarBusiness>();
         services.AddScoped<IRadarSource, RadarSource>();
+        services.AddScoped<ISatelliteIemBusiness, SatelliteIemBusiness>();
+        services.AddScoped<ISatelliteIemSource, SatelliteIemSource>();
+        services.AddScoped<ISatelliteAwsBusiness, SatelliteAwsBusiness>();
+        services.AddScoped<ISatelliteAwsSource, SatelliteAwsSource>();
+        services.AddScoped<ISatelliteProcess, SatelliteProcess>();
+        services.AddScoped<ISatelliteSource, SatelliteSource>();
         services.AddScoped<ISpcBusiness, SpcBusiness>();
         services.AddScoped<ISpcProcess, SpcProcess>();
         services.AddScoped<ISpcSource, SpcSource>();
@@ -132,6 +141,7 @@ public static class OlieCommon
         services.AddScoped<IDeleteOldContentProcess, DeleteOldContentProcess>();
         services.AddScoped<IImportStormEventsDatabaseProcess, ImportStormEventsDatabaseProcess>();
         services.AddScoped<IImportStormEventsSpcProcess, ImportStormEventsSpcProcess>();
+        services.AddScoped<ISatelliteInventoryProcess, SatelliteInventoryProcess>();
         services.AddScoped<ISpcMesosProcess, SpcMesosProcess>();
 
         #endregion

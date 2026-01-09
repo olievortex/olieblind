@@ -1,3 +1,6 @@
+using Moq;
+using olieblind.data;
+using olieblind.data.Entities;
 using olieblind.lib.StormEvents;
 using olieblind.lib.StormEvents.Models;
 
@@ -241,43 +244,36 @@ public class DailySummaryBusinessTests
     #region GetSevereByYear
 
     [Test]
-    public async Task GetSevereByYear_NotImplemented()
+    public async Task GetSevereByYear_ReturnsTopRow_ValidParameters()
     {
-        var testable = new DailySummaryBusiness(null!);
-        Assert.Throws<NotImplementedException>(() => testable.GetSevereByYear(1991, CancellationToken.None));
+        // Arrange
+        const int year = 2021;
+        const string date1 = "2021-07-10";
+        const string date2 = "2021-07-11";
+        var now = DateTime.UtcNow;
+        var ct = CancellationToken.None;
+        var repo = new Mock<IMyRepository>();
+        var testable = new DailySummaryBusiness(repo.Object);
+        var entities = new List<StormEventsDailySummaryEntity>
+        {
+            new() { Id = date1, Year = year, SourceFk = "a", Timestamp = now.AddMonths(-1) },
+            new() { Id = date1, Year = year, SourceFk = "b", Timestamp = now },
+            new() { Id = date2, Year = year, SourceFk = "c", Timestamp = now }
+        };
+        repo.Setup(s => s.StormEventsDailySummaryListByYear(year, ct))
+            .ReturnsAsync(entities);
+
+        // Act
+        var result = await testable.GetSevereByYear(year, ct);
+
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result, Has.Count.EqualTo(2));
+            Assert.That(result[0].SourceFk, Is.EqualTo("b"));
+            Assert.That(result[1].SourceFk, Is.EqualTo("c"));
+        }
     }
-
-    //[Test]
-    //public async Task GetSevereByYearAsync_ReturnsTopRow_ValidParameters()
-    //{
-    //    // Arrange
-    //    const int year = 2021;
-    //    const string date1 = "2021-07-10";
-    //    const string date2 = "2021-07-11";
-    //    var now = DateTime.UtcNow;
-    //    var ct = CancellationToken.None;
-    //    var cosmos = new Mock<ICosmosRepository>();
-    //    var testable = new DailySummaryBusiness(cosmos.Object);
-    //    var entities = new List<StormEventsDailySummaryEntity>
-    //    {
-    //        new() { Id = date1, Year = year, SourceFk = "a", Timestamp = now.AddMonths(-1) },
-    //        new() { Id = date1, Year = year, SourceFk = "b", Timestamp = now },
-    //        new() { Id = date2, Year = year, SourceFk = "c", Timestamp = now }
-    //    };
-    //    cosmos.Setup(s => s.StormEventsDailySummaryListSevereForYear(year, ct))
-    //        .ReturnsAsync(entities);
-
-    //    // Act
-    //    var result = await testable.GetSevereByYearAsync(year, ct);
-
-    //    // Assert
-    //    Assert.Multiple(() =>
-    //    {
-    //        Assert.That(result, Has.Count.EqualTo(2));
-    //        Assert.That(result[0].SourceFk, Is.EqualTo("b"));
-    //        Assert.That(result[1].SourceFk, Is.EqualTo("c"));
-    //    });
-    //}
 
     #endregion
 

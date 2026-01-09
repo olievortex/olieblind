@@ -11,7 +11,7 @@ public class MesoProductProcessTests
     #region Download
 
     [Test]
-    public async Task DownloadAsync_ShortCircuit_NoFile()
+    public async Task Download_ShortCircuit_NoFile()
     {
         // Arrange
         const int year = 2023;
@@ -21,7 +21,7 @@ public class MesoProductProcessTests
         var testable = new MesoProductProcess(source.Object, null!, null!);
 
         // Act
-        var result = await testable.Download(year, index, null!, ct);
+        var result = await testable.Download(year, index, string.Empty, null!, ct);
 
         // Assert
         Assert.That(result, Is.False);
@@ -42,6 +42,8 @@ public class MesoProductProcessTests
         var ct = CancellationToken.None;
         var source = new Mock<IMesoProductSource>();
         source.Setup(s => s.DownloadHtml(year, index, ct)).ReturnsAsync(html);
+        source.Setup(s => s.StoreHtml(index, html, effectiveTime, null!, ct))
+            .ReturnsAsync(html);
         var repo = new Mock<IMyRepository>();
         repo.Setup(s => s.SpcMesoProductCreate(It.IsAny<SpcMesoProductEntity>(), ct))
             .Callback((SpcMesoProductEntity e, CancellationToken _) => entity = e);
@@ -53,7 +55,7 @@ public class MesoProductProcessTests
         var testable = new MesoProductProcess(source.Object, parse.Object, repo.Object);
 
         // Act
-        var result = await testable.Download(year, index, null!, ct);
+        var result = await testable.Download(year, index, string.Empty, null!, ct);
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -64,6 +66,7 @@ public class MesoProductProcessTests
             Assert.That(entity.Concerning, Is.EqualTo(concerning));
             Assert.That(entity.Narrative, Is.EqualTo(narrative));
             Assert.That(entity.Html, Is.EqualTo(html));
+            Assert.That(entity.Timestamp, Is.GreaterThan(DateTime.MinValue));
         }
     }
 

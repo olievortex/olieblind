@@ -106,4 +106,31 @@ public class OlieImageService : IOlieImageService
             return path.Replace("\\", "/");
         }
     }
+
+    public async Task<string> SafeConvert(byte[] sourceImage, string fallbackPath, string extension, CancellationToken ct)
+    {
+        try
+        {
+            if (Path.GetExtension(fallbackPath).Equals(extension, StringComparison.OrdinalIgnoreCase))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(fallbackPath) ?? throw new InvalidOperationException());
+                await File.WriteAllBytesAsync(fallbackPath, sourceImage, ct);
+                return fallbackPath;
+            }
+
+            var destPath = Path.ChangeExtension(fallbackPath, extension);
+            Directory.CreateDirectory(Path.GetDirectoryName(destPath) ?? throw new InvalidOperationException());
+
+            using Image image = Image.Load(sourceImage);
+            await image.SaveAsync(destPath, ct);
+
+            return destPath;
+        }
+        catch
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(fallbackPath) ?? throw new InvalidOperationException());
+            await File.WriteAllBytesAsync(fallbackPath, sourceImage, ct);
+            return fallbackPath;
+        }
+    }
 }
