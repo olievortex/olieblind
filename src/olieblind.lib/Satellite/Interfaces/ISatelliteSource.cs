@@ -9,10 +9,10 @@ namespace olieblind.lib.Satellite.Interfaces;
 
 public interface ISatelliteSource
 {
-    Task AddInventoryToCosmos(string effectiveDate, string bucket, int channel, DayPartsEnum dayPart,
+    Task AddInventoryToDatabase(string effectiveDate, string bucket, int channel, DayPartsEnum dayPart,
         CancellationToken ct);
 
-    Task AddProductsToCosmos(string[] keys, string effectiveDate, string bucket, int channel, DayPartsEnum dayPart,
+    Task AddProductsToDatabase(string[] keys, string effectiveDate, string bucket, int channel, DayPartsEnum dayPart,
         Func<string, DateTime> getScanTimeFunc, CancellationToken ct);
 
     DateTime GetEffectiveDate(string value);

@@ -95,7 +95,7 @@ public class SatelliteIemBusinessTests
         const int channel = 2;
         const DayPartsEnum dayPart = DayPartsEnum.Afternoon;
         var ct = CancellationToken.None;
-        var listFiles = new List<string> { "a", "b" };
+        var listFiles = new List<string> { "a", "b", "c" };
         var effectiveDate = new DateTime(2021, 7, 18);
         var url = Guid.NewGuid().ToString();
         var start = new DateTime(2021, 7, 18, 18, 0, 0);
@@ -106,7 +106,10 @@ public class SatelliteIemBusinessTests
         var iemSource = new Mock<ISatelliteIemSource>();
         iemSource.Setup(s => s.GetPrefix(effectiveDate)).Returns(url);
         iemSource.Setup(s => s.IemList(url, ct)).ReturnsAsync(listFiles);
-        iemSource.Setup(s => s.GetChannelFromKey(It.IsAny<string>())).Returns(channel);
+        iemSource.SetupSequence(s => s.GetChannelFromKey(It.IsAny<string>()))
+            .Returns(channel)
+            .Returns(0)
+            .Returns(channel);
         iemSource.Setup(s => s.GetScanTimeFromKey(effectiveDate, It.IsAny<string>())).Returns(start);
         var testable = new SatelliteIemBusiness(source.Object, iemSource.Object);
 

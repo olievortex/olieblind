@@ -46,7 +46,7 @@ public class SatelliteSource(IMyRepository repo) : ISatelliteSource
         throw new NotImplementedException();
     }
 
-    public async Task AddInventoryToCosmos(string effectiveDate, string bucket, int channel, DayPartsEnum dayPart,
+    public async Task AddInventoryToDatabase(string effectiveDate, string bucket, int channel, DayPartsEnum dayPart,
        CancellationToken ct)
     {
         var entity = new SatelliteAwsInventoryEntity
@@ -62,7 +62,7 @@ public class SatelliteSource(IMyRepository repo) : ISatelliteSource
         await repo.SatelliteAwsInventoryCreate(entity, ct);
     }
 
-    public async Task AddProductsToCosmos(string[] keys, string effectiveDate, string bucket, int channel,
+    public async Task AddProductsToDatabase(string[] keys, string effectiveDate, string bucket, int channel,
         DayPartsEnum dayPart, Func<string, DateTime> getScanTimeFunc, CancellationToken ct)
     {
         var items = new List<SatelliteAwsProductEntity>();
