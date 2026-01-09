@@ -5,7 +5,6 @@ using olieblind.data.Enums;
 using olieblind.lib.Processes;
 using olieblind.lib.Satellite.Interfaces;
 using olieblind.lib.StormEvents.Interfaces;
-using System.Runtime.CompilerServices;
 
 namespace olieblind.test.ProcessesTests;
 

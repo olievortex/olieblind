@@ -4,10 +4,6 @@ using olieblind.data.Entities;
 using olieblind.data.Enums;
 using olieblind.lib.Satellite;
 using olieblind.lib.Satellite.Interfaces;
-using olieblind.lib.Services;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace olieblind.test.SatelliteTests;
 
