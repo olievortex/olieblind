@@ -32,7 +32,7 @@ public interface IOlieConfig
 
     Uri MySqlBackupContainer { get; }
 
-    string PurpleCmdPath { get; }
+    string BrownCmdPath { get; }
 
     string SpeechRegion { get; }
 

@@ -43,7 +43,7 @@ public class OlieConfig(IConfiguration config) : IOlieConfig
 
     public string SpeechVoiceName => GetString("OlieSpeechVoiceName");
 
-    public string PurpleCmdPath => GetString("OliePurpleCmdPath");
+    public string BrownCmdPath => GetString("OlieBrownCmdPath");
 
     public string VideoPath => GetString("OlieVideoPath");
 

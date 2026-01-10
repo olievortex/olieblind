@@ -60,9 +60,9 @@ public interface IOlieWebService
 
     #endregion
 
-    #region Purple
+    #region Brown
 
-    Task<string> PurpleShell(IOlieConfig config, string arguments, CancellationToken ct);
+    Task<string> BrownShell(IOlieConfig config, string arguments, CancellationToken ct);
 
     #endregion
 
