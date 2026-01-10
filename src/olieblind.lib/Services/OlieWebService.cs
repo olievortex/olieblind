@@ -341,9 +341,9 @@ public class OlieWebService(IHttpClientFactory httpClientFactory) : IOlieWebServ
 
     #endregion
 
-    #region Purple
+    #region Blue
 
-    public async Task<string> PurpleShell(IOlieConfig config, string arguments, CancellationToken ct)
+    public async Task<string> BrownShell(IOlieConfig config, string arguments, CancellationToken ct)
     {
         const string AppiKey = "APPLICATIONINSIGHTS_CONNECTION_STRING";
         var sbStdOut = new StringBuilder();
@@ -352,7 +352,7 @@ public class OlieWebService(IHttpClientFactory httpClientFactory) : IOlieWebServ
         using var p = new Process();
         p.StartInfo.UseShellExecute = false;
         p.StartInfo.CreateNoWindow = true;
-        p.StartInfo.FileName = config.PurpleCmdPath;
+        p.StartInfo.FileName = config.BrownCmdPath;
         p.StartInfo.RedirectStandardError = true;
         if (!p.StartInfo.EnvironmentVariables.ContainsKey(AppiKey))
             p.StartInfo.EnvironmentVariables.Add(AppiKey, config.ApplicationInsightsConnectionString);

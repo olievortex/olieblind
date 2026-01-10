@@ -22,9 +22,12 @@ The following software is recommended for the development environment:
 - olieblind.cli: A command line interface to run scheduled tasks. (.NET Console App)
 - olieblind.data: Provides repositories and defines entities for the other projects. (.NET Library)
 - olieblind.lib: Contains all the orchestration and business logic. (.NET Library)
-- olieblind.purple: Python scripts for generating the weather maps
+- olieblind.brown: Create the convective weather maps (Python)
 - olieblind.text: Unit tests (NUnit)
 - olieblind.web: The website front-end to all this madness (ASP.NET Core)
+
+# Related Projects
+The solution is dependent upon the related [olievortex_purple](https://github.com/olievortex/olievortex_purple) Github repository. The necessary steps are included in this repository's READMEs in the installation folder.
 
 # Infrastructure
 For this demo, you will need an account for Azure Cloud, Akamai Cloud, and Google Cloud.

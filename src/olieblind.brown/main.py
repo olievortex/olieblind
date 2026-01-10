@@ -1,5 +1,5 @@
 def main():
-    print("Hello from olieblind-purple!")
+    print("Hello from olieblind.brown!")
 
 
 if __name__ == "__main__":

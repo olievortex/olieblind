@@ -1,8 +1,18 @@
 # OlieBlind Install
+Please first complete all the steps in the /infrastructure/README.md file before continuing here.
+
 With the infrastructure in place, we can now install olieblind to the server. Log into the Linode instance and perform these steps.
 
+## Clone projects
+We clone the olieblind project into the correct folder. This project is also dependent upon the olievortex_purple project. We will clone the files into our source folder.
+
+    # mkdir -p ~/source/repos
+    # cd ~/source/repos
+    # git clone https://github.com/olievortex/olieblind.git
+    # git clone https://github.com/olievortex/olievortex_purple.git
+
 ## Create symbolic links
-Creates ~/olieblind folder and adds links to scripts from within the repo. Also installs a font.
+Create the olieblind folder. This will contain useful scripts. These scripts are linked to the scripts inside the repo. Also installs a font.
 
     # ~/source/repos/olieblind/install/create_links.sh
 
@@ -72,14 +82,14 @@ The cli has a simple test that lists text-to-speech voices. If this works, we kn
 
 Confirm that you see a bunch of voice names and genders in the log file.
 
-## Initialize OlieBind.purple
-Ensure we are able to create a Python environment for OlieBlind.purple.
+## Initialize OlieBind.brown
+Ensure we are able to create a Python environment for OlieBlind.brown.
 
-    # cd /opt/olieblind.purple
+    # cd /opt/olieblind.brown
     # uv python install 3.13
     # uv run main.py
 
-After installing a bunch of packages. you should see "Hello from olieblind-purple!"
+After installing a bunch of packages. you should see "Hello from olieblind.brown!"
 
 ## Validate video process
 Run the SPC Day One process, confirm a video was created, and check the log for errors.

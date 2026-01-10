@@ -13,5 +13,7 @@ mkdir -p /opt/olieblind.api
 chown olievortex:olievortex /opt/olieblind.api
 mkdir -p /opt/olieblind.web
 chown olievortex:olievortex /opt/olieblind.web
-mkdir -p /opt/olieblind.purple
-chown olievortex:olievortex /opt/olieblind.purple
+mkdir -p /opt/olievortex_purple
+chown olievortex:olievortex /opt/olievortex_purple
+mkdir -p /opt/olieblind.brown
+chown olievortex:olievortex /opt/olieblind.brown

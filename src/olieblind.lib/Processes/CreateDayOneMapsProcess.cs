@@ -39,7 +39,7 @@ public class CreateDayOneMapsProcess(
         await ows.ApiDownloadBytes(grib, SourceUrl, ct);
 
         // Shell out to Purple
-        _ = await ows.PurpleShell(config, $"{PythonScript} \"{grib}\" \"{ImageFolder}\" {FilePrefix}", ct);
+        _ = await ows.BrownShell(config, $"{PythonScript} \"{grib}\" \"{ImageFolder}\" {FilePrefix}", ct);
 
         // Update database
         await AddToDatabaseAsync(ct);
