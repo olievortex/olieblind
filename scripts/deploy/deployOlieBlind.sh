@@ -7,3 +7,10 @@ set -e
 ./deployOlieBlind.Cli.sh
 ./deployOlieBlind.Api.sh
 ./deployOlieBlind.Web.sh
+
+echo Websites are sterting
+sleep 5
+
+echo
+echo List of dotnet processes
+ps -eaf | grep dotnet
