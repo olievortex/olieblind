@@ -67,4 +67,22 @@ MSYS_NO_PATHCONV=1 az monitor app-insights component create \
         --workspace /subscriptions/${subscription_id}/resourceGroups/${resource_group}/providers/Microsoft.OperationalInsights/workspaces/${ws_name} \
         --subscription ${subscription_id}
 
+echo Create Service Bus
+az servicebus namespace create \
+        --subscription ${subscription_id} \
+        --location 'South Central US' \
+        --resource-group ${resource_group} \
+        --name sb-olieblind
+
+az servicebus queue create \
+        --subscription ${subscription_id} \
+        --resource-group ${resource_group} \
+        --namespace-name sb-olieblind \
+        --name satellite_aws_posters
+
+MSYS_NO_PATHCONV=1 az role assignment create --assignee ${group_id} \
+        --role "Azure Service Bus Data Owner" \
+        --subscription ${subscription_id} \
+        --scope /subscriptions/${subscription_id}/resourceGroups/${resource_group}/providers/Microsoft.ServiceBus/namespaces/sb-olieblind
+
 echo Done!
