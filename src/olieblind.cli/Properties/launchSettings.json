@@ -1,7 +1,7 @@
 ﻿{
   "profiles": {
     "OlievortexRed.Cli": {
-      "commandLineArgs": "satelliteinventory 2010",
+      "commandLineArgs": "satellitemarquee 2025",
       "commandName": "Project"
     }
   }

@@ -1,4 +1,7 @@
+using Amazon.S3;
 using Moq;
+using olieblind.data;
+using olieblind.data.Entities;
 using olieblind.data.Enums;
 using olieblind.lib.Satellite;
 using olieblind.lib.Satellite.Interfaces;
@@ -8,85 +11,78 @@ namespace olieblind.test.SatelliteTests;
 
 public class SatelliteAwsBusinessTests
 {
-    //#region Download
-
-    //[Test]
-    //public async Task DownloadAsync_ShortCircuit_AlreadyDownloaded()
-    //{
-    //    // Arrange
-    //    var ct = CancellationToken.None;
-    //    var ows = new Mock<IOlieWebServices>();
-    //    var awsSource = new Mock<ISatelliteAwsSource>();
-    //    var source = new Mock<ISatelliteSource>();
-    //    var cosmos = new Mock<ICosmosRepository>();
-    //    var testable = new SatelliteAwsBusiness(ows.Object, awsSource.Object, source.Object, cosmos.Object);
-    //    var product = new SatelliteAwsProductEntity
-    //    {
-    //        PathSource = "a"
-    //    };
-
-    //    // Act
-    //    await testable.DownloadAsync(product, Delay, null!, null!, ct);
-
-    //    // Assert
-    //    Assert.That(product.Timestamp, Is.EqualTo(DateTime.MinValue));
-    //}
-
-    //[Test]
-    //public async Task DownloadAsync_Retries_OneFailure()
-    //{
-    //    // Arrange
-    //    var ct = CancellationToken.None;
-    //    var ows = new Mock<IOlieWebServices>();
-    //    ows.SetupSequence(s => s.AwsDownloadAsync(It.IsAny<string>(), It.IsAny<string>(),
-    //            It.IsAny<string>(), null!, ct))
-    //        .Returns(Task.FromException(new AmazonS3Exception("Olie")))
-    //        .Returns(Task.CompletedTask);
-    //    var awsSource = new Mock<ISatelliteAwsSource>();
-    //    var source = new Mock<ISatelliteSource>();
-    //    var cosmos = new Mock<ICosmosRepository>();
-    //    var testable = new SatelliteAwsBusiness(ows.Object, awsSource.Object, source.Object, cosmos.Object);
-    //    var product = new SatelliteAwsProductEntity();
-
-    //    // Act
-    //    await testable.DownloadAsync(product, Delay, null!, null!, ct);
-
-    //    // Assert
-    //    Assert.That(product.Timestamp, Is.Not.EqualTo(DateTime.MinValue));
-    //}
-
-    //[Test]
-    //public void DownloadAsync_Trows_ThreeFailures()
-    //{
-    //    // Arrange
-    //    var ct = CancellationToken.None;
-    //    var ows = new Mock<IOlieWebServices>();
-    //    ows.Setup(s => s.AwsDownloadAsync(It.IsAny<string>(), It.IsAny<string>(),
-    //            It.IsAny<string>(), null!, ct))
-    //        .Returns(Task.FromException(new AmazonS3Exception("Olie")));
-    //    var awsSource = new Mock<ISatelliteAwsSource>();
-    //    var source = new Mock<ISatelliteSource>();
-    //    var cosmos = new Mock<ICosmosRepository>();
-    //    var testable = new SatelliteAwsBusiness(ows.Object, awsSource.Object, source.Object, cosmos.Object);
-    //    var product = new SatelliteAwsProductEntity();
-
-    //    // Act, Assert
-    //    Assert.ThrowsAsync<AmazonS3Exception>(() => testable.DownloadAsync(product, Delay, null!, null!, ct));
-    //}
-
-    //private static Task Delay(int _)
-    //{
-    //    return Task.CompletedTask;
-    //}
+    #region Download
 
     [Test]
-    public void Download_NotImplemented()
+    public async Task Download_ShortCircuit_AlreadyDownloaded()
     {
-        var testable = new SatelliteAwsBusiness(null!, null!, null!);
-        Assert.Throws<NotImplementedException>(() => testable.Download(null!, null!, null!, null!, CancellationToken.None));
+        // Arrange
+        var ct = CancellationToken.None;
+        var ows = new Mock<IOlieWebService>();
+        var awsSource = new Mock<ISatelliteAwsSource>();
+        var source = new Mock<ISatelliteSource>();
+        var repo = new Mock<IMyRepository>();
+        var testable = new SatelliteAwsBusiness(source.Object, awsSource.Object, ows.Object, repo.Object);
+        var product = new SatelliteAwsProductEntity
+        {
+            PathSource = "a"
+        };
+
+        // Act
+        await testable.Download(product, Delay, null!, null!, ct);
+
+        // Assert
+        Assert.That(product.Timestamp, Is.EqualTo(DateTime.MinValue));
     }
 
-    //#endregion
+    [Test]
+    public async Task Download_Retries_OneFailure()
+    {
+        // Arrange
+        var ct = CancellationToken.None;
+        var ows = new Mock<IOlieWebService>();
+        ows.SetupSequence(s => s.AwsDownload(It.IsAny<string>(), It.IsAny<string>(),
+                It.IsAny<string>(), null!, ct))
+            .Returns(Task.FromException(new AmazonS3Exception("Olie")))
+            .Returns(Task.CompletedTask);
+        var awsSource = new Mock<ISatelliteAwsSource>();
+        var source = new Mock<ISatelliteSource>();
+        var repo = new Mock<IMyRepository>();
+        var testable = new SatelliteAwsBusiness(source.Object, awsSource.Object, ows.Object, repo.Object);
+        var product = new SatelliteAwsProductEntity();
+
+        // Act
+        await testable.Download(product, Delay, null!, null!, ct);
+
+        // Assert
+        Assert.That(product.Timestamp, Is.Not.EqualTo(DateTime.MinValue));
+    }
+
+    [Test]
+    public void Download_Trows_ThreeFailures()
+    {
+        // Arrange
+        var ct = CancellationToken.None;
+        var ows = new Mock<IOlieWebService>();
+        ows.Setup(s => s.AwsDownload(It.IsAny<string>(), It.IsAny<string>(),
+                It.IsAny<string>(), null!, ct))
+            .Returns(Task.FromException(new AmazonS3Exception("Olie")));
+        var awsSource = new Mock<ISatelliteAwsSource>();
+        var source = new Mock<ISatelliteSource>();
+        var repo = new Mock<IMyRepository>();
+        var testable = new SatelliteAwsBusiness(source.Object, awsSource.Object, ows.Object, repo.Object);
+        var product = new SatelliteAwsProductEntity();
+
+        // Act, Assert
+        Assert.ThrowsAsync<AmazonS3Exception>(() => testable.Download(product, Delay, null!, null!, ct));
+    }
+
+    private static Task Delay(int _)
+    {
+        return Task.CompletedTask;
+    }
+
+    #endregion
 
     #region ListAwsKeys
 
@@ -107,7 +103,7 @@ public class SatelliteAwsBusinessTests
         awsSource.Setup(s => s.GetChannelFromAwsKey(It.IsAny<string>())).Returns(channel);
         var source = new Mock<ISatelliteSource>();
         source.Setup(s => s.GetEffectiveDate(dayValue)).Returns(effectiveDate);
-        var testable = new SatelliteAwsBusiness(source.Object, awsSource.Object, ows.Object);
+        var testable = new SatelliteAwsBusiness(source.Object, awsSource.Object, ows.Object, null!);
 
         // Act
         var result = await testable.ListKeys(dayValue, satellite, channel, dayPart, null!, ct);
@@ -129,7 +125,7 @@ public class SatelliteAwsBusinessTests
         const int channel = 13;
         var awsSource = new Mock<ISatelliteAwsSource>();
         var source = new Mock<ISatelliteSource>();
-        var testable = new SatelliteAwsBusiness(source.Object, awsSource.Object, ows.Object);
+        var testable = new SatelliteAwsBusiness(source.Object, awsSource.Object, ows.Object, null!);
 
         // Act
         var result = await testable.ListKeys(dayValue, satellite, channel, dayPart, null!, ct);

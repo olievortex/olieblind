@@ -2,8 +2,10 @@
 using Amazon.S3.Model;
 using Azure;
 using Azure.AI.TextAnalytics;
+using Azure.Messaging.ServiceBus;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO.Compression;
@@ -194,12 +196,11 @@ public class OlieWebService(IHttpClientFactory httpClientFactory) : IOlieWebServ
 
     #region Aws
 
-    //public async Task AwsDownloadAsync(string filename, string bucketName, string key, IAmazonS3 client,
-    //    CancellationToken ct)
-    //{
-    //    var response = await client.GetObjectAsync(bucketName, key, ct);
-    //    await response.WriteResponseStreamToFileAsync(filename, false, ct);
-    //}
+    public async Task AwsDownload(string filename, string bucketName, string key, IAmazonS3 client, CancellationToken ct)
+    {
+        var response = await client.GetObjectAsync(bucketName, key, ct);
+        await response.WriteResponseStreamToFileAsync(filename, false, ct);
+    }
 
     public async Task<List<string>> AwsList(string bucketName, string prefix, IAmazonS3 client, CancellationToken ct)
     {
@@ -368,6 +369,21 @@ public class OlieWebService(IHttpClientFactory httpClientFactory) : IOlieWebServ
         p.Close();
 
         return sbStdOut.ToString();
+    }
+
+    #endregion
+
+    #region ServiceBus
+
+    public async Task ServiceBusSendJson(ServiceBusSender sender, object data, CancellationToken ct)
+    {
+        var json = JsonConvert.SerializeObject(data);
+        var message = new ServiceBusMessage(json)
+        {
+            ContentType = "application/json"
+        };
+
+        await sender.SendMessageAsync(message, ct);
     }
 
     #endregion

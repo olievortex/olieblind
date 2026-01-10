@@ -49,6 +49,8 @@ public class OlieConfig(IConfiguration config) : IOlieConfig
 
     public string BlobBronzeContainerUri => GetString("OlieBlobBronzeContainerUri");
 
+    public string AwsServiceBus => GetString("OlieAwsServiceBus");
+
     private string GetString(string key)
     {
         return _config[key] ?? throw new ApplicationException($"{key} setting missing from configuration");

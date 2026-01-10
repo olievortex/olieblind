@@ -1,4 +1,3 @@
-using Azure.Identity;
 using Azure.Messaging.ServiceBus;
 using Azure.Storage.Blobs;
 using olieblind.data.Entities;
@@ -9,8 +8,7 @@ namespace olieblind.lib.Satellite.Interfaces;
 
 public interface ISatelliteSource
 {
-    Task AddInventoryToDatabase(string effectiveDate, string bucket, int channel, DayPartsEnum dayPart,
-        CancellationToken ct);
+    Task AddInventoryToDatabase(string effectiveDate, string bucket, int channel, DayPartsEnum dayPart, CancellationToken ct);
 
     Task AddProductsToDatabase(string[] keys, string effectiveDate, string bucket, int channel, DayPartsEnum dayPart,
         Func<string, DateTime> getScanTimeFunc, CancellationToken ct);
@@ -23,18 +21,9 @@ public interface ISatelliteSource
 
     string GetPath(DateTime effectiveDate, string metal);
 
-    Task<SatelliteAwsProductEntity?> GetProductPosterAsync(string effectiveDate, DateTime eventTime,
-        CancellationToken ct);
+    Task<SatelliteAwsProductEntity?> GetMarqueeSatelliteProduct(string effectiveDate, DateTime eventTime, CancellationToken ct);
 
-    Task<List<SatelliteAwsProductEntity>> GetProductListAsync(string effectiveDate, string bucketName,
-        int channel, CancellationToken ct);
+    Task MakeThumbnail(SatelliteAwsProductEntity satellite, Point finalSize, string goldPath, CancellationToken ct);
 
-    Task<List<SatelliteAwsProductEntity>> GetProductListNoPosterAsync(CancellationToken ct);
-
-    Task MakePosterAsync(SatelliteAwsProductEntity satellite, Point finalSize, BlobContainerClient goldClient,
-        CancellationToken ct);
-
-    Task<bool> MessagePurpleAsync(SatelliteAwsProductEntity satellite, ServiceBusSender sender, CancellationToken ct);
-
-    Task Start1080ContainersAsync(DefaultAzureCredential credential, int instanceLimit, CancellationToken ct);
+    Task MessagePurple(SatelliteAwsProductEntity satellite, ServiceBusSender sender, CancellationToken ct);
 }

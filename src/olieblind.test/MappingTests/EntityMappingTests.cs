@@ -113,6 +113,7 @@ public class EntityMappingTests
             Assert.That(results[0].HeadlineEventTime, Is.EqualTo(time));
             Assert.That(results[0].RowCount, Is.EqualTo(28));
             Assert.That(results[0].IsCurrent, Is.False);
+            Assert.That(results[0].ToString(), Is.EqualTo("2010-07-10"));
         }
     }
 

@@ -1,5 +1,6 @@
 ﻿using Amazon.S3;
 using Azure.AI.TextAnalytics;
+using Azure.Messaging.ServiceBus;
 using Azure.Storage.Blobs;
 using System.Net;
 using System.Net.Http.Headers;
@@ -30,12 +31,7 @@ public interface IOlieWebService
 
     #region Aws
 
-    //public async Task AwsDownloadAsync(string filename, string bucketName, string key, IAmazonS3 client,
-    //    CancellationToken ct)
-    //{
-    //    var response = await client.GetObjectAsync(bucketName, key, ct);
-    //    await response.WriteResponseStreamToFileAsync(filename, false, ct);
-    //}
+    Task AwsDownload(string filename, string bucketName, string key, IAmazonS3 client, CancellationToken ct);
 
     Task<List<string>> AwsList(string bucketName, string prefix, IAmazonS3 client, CancellationToken ct);
 
@@ -67,6 +63,12 @@ public interface IOlieWebService
     #region Purple
 
     Task<string> PurpleShell(IOlieConfig config, string arguments, CancellationToken ct);
+
+    #endregion
+
+    #region ServiceBus
+
+    Task ServiceBusSendJson(ServiceBusSender sender, object data, CancellationToken ct);
 
     #endregion
 }

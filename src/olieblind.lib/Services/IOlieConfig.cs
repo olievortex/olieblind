@@ -43,4 +43,6 @@ public interface IOlieConfig
     string VideoPath { get; }
 
     string BlobBronzeContainerUri { get; }
+
+    string AwsServiceBus { get; }
 }

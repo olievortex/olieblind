@@ -62,6 +62,7 @@ public class Program
             OlieArgs.CommandsEnum.EventsDatabase => await CreateService<CommandEventsDatabase>().Run(olieArgs, ct),
             OlieArgs.CommandsEnum.EventsSpc => await CreateService<CommandEventsSpc>().Run(olieArgs, ct),
             OlieArgs.CommandsEnum.SatelliteInventory => await CreateService<CommandSatelliteInventory>().Run(olieArgs, ct),
+            OlieArgs.CommandsEnum.SatelliteMarquee => await CreateService<CommandSatelliteMarquee>().Run(olieArgs, ct),
             OlieArgs.CommandsEnum.SpcDayOneVideo => await CreateService<CommandSpcDayOneVideo>().Run(ct),
             OlieArgs.CommandsEnum.SpcDayTwoVideo => await CreateService<CommandSpcDayTwoVideo>().Run(ct),
             OlieArgs.CommandsEnum.SpcDayThreeVideo => await CreateService<CommandSpcDayThreeVideo>().Run(ct),
@@ -139,6 +140,7 @@ public class Program
         services.AddScoped<CommandEventsDatabase>();
         services.AddScoped<CommandEventsSpc>();
         services.AddScoped<CommandSatelliteInventory>();
+        services.AddScoped<CommandSatelliteMarquee>();
         services.AddScoped<CommandSpcDayOneVideo>();
         services.AddScoped<CommandSpcDayTwoVideo>();
         services.AddScoped<CommandSpcDayThreeVideo>();
