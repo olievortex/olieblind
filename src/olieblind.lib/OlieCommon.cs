@@ -125,6 +125,7 @@ public static class OlieCommon
         services.AddScoped<ISatelliteIemSource, SatelliteIemSource>();
         services.AddScoped<ISatelliteAwsBusiness, SatelliteAwsBusiness>();
         services.AddScoped<ISatelliteAwsSource, SatelliteAwsSource>();
+        services.AddScoped<ISatelliteMarqueeProcess, SatelliteMarqueeProcess>();
         services.AddScoped<ISatelliteProcess, SatelliteProcess>();
         services.AddScoped<ISatelliteSource, SatelliteSource>();
         services.AddScoped<ISpcBusiness, SpcBusiness>();
