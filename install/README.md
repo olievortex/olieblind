@@ -82,14 +82,14 @@ The cli has a simple test that lists text-to-speech voices. If this works, we kn
 
 Confirm that you see a bunch of voice names and genders in the log file.
 
-## Initialize OlieBind.purple
-Ensure we are able to create a Python environment for OlieBlind.purple.
+## Initialize OlieBind.brown
+Ensure we are able to create a Python environment for OlieBlind.brown.
 
-    # cd /opt/olieblind.purple
+    # cd /opt/olieblind.brown
     # uv python install 3.13
     # uv run main.py
 
-After installing a bunch of packages. you should see "Hello from olieblind-purple!"
+After installing a bunch of packages. you should see "Hello from olieblind.brown!"
 
 ## Validate video process
 Run the SPC Day One process, confirm a video was created, and check the log for errors.

@@ -8,7 +8,7 @@ set -e
 ./deployOlieBlind.Api.sh
 ./deployOlieBlind.Web.sh
 
-echo Websites are sterting
+echo Websites are starting
 sleep 5
 
 echo
