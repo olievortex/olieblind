@@ -24,6 +24,7 @@ public class SatelliteProcess(ISatelliteAwsBusiness awsBusiness, ISatelliteIemBu
                 await source.MakeThumbnail(satellite, finalSize, goldPath, ct);
 
             summary.SatellitePathPoster = satellite.PathPoster;
+            summary.Timestamp = DateTime.UtcNow;
             await repo.StormEventsDailySummaryUpdate(summary, ct);
         }
     }
