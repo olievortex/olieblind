@@ -91,6 +91,25 @@ Ensure we are able to create a Python environment for OlieBlind.brown.
 
 After installing a bunch of packages. you should see "Hello from olieblind.brown!"
 
+## Initialize olievortex_purple
+The settings for this project are stored in the .env file. There is a .env_template provided.
+
+Do not put brackets around an IPv6 MySQL host
+
+    # cd /opt/olievortex_purple
+    # cp .env_template .env
+    # vi .env
+
+Update the appropriate settings and save the file. Now install the packages.
+
+    # uv python install 3.13
+    # uv run main.py
+
+Confirm that it prints a friendly hello world message.
+
+Note: When creating a satellite map for the first time, a temporary RAM boost (8GB) is needed to accomodate build the projection mapping cache.
+
+
 ## Validate video process
 Run the SPC Day One process, confirm a video was created, and check the log for errors.
 
