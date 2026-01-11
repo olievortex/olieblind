@@ -25,4 +25,4 @@ git pull
 
 echo deploy
 rm -rf ${pubPath}/__pycache__
-cp -r * ${pubPath}
+cp -r . ${pubPath}
