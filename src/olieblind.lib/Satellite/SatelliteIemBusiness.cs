@@ -43,8 +43,8 @@ public class SatelliteIemBusiness(ISatelliteSource source, ISatelliteIemSource i
         }
 
         await ows.BlobUploadFile(blobClient, blobName, localFilename, ct);
-        ows.FileDelete(localFilename);
 
+        product.PathLocal = localFilename;
         product.PathSource = blobName;
         product.TimeTakenDownload = (int)stopwatch.Elapsed.TotalSeconds;
         product.Timestamp = DateTime.UtcNow;

@@ -53,7 +53,7 @@ public class SatelliteIemBusinessTests
         await testable.Download(product, Delay, null!, ct);
 
         // Assert
-        Assert.That(product.Timestamp, Is.Not.EqualTo(DateTime.MinValue));
+        Assert.That(product.PathLocal, Is.Not.Null);
     }
 
     [Test]
