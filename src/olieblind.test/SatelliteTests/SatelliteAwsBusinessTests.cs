@@ -55,7 +55,7 @@ public class SatelliteAwsBusinessTests
         await testable.Download(product, Delay, null!, null!, ct);
 
         // Assert
-        Assert.That(product.Timestamp, Is.Not.EqualTo(DateTime.MinValue));
+        Assert.That(product.PathLocal, Is.Not.Null);
     }
 
     [Test]

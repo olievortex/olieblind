@@ -16,6 +16,7 @@ public class SatelliteAwsProductEntity
     [MaxLength(320)] public string? Path1080 { get; init; }
     [MaxLength(320)] public string? PathPoster { get; set; }
     [MaxLength(320)] public string? PathSource { get; set; }
+    [MaxLength(320)] public string? PathLocal { get; set; }
     public DateTime ScanTime { get; init; }
     public DateTime Timestamp { get; set; }
     public int TimeTaken1080 { get; init; }
@@ -34,6 +35,7 @@ public class SatelliteAwsProductEntity
 //  "Path1080" varchar(320) DEFAULT NULL,
 //  "PathPoster" varchar(320) DEFAULT NULL,
 //  "PathSource" varchar(320) DEFAULT NULL,
+//  "PathLocal" varchar(320) DEFAULT NULL,
 //  "ScanTime" datetime NOT NULL,
 //  "Timestamp" datetime NOT NULL,
 //  "TimeTaken1080" int NOT NULL,
