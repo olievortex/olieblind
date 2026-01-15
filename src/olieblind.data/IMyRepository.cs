@@ -1,5 +1,6 @@
 ﻿using olieblind.data.Entities;
 using olieblind.data.Enums;
+using olieblind.data.Models;
 
 namespace olieblind.data;
 
@@ -90,6 +91,12 @@ public interface IMyRepository
     Task<SpcMesoProductEntity?> SpcMesoProductGetLatest(int year, CancellationToken ct);
 
     Task SpcMesoProductUpdate(SpcMesoProductEntity entity, CancellationToken ct);
+
+    #endregion
+
+    #region StormEventsAnnualSummary
+
+    Task<List<StormEventsAnnualSummaryModel>> StormEventsAnnualSummaryList(CancellationToken ct);
 
     #endregion
 

@@ -5,6 +5,8 @@ using olieblind.lib.CookieConsent;
 using olieblind.lib.ForecastModels;
 using olieblind.lib.Models;
 using olieblind.lib.Services;
+using olieblind.lib.StormEvents;
+using olieblind.lib.StormEvents.Interfaces;
 using olieblind.lib.Video;
 
 namespace olieblind.api;
@@ -39,6 +41,7 @@ public static class Program
         builder.Services.AddScoped<IVideoBusiness, VideoBusiness>();
         builder.Services.AddScoped<IModelForecastBusiness, ModelForecastBusiness>();
         builder.Services.AddScoped<ICookieConsentBusiness, CookieConsentBusiness>();
+        builder.Services.AddScoped<IStormEventsSource, StormEventsSource>();
     }
 
     private static void MapEndpoints(this WebApplication app)
@@ -46,6 +49,7 @@ public static class Program
         app.MapVideoEndpoints();
         app.MapUserEndpoints();
         app.MapModelForecastEndpoints();
+        app.MapEventsEndpoints();
     }
 
     private static void AddEntityFramework(this WebApplicationBuilder builder, IOlieConfig config)

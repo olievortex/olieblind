@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using olieblind.data.Entities;
 using olieblind.data.Enums;
+using olieblind.data.Models;
 using System.Diagnostics.CodeAnalysis;
 
 namespace olieblind.data;
@@ -250,6 +251,28 @@ public class MyRepository(MyContext context) : IMyRepository
     {
         context.SpcMesoProducts.Update(entity);
         await context.SaveChangesAsync(ct);
+    }
+
+    #endregion
+
+    #region StormEventsAnnualSummary
+
+    public async Task<List<StormEventsAnnualSummaryModel>> StormEventsAnnualSummaryList(CancellationToken ct)
+    {
+        return [.. context.StormEventsDailySummaries
+            .Where(w => w.IsCurrent)
+            .GroupBy(g => g.Year)
+            .Select(s => new StormEventsAnnualSummaryModel
+            {
+                Year = s.Key,
+                SevereDays = s.Count(),
+                HailReports = s.Sum(u => u.Hail),
+                WindReports = s.Sum(u => u.Wind),
+                ExtremeTornadoes = s.Sum(u => u.F5 + u.F4),
+                StrongTornadoes = s.Sum(u => u.F3 + u.F2),
+                OtherTornadoes = s.Sum(u => u.F1)
+            })
+            .OrderByDescending(d => d.Year)];
     }
 
     #endregion

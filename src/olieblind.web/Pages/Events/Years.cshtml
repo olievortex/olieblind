@@ -1,0 +1,42 @@
+@page
+@model olieblind.web.Pages.Events.Years
+@{
+    ViewData["Title"] = "Analysis";
+}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active" aria-current="page">
+            <a href="#">Years</a>
+        </li>
+    </ol>
+</nav>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">Year</th>
+        <th scope="col">Severe Days</th>
+        <th scope="col">Wind Reports</th>
+        <th scope="col">Hail Reports</th>
+        <th scope="col">Extreme Tornadoes</th>
+        <th scope="col">Violent Tornadoes</th>
+        <th scope="col">Other Tornadoes</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var year in Model.AnnualList)
+    {
+        <tr>
+            <th scope="row">
+                <a asp-page="/Events/AnnualOverview" asp-route-year="@year.Year">@year.Year</a>
+            </th>
+            <td>@year.SevereDays</td>
+            <td>@($"{year.WindReports:N0}")</td>
+            <td>@($"{year.HailReports:N0}")</td>
+            <td>@year.ExtremeTornadoes</td>
+            <td>@year.StrongTornadoes</td>
+            <td>@($"{year.OtherTornadoes:N0}")</td>
+        </tr>
+    }
+    </tbody>
+</table>
