@@ -319,13 +319,14 @@ public class MyRepository(MyContext context) : IMyRepository
         await context.SaveChangesAsync(ct);
     }
 
-    public async Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryListMissingPostersForYear(int year, CancellationToken ct)
+    public async Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryListByDate(string effectiveDate, int year, CancellationToken ct)
     {
         return await context.StormEventsDailySummaries
+            .AsNoTracking()
             .Where(w =>
                 w.Year == year &&
-                w.HeadlineEventTime != null &&
-                (w.SatellitePath1080 == null || w.SatellitePathPoster == null))
+                w.Id == effectiveDate &&
+                w.IsCurrent)
             .ToListAsync(ct);
     }
 
@@ -333,6 +334,16 @@ public class MyRepository(MyContext context) : IMyRepository
     {
         return await context.StormEventsDailySummaries
             .Where(w => w.Year == year)
+            .ToListAsync(ct);
+    }
+
+    public async Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryListMissingPostersForYear(int year, CancellationToken ct)
+    {
+        return await context.StormEventsDailySummaries
+            .Where(w =>
+                w.Year == year &&
+                w.HeadlineEventTime != null &&
+                (w.SatellitePath1080 == null || w.SatellitePathPoster == null))
             .ToListAsync(ct);
     }
 

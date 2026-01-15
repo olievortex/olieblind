@@ -114,9 +114,11 @@ public interface IMyRepository
 
     Task StormEventsDailySummaryCreate(StormEventsDailySummaryEntity entity, CancellationToken ct);
 
-    Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryListMissingPostersForYear(int year, CancellationToken ct);
+    Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryListByDate(string effectiveDate, int year, CancellationToken ct);
 
     Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryListByYear(int year, CancellationToken ct);
+
+    Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryListMissingPostersForYear(int year, CancellationToken ct);
 
     Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryGet(string effectiveDate, int year, CancellationToken ct);
 

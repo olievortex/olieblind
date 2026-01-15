@@ -41,6 +41,7 @@ public static class Program
         builder.Services.AddScoped<IVideoBusiness, VideoBusiness>();
         builder.Services.AddScoped<IModelForecastBusiness, ModelForecastBusiness>();
         builder.Services.AddScoped<ICookieConsentBusiness, CookieConsentBusiness>();
+        builder.Services.AddScoped<IStormEventsBusiness, StormEventsBusiness>();
         builder.Services.AddScoped<IStormEventsSource, StormEventsSource>();
     }
 
