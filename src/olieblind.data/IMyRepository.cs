@@ -92,6 +92,8 @@ public interface IMyRepository
 
     Task<SpcMesoProductEntity?> SpcMesoProductGetLatest(int year, CancellationToken ct);
 
+    Task<List<SpcMesoProductEntity>> SpcMesoProductGetList(string effectiveDate, CancellationToken ct);
+
     Task SpcMesoProductUpdate(SpcMesoProductEntity entity, CancellationToken ct);
 
     #endregion

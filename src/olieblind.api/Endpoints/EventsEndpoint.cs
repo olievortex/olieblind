@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
+using olieblind.data.Entities;
 using olieblind.data.Models;
 using olieblind.lib.StormEvents.Interfaces;
 using olieblind.lib.StormEvents.Models;
@@ -13,6 +14,7 @@ public static class EventsEndpoint
         app.MapGet("/api/events/annualOverview/{year:int}", GetAnnualOverview);
         app.MapGet("/api/events/dailyDetailIdentifierByDate/{effectiveDate}", GetDailyDetailIdentifierByDate);
         app.MapGet("/api/events/dailyOverview/{effectiveDate}/{sourceFk}", GetDailyOverview);
+        app.MapGet("/api/events/mesos/{effectiveDate}", GetSpcMesos);
     }
 
     public static async Task<Ok<List<StormEventsAnnualSummaryModel>>> GetAnnualSummaryList(IStormEventsSource source, CancellationToken ct)
@@ -38,6 +40,12 @@ public static class EventsEndpoint
     public static async Task<Ok<DailyOverviewModel>> GetDailyOverview(string effectiveDate, string sourceFk, IStormEventsBusiness business, CancellationToken ct)
     {
         var result = await business.GetDailyOverview(effectiveDate, sourceFk, ct);
+        return TypedResults.Ok(result);
+    }
+
+    public static async Task<Ok<List<SpcMesoProductEntity>>> GetSpcMesos(string effectiveDate, IStormEventsSource source, CancellationToken ct)
+    {
+        var result = await source.GetMesoList(effectiveDate, ct);
         return TypedResults.Ok(result);
     }
 }

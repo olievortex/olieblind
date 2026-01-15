@@ -253,6 +253,14 @@ public class MyRepository(MyContext context) : IMyRepository
             .FirstOrDefaultAsync(ct);
     }
 
+    public async Task<List<SpcMesoProductEntity>> SpcMesoProductGetList(string effectiveDate, CancellationToken ct)
+    {
+        return await context.SpcMesoProducts
+            .AsNoTracking()
+            .Where(c => c.EffectiveDate == effectiveDate)
+            .ToListAsync(ct);
+    }
+
     public async Task SpcMesoProductUpdate(SpcMesoProductEntity entity, CancellationToken ct)
     {
         context.SpcMesoProducts.Update(entity);

@@ -1,0 +1,73 @@
+@page
+@model olieblind.web.Pages.Events.HailReports
+@{
+    ViewData["Title"] = "Analysis";
+}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-page="/Events/Years">Years</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-page="/Events/AnnualOverview" asp-route-year="@Model.Year">@Model.Year</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-page="/Events/DailyOverview" asp-route-year="@Model.Year"
+               asp-route-effectiveDate="@Model.EffectiveDate"
+               asp-route-sourceFk="@Model.SourceFk">@Model.EffectiveDate</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <a href="#">Hail Reports</a>
+        </li>
+    </ol>
+</nav>
+@if (Model.DailyModel.Hails.Count == 0)
+{
+    <p>No hail reports were found for this day.</p>
+}
+
+@if (Model.DailyModel.Hails.Count > 0)
+{
+    <h2>Hail Reports</h2>
+
+    <a class="btn @Model.TimeClass" asp-page="/Events/HailReports" asp-route-year="@Model.Year"
+       asp-route-effectiveDate="@Model.EffectiveDate" asp-route-sourceFk="@Model.SourceFk"
+       asp-route-sort="time">Sort by Time</a>
+    <a class="btn @Model.MagnitudeClass" asp-page="/Events/HailReports" asp-route-year="@Model.Year"
+       asp-route-effectiveDate="@Model.EffectiveDate" asp-route-sourceFk="@Model.SourceFk"
+       asp-route-sort="magnitude">Sort by Size</a>
+    <a class="btn @Model.StateClass" asp-page="/Events/HailReports" asp-route-year="@Model.Year"
+       asp-route-effectiveDate="@Model.EffectiveDate" asp-route-sourceFk="@Model.SourceFk"
+       asp-route-sort="state">Sort by State</a>
+    <a class="btn @Model.CountyClass" asp-page="/Events/HailReports" asp-route-year="@Model.Year"
+       asp-route-effectiveDate="@Model.EffectiveDate" asp-route-sourceFk="@Model.SourceFk"
+       asp-route-sort="county">Sort by County</a>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Time</th>
+            <th scope="col">Size</th>
+            <th scope="col">State</th>
+            <th scope="col">County</th>
+            <th scope="col">Location</th>
+            <th scope="col">Narrative</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var hail in Model.EventList)
+        {
+            <tr>
+                <th scope="row">@($"{hail.EffectiveTime:HH:mm}Z")</th>
+                <td>@hail.Magnitude</td>
+                <td>@OlieWebCommon.StateToAbbr(hail.State)</td>
+                <td>@OlieWebCommon.County(hail.County)</td>
+                <td>@OlieWebCommon.ProperCase(hail.City)</td>
+                <td>@hail.Narrative</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    <p>Storm reports are derived from "The Storm Events Database" (National
+        Centers for Environmental Information) and/or "Past Storm Reports" (Storm Prediction Center).</p>
+}

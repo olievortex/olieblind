@@ -1,0 +1,53 @@
+@page
+@model olieblind.web.Pages.Events.MesoList
+@{
+    ViewData["Title"] = "Analysis";
+}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-page="/Events/Years">Years</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-page="/Events/AnnualOverview" asp-route-year="@Model.Year">@Model.Year</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-page="/Events/DailyOverview" asp-route-year="@Model.Year"
+               asp-route-effectiveDate="@Model.EffectiveDate"
+               asp-route-sourceFk="@Model.SourceFk">@Model.EffectiveDate</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <a href="#">Mesoscale Discussions</a>
+        </li>
+    </ol>
+</nav>
+@if (Model.MesoItems.Count == 0)
+{
+    <p>No Mesoscale Discussions were found for this day.</p>
+}
+
+@if (Model.MesoItems.Count > 0)
+{
+    <h2>Mesoscale Discussions</h2>
+
+    <div class="row">
+        @foreach (var meso in Model.MesoItems)
+        {
+            <div class="card" style="width: 18rem;">
+                @if (meso.GraphicUrl is not null)
+                {
+                    <img src="@Model.BlobBase/@meso.GraphicUrl" class="card-img-top" alt="Mesoscale Discussion @meso.Id">
+                }
+                <div class="card-body">
+                    <h5 class="card-title">MD @meso.Id - @($"{meso.EffectiveTime:HH:mm}")Z</h5>
+                    <p class="card-text">(@meso.AreasAffected) @meso.Concerning</p>
+                    <a class="btn btn-primary" asp-page="/Events/MesoDetail" asp-route-year="@Model.Year"
+                       asp-route-id="@meso.Id" asp-route-effectiveDate="@Model.EffectiveDate"
+                       asp-route-sourceFk="@Model.SourceFk">Detail</a>
+                </div>
+            </div>
+        }
+    </div>
+
+    <p>Mesoscale Discussions are derived from "Archived Convective Products" (Storm Prediction Center).</p>
+}

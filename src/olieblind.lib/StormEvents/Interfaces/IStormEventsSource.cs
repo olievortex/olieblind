@@ -12,4 +12,6 @@ public interface IStormEventsSource
     Task<StormEventsDailySummaryEntity?> GetDailySummaryByDate(string effectiveDate, int year, CancellationToken ct);
 
     Task<List<StormEventsDailySummaryEntity>> GetDailySummaryList(int year, CancellationToken ct);
+
+    Task<List<SpcMesoProductEntity>> GetMesoList(string effectiveDate, CancellationToken ct);
 }
