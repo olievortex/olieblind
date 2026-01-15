@@ -60,6 +60,11 @@ public class StormEventsSource(IMyRepository repo) : IStormEventsSource
         return topRows;
     }
 
+    public async Task<SpcMesoProductEntity?> GetMeso(int year, int id, CancellationToken ct)
+    {
+        return await repo.SpcMesoProductGet(year, id, ct);
+    }
+
     public async Task<List<SpcMesoProductEntity>> GetMesoList(string effectiveDate, CancellationToken ct)
     {
         return await repo.SpcMesoProductGetList(effectiveDate, ct);

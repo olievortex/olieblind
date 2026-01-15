@@ -15,6 +15,7 @@ public static class EventsEndpoint
         app.MapGet("/api/events/dailyDetailIdentifierByDate/{effectiveDate}", GetDailyDetailIdentifierByDate);
         app.MapGet("/api/events/dailyOverview/{effectiveDate}/{sourceFk}", GetDailyOverview);
         app.MapGet("/api/events/mesos/{effectiveDate}", GetSpcMesos);
+        app.MapGet("/api/events/mesos/{year:int}/{id:int}", GetSpcMeso);
     }
 
     public static async Task<Ok<List<StormEventsAnnualSummaryModel>>> GetAnnualSummaryList(IStormEventsSource source, CancellationToken ct)
@@ -40,6 +41,12 @@ public static class EventsEndpoint
     public static async Task<Ok<DailyOverviewModel>> GetDailyOverview(string effectiveDate, string sourceFk, IStormEventsBusiness business, CancellationToken ct)
     {
         var result = await business.GetDailyOverview(effectiveDate, sourceFk, ct);
+        return TypedResults.Ok(result);
+    }
+
+    public static async Task<Ok<SpcMesoProductEntity>> GetSpcMeso(int year, int id, IStormEventsSource source, CancellationToken ct)
+    {
+        var result = await source.GetMeso(year, id, ct);
         return TypedResults.Ok(result);
     }
 
