@@ -38,7 +38,7 @@ public class AnnualOverview(IHttpClientFactory client) : PageModel
         }
 
         var searchDate = $"{SelectedDate.Year}-{SelectedDate.Month:00}-{SelectedDate.Day:00}";
-        var identity = await OlieWebCommon.ApiGet< DailyDetailIdentifierModel>(client, $"/api/events/dailyDetailIdentifierByDate/{searchDate}", ct);
+        var identity = await OlieWebCommon.ApiGet<DailyDetailIdentifierModel>(client, $"/api/events/dailyDetailIdentifierByDate/{searchDate}", ct);
         if (identity is null)
         {
             await InitializePage(year, ct);
