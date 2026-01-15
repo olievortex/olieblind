@@ -12,6 +12,7 @@ public static class EventsEndpoint
         app.MapGet("/api/events/annualSummaryList", GetAnnualSummaryList);
         app.MapGet("/api/events/annualOverview/{year:int}", GetAnnualOverview);
         app.MapGet("/api/events/dailyDetailIdentifierByDate/{effectiveDate}", GetDailyDetailIdentifierByDate);
+        app.MapGet("/api/events/dailyOverview/{effectiveDate}/{sourceFk}", GetDailyOverview);
     }
 
     public static async Task<Ok<List<StormEventsAnnualSummaryModel>>> GetAnnualSummaryList(IStormEventsSource source, CancellationToken ct)
@@ -31,6 +32,12 @@ public static class EventsEndpoint
     public static async Task<Ok<DailyDetailIdentifierModel>> GetDailyDetailIdentifierByDate(string effectiveDate, IStormEventsBusiness business, CancellationToken ct)
     {
         var result = await business.GetDailyDetailIdentifierByDate(effectiveDate, ct);
+        return TypedResults.Ok(result);
+    }
+
+    public static async Task<Ok<DailyOverviewModel>> GetDailyOverview(string effectiveDate, string sourceFk, IStormEventsBusiness business, CancellationToken ct)
+    {
+        var result = await business.GetDailyOverview(effectiveDate, sourceFk, ct);
         return TypedResults.Ok(result);
     }
 }

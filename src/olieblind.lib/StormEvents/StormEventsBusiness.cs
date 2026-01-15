@@ -1,10 +1,15 @@
-﻿using olieblind.lib.StormEvents.Interfaces;
+﻿using olieblind.data;
+using olieblind.lib.StormEvents.Interfaces;
 using olieblind.lib.StormEvents.Models;
 
 namespace olieblind.lib.StormEvents;
 
-public class StormEventsBusiness(IStormEventsSource source) : IStormEventsBusiness
+public class StormEventsBusiness(IStormEventsSource source, IMyRepository repo) : IStormEventsBusiness
 {
+    private const int Goes16 = 2018;
+    private const string EimAttribution = "Iowa Environmental Mesonet of Iowa State University";
+    private const string AwsAttribution = "NOAA Open Data Dissemination Program";
+
     public async Task<AnnualOverviewModel> GetAnnualOverview(int year, CancellationToken ct)
     {
         var events = await source.GetDailySummaryList(year, ct);
@@ -73,5 +78,49 @@ public class StormEventsBusiness(IStormEventsSource source) : IStormEventsBusine
             EffectiveDate = summary.Id,
             Year = summary.Year
         };
+    }
+
+    public async Task<DailyOverviewModel?> GetDailyOverview(string effectiveDate, string sourceFk, CancellationToken ct)
+    {
+        var year = int.Parse(effectiveDate[..4]);
+
+        var dateValue = source.FromEffectiveDate(effectiveDate);
+        if (dateValue is null) return null;
+
+        var summary = await repo.StormEventsDailySummaryGet(effectiveDate, year, sourceFk, ct);
+        if (summary is null) return null;
+
+        var events = await repo.StormEventsDailyDetailList(effectiveDate, sourceFk, ct);
+        var tornadoes = events
+            .Where(w => w.EventType == "Tornado")
+            .OrderBy(o => o.DateFk)
+            .ThenBy(o => o.Timestamp)
+            .ToList();
+        var hails = events
+            .Where(w => w.EventType == "Hail")
+            .OrderBy(o => o.DateFk)
+            .ThenBy(o => o.Timestamp)
+            .ToList();
+        var winds = events
+            .Where(w => w.EventType == "Thunderstorm Wind")
+            .OrderBy(o => o.DateFk)
+            .ThenBy(o => o.Timestamp)
+            .ToList();
+        var mesos = await repo.SpcMesoProductGetCount(effectiveDate, ct);
+
+        var result = new DailyOverviewModel
+        {
+            Events = events,
+            Tornadoes = tornadoes,
+            SatellitePosterPath = summary.SatellitePathPoster ?? summary.SatellitePath1080,
+            Satellite1080Path = summary.SatellitePath1080 ?? summary.SatellitePathPoster,
+            SatelliteDateTime = summary.HeadlineEventTime,
+            SatelliteAttribution = dateValue.Value.Year < Goes16 ? EimAttribution : AwsAttribution,
+            Winds = winds,
+            Hails = hails,
+            MesoCount = mesos
+        };
+
+        return result;
     }
 }

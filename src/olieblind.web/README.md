@@ -3,5 +3,6 @@ The following evironment variables are required to run locally. Replace the dumm
 {
   "APPLICATIONINSIGHTS_CONNECTION_STRING": "xxxx",
   "OlieBlueUrl": "http://localhost:5120",
-  "OlieCookieConsentVersion": "1"
+  "OlieCookieConsentVersion": "1",
+  "OlieBaseVideoUrl": "https://www.olievortex.com/videos"
 }

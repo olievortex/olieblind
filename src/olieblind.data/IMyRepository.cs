@@ -88,6 +88,8 @@ public interface IMyRepository
 
     Task<SpcMesoProductEntity?> SpcMesoProductGet(int year, int index, CancellationToken ct);
 
+    Task<int> SpcMesoProductGetCount(string effectiveDate, CancellationToken ct);
+
     Task<SpcMesoProductEntity?> SpcMesoProductGetLatest(int year, CancellationToken ct);
 
     Task SpcMesoProductUpdate(SpcMesoProductEntity entity, CancellationToken ct);
@@ -102,11 +104,13 @@ public interface IMyRepository
 
     #region StormEventsDailyDetail
 
+    Task<int> StormEventsDailyDetailCount(string dateFk, string sourceFk, CancellationToken ct);
+
     Task StormEventsDailyDetailCreate(List<StormEventsDailyDetailEntity> entities, CancellationToken ct);
 
     Task StormEventsDailyDetailDelete(string dateFk, string sourceFk, CancellationToken ct);
 
-    Task<int> StormEventsDailyDetailCount(string dateFk, string sourceFk, CancellationToken ct);
+    Task<List<StormEventsDailyDetailEntity>> StormEventsDailyDetailList(string effectiveDate, string sourceFk, CancellationToken ct);
 
     #endregion
 
@@ -121,6 +125,8 @@ public interface IMyRepository
     Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryListMissingPostersForYear(int year, CancellationToken ct);
 
     Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryGet(string effectiveDate, int year, CancellationToken ct);
+
+    Task<StormEventsDailySummaryEntity?> StormEventsDailySummaryGet(string effectiveDate, int year, string sourceFk, CancellationToken ct);
 
     Task StormEventsDailySummaryUpdate(StormEventsDailySummaryEntity entity, CancellationToken ct);
 

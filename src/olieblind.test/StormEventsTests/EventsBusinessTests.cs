@@ -19,14 +19,14 @@ public class EventsBusinessTests
         const string date2 = "2023-07-11";
         var sourceFk = Guid.NewGuid().ToString();
         var a = new StormEventsDailySummaryEntity
-            { Id = date1, SourceFk = sourceFk, F5 = 1, F4 = 2, F3 = 7, F2 = 4, F1 = 6, Wind = 3, Hail = 5, Year = year };
+        { Id = date1, SourceFk = sourceFk, F5 = 1, F4 = 2, F3 = 7, F2 = 4, F1 = 6, Wind = 3, Hail = 5, Year = year };
         var b = new StormEventsDailySummaryEntity
-            { Id = date2, SourceFk = sourceFk, F5 = 0, F4 = 1, F3 = 0, F2 = 1, F1 = 5, Wind = 32, Hail = 1, Year = year };
+        { Id = date2, SourceFk = sourceFk, F5 = 0, F4 = 1, F3 = 0, F2 = 1, F1 = 5, Wind = 32, Hail = 1, Year = year };
         List<StormEventsDailySummaryEntity> events = [a, b];
         var source = new Mock<IStormEventsSource>();
         source.Setup(s => s.GetDailySummaryList(year, ct))
             .ReturnsAsync(events);
-        var testable = new StormEventsBusiness(source.Object);
+        var testable = new StormEventsBusiness(source.Object, null!);
 
         // Act
         var result = await testable.GetAnnualOverview(year, ct);
@@ -59,7 +59,7 @@ public class EventsBusinessTests
         var ct = CancellationToken.None;
         const string effectiveDate = "2021-07-18";
         var source = new Mock<IStormEventsSource>();
-        var testable = new StormEventsBusiness(source.Object);
+        var testable = new StormEventsBusiness(source.Object, null!);
 
         // Act
         var result = await testable.GetDailyDetailIdentifierByDate(effectiveDate, ct);
@@ -86,7 +86,7 @@ public class EventsBusinessTests
         };
         source.Setup(s => s.GetDailySummaryByDate(effectiveValue, year, ct))
             .ReturnsAsync(summary);
-        var testable = new StormEventsBusiness(source.Object);
+        var testable = new StormEventsBusiness(source.Object, null!);
 
         // Act
         var result = await testable.GetDailyDetailIdentifierByDate(effectiveValue, ct);

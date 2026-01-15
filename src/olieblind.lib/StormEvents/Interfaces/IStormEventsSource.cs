@@ -5,6 +5,8 @@ namespace olieblind.lib.StormEvents.Interfaces;
 
 public interface IStormEventsSource
 {
+    DateTime? FromEffectiveDate(string value);
+
     Task<List<StormEventsAnnualSummaryModel>> GetAnnualSummaryList(CancellationToken ct);
 
     Task<StormEventsDailySummaryEntity?> GetDailySummaryByDate(string effectiveDate, int year, CancellationToken ct);
