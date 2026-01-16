@@ -257,45 +257,45 @@ public class EventsSourceTests
 
     #endregion
 
-    //#region GetRadarInventory
+    #region GetRadarInventory
 
-    //[Test]
-    //public async Task GetRadarInventoryAsync_Item_ValidParameters()
-    //{
-    //    // Arrange
-    //    var ct = CancellationToken.None;
-    //    const string radarId = "KMSP";
-    //    const string effectiveDate = "2021-07-18";
-    //    const string bucketName = "LevelIi";
-    //    var expected = new RadarInventoryEntity
-    //    {
-    //        BucketName = bucketName,
-    //        EffectiveDate = effectiveDate,
-    //        Id = radarId,
-    //        Timestamp = DateTime.UtcNow,
-    //        FileList = [string.Empty]
-    //    };
-    //    var cosmos = new Mock<IOlieCosmosRepository>();
-    //    cosmos.Setup(s => s.RadarInventoryGetAsync(radarId, effectiveDate, bucketName, ct))
-    //        .ReturnsAsync(expected);
-    //    var testable = new EventsSource(cosmos.Object);
+    [Test]
+    public async Task GetRadarInventory_Item_ValidParameters()
+    {
+        // Arrange
+        var ct = CancellationToken.None;
+        const string radarId = "KMSP";
+        const string effectiveDate = "2021-07-18";
+        const string bucketName = "LevelIi";
+        var expected = new RadarInventoryEntity
+        {
+            BucketName = bucketName,
+            EffectiveDate = effectiveDate,
+            Id = radarId,
+            Timestamp = DateTime.UtcNow,
+            FileList = [string.Empty]
+        };
+        var repo = new Mock<IMyRepository>();
+        repo.Setup(s => s.RadarInventoryGet(radarId, effectiveDate, bucketName, ct))
+            .ReturnsAsync(expected);
+        var testable = new StormEventsSource(repo.Object);
 
-    //    // Act
-    //    var result = await testable.GetRadarInventoryAsync(radarId, effectiveDate, bucketName, ct);
+        // Act
+        var result = await testable.GetRadarInventory(radarId, effectiveDate, bucketName, ct);
 
-    //    // Assert
-    //    Assert.Multiple(() =>
-    //    {
-    //        Assert.That(result, Is.EqualTo(expected));
-    //        Assert.That(result?.BucketName, Is.EqualTo(bucketName));
-    //        Assert.That(result?.EffectiveDate, Is.EqualTo(effectiveDate));
-    //        Assert.That(result?.Id, Is.EqualTo(radarId));
-    //        Assert.That(result?.FileList, Has.Count.EqualTo(1));
-    //        Assert.That(result?.Timestamp, Is.Not.EqualTo(DateTime.MinValue));
-    //    });
-    //}
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result, Is.EqualTo(expected));
+            Assert.That(result?.BucketName, Is.EqualTo(bucketName));
+            Assert.That(result?.EffectiveDate, Is.EqualTo(effectiveDate));
+            Assert.That(result?.Id, Is.EqualTo(radarId));
+            Assert.That(result?.FileList, Has.Count.EqualTo(1));
+            Assert.That(result?.Timestamp, Is.Not.EqualTo(DateTime.MinValue));
+        }
+    }
 
-    //#endregion
+    #endregion
 
     //#region GetSatelliteList
 

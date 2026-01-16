@@ -1,6 +1,7 @@
 ﻿using olieblind.data;
 using olieblind.data.Entities;
 using olieblind.data.Models;
+using olieblind.lib.Mapping;
 using olieblind.lib.StormEvents.Interfaces;
 using System.Globalization;
 
@@ -68,5 +69,15 @@ public class StormEventsSource(IMyRepository repo) : IStormEventsSource
     public async Task<List<SpcMesoProductEntity>> GetMesoList(string effectiveDate, CancellationToken ct)
     {
         return await repo.SpcMesoProductGetList(effectiveDate, ct);
+    }
+
+    public async Task<RadarInventoryEntity?> GetRadarInventory(string radarId, string effectiveDate, string bucketName, CancellationToken ct)
+    {
+        var result = await repo.RadarInventoryGet(radarId, effectiveDate, bucketName, ct);
+
+        if (result is not null)
+            EntityCompression.Decompress(result);
+
+        return result;
     }
 }

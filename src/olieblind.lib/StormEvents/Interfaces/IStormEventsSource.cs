@@ -16,4 +16,6 @@ public interface IStormEventsSource
     Task<SpcMesoProductEntity?> GetMeso(int year, int id, CancellationToken ct);
 
     Task<List<SpcMesoProductEntity>> GetMesoList(string effectiveDate, CancellationToken ct);
+
+    Task<RadarInventoryEntity?> GetRadarInventory(string radarId, string effectiveDate, string bucketName, CancellationToken ct);
 }
