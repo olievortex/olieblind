@@ -9,6 +9,8 @@ namespace olieblind.data;
 [ExcludeFromCodeCoverage]
 public class MyRepository(MyContext context) : IMyRepository
 {
+    private const int VisibleSat = 2;
+
     #region ProductMap
 
     public async Task ProductMapCreate(ProductMapEntity entity, CancellationToken ct)
@@ -200,6 +202,18 @@ public class MyRepository(MyContext context) : IMyRepository
                         w.ScanTime >= eventTime)
             .OrderBy(o => o.ScanTime)
             .FirstOrDefaultAsync(ct);
+    }
+
+    public async Task<List<SatelliteAwsProductEntity>> SatelliteAwsProductGetList(string effectiveDate, CancellationToken ct)
+    {
+        return await context.SatelliteAwsProducts
+            .AsNoTracking()
+            .Where(w =>
+                w.EffectiveDate == effectiveDate &&
+                w.Channel == VisibleSat &&
+                w.DayPart == DayPartsEnum.Afternoon)
+            .OrderBy(o => o.ScanTime)
+            .ToListAsync(ct);
     }
 
     public async Task<List<SatelliteAwsProductEntity>> SatelliteAwsProductListNoPoster(CancellationToken ct)

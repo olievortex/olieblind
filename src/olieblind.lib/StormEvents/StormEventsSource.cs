@@ -61,6 +61,26 @@ public class StormEventsSource(IMyRepository repo) : IStormEventsSource
         return topRows;
     }
 
+    public List<SatelliteAwsProductEntity> GetIemSatelliteList()
+    {
+        var current = new TimeSpan(0, 18, 0, 0);
+        var stop = new TimeSpan(0, 24, 0, 0);
+        var result = new List<SatelliteAwsProductEntity>();
+
+        while (current < stop)
+        {
+            var entity = new SatelliteAwsProductEntity
+            {
+                ScanTime = new DateTime(2010, 1, 1,
+                    current.Hours, current.Minutes, 0, DateTimeKind.Utc)
+            };
+            result.Add(entity);
+            current = current.Add(new TimeSpan(0, 15, 0));
+        }
+
+        return result;
+    }
+
     public async Task<SpcMesoProductEntity?> GetMeso(int year, int id, CancellationToken ct)
     {
         return await repo.SpcMesoProductGet(year, id, ct);

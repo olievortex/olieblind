@@ -9,4 +9,6 @@ public interface IStormEventsBusiness
     Task<DailyOverviewModel?> GetDailyOverview(string effectiveDate, string sourceFk, CancellationToken ct);
 
     Task<DailyDetailIdentifierModel?> GetDailyDetailIdentifierByDate(string effectiveDate, CancellationToken ct);
+
+    Task<SatelliteListModel> GetSatelliteList(string effectiveDate, CancellationToken ct);
 }

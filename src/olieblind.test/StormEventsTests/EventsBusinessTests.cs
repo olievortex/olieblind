@@ -307,31 +307,32 @@ public class EventsBusinessTests
 
     #endregion
 
-    //#region GetSatelliteList
+    #region GetSatelliteList
 
-    //[Test]
-    //public async Task GetSatelliteListAsync_Model_NoIem()
-    //{
-    //    // Arrange
-    //    var ct = CancellationToken.None;
-    //    const string effectiveDay = "2020-07-18";
-    //    var source = new Mock<IEventsSource>();
-    //    source.Setup(s => s.GetSatelliteListAsync(effectiveDay, ct))
-    //        .ReturnsAsync([new SatelliteAwsProductEntity { BucketName = "Dillon" }]);
-    //    source.Setup(s => s.GetIemSatelliteList())
-    //        .Returns([new SatelliteAwsProductEntity()]);
-    //    var testable = new EventsBusiness(source.Object);
+    [Test]
+    public async Task GetSatelliteList_Model_NoIem()
+    {
+        // Arrange
+        var ct = CancellationToken.None;
+        const string effectiveDay = "2020-07-18";
+        var source = new Mock<IStormEventsSource>();
+        source.Setup(s => s.GetIemSatelliteList())
+            .Returns([new SatelliteAwsProductEntity()]);
+        var repo = new Mock<IMyRepository>();
+        repo.Setup(s => s.SatelliteAwsProductGetList(effectiveDay, ct))
+            .ReturnsAsync([new SatelliteAwsProductEntity { BucketName = "Dillon" }]);
+        var testable = new StormEventsBusiness(source.Object, repo.Object);
 
-    //    // Act
-    //    var result = await testable.GetSatelliteListAsync(effectiveDay, ct);
+        // Act
+        var result = await testable.GetSatelliteList(effectiveDay, ct);
 
-    //    // Assert
-    //    Assert.Multiple(() =>
-    //    {
-    //        Assert.That(result.AwsList, Has.Count.GreaterThan(0));
-    //        Assert.That(result.IemList, Has.Count.GreaterThan(0));
-    //    });
-    //}
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.AwsList, Has.Count.GreaterThan(0));
+            Assert.That(result.IemList, Has.Count.GreaterThan(0));
+        }
+    }
 
-    //#endregion
+    #endregion
 }

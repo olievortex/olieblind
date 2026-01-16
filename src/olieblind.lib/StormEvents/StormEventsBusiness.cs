@@ -9,6 +9,7 @@ public class StormEventsBusiness(IStormEventsSource source, IMyRepository repo) 
     private const int Goes16 = 2018;
     private const string EimAttribution = "Iowa Environmental Mesonet of Iowa State University";
     private const string AwsAttribution = "NOAA Open Data Dissemination Program";
+    private const string IowaMesonetBucket = "IEM";
 
     public async Task<AnnualOverviewModel> GetAnnualOverview(int year, CancellationToken ct)
     {
@@ -122,5 +123,20 @@ public class StormEventsBusiness(IStormEventsSource source, IMyRepository repo) 
         };
 
         return result;
+    }
+
+    public async Task<SatelliteListModel> GetSatelliteList(string effectiveDate, CancellationToken ct)
+    {
+        var satList = await repo.SatelliteAwsProductGetList(effectiveDate, ct);
+        var awsList = satList.Where(w => w.BucketName != IowaMesonetBucket).ToList();
+        var iemList = satList.Where(w => w.BucketName == IowaMesonetBucket).ToList();
+
+        if (iemList.Count == 0) iemList = source.GetIemSatelliteList();
+
+        return new SatelliteListModel
+        {
+            IemList = iemList,
+            AwsList = awsList
+        };
     }
 }

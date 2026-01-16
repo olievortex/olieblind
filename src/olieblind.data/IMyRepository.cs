@@ -76,6 +76,8 @@ public interface IMyRepository
 
     Task<SatelliteAwsProductEntity?> SatelliteAwsProductGetPoster(string effectiveDate, DateTime eventTime, CancellationToken ct);
 
+    Task<List<SatelliteAwsProductEntity>> SatelliteAwsProductGetList(string effectiveDate, CancellationToken ct);
+
     Task<List<SatelliteAwsProductEntity>> SatelliteAwsProductListNoPoster(CancellationToken ct);
 
     Task SatelliteAwsProductUpdate(SatelliteAwsProductEntity entity, CancellationToken ct);

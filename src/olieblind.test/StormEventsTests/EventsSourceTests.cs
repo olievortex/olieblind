@@ -168,22 +168,22 @@ public class EventsSourceTests
 
     #endregion
 
-    //#region GetIemSatelliteList
+    #region GetIemSatelliteList
 
-    //[Test]
-    //public void GetIemSatelliteList_List_ValidParameters()
-    //{
-    //    // Arrange
-    //    var testable = new EventsSource(null!);
+    [Test]
+    public void GetIemSatelliteList_List_ValidParameters()
+    {
+        // Arrange
+        var testable = new StormEventsSource(null!);
 
-    //    // Act
-    //    var result = testable.GetIemSatelliteList();
+        // Act
+        var result = testable.GetIemSatelliteList();
 
-    //    // Assert
-    //    Assert.That(result, Has.Count.EqualTo(24));
-    //}
+        // Assert
+        Assert.That(result, Has.Count.EqualTo(24));
+    }
 
-    //#endregion
+    #endregion
 
     #region GetMeso
 
@@ -296,70 +296,4 @@ public class EventsSourceTests
     }
 
     #endregion
-
-    //#region GetSatelliteList
-
-    //[Test]
-    //public async Task GetSatelliteListAsync_List_ValidParameters()
-    //{
-    //    // Arrange
-    //    const string effectiveDate = "2021-07-18";
-    //    var id = Guid.NewGuid().ToString();
-    //    var bucketName = Guid.NewGuid().ToString();
-    //    var a = new SatelliteAwsProductEntity
-    //    {
-    //        BucketName = bucketName,
-    //        Id = id,
-    //        Channel = 2,
-    //        DayPart = 3,
-    //        ScanTime = DateTime.UtcNow,
-    //        EffectiveDate = effectiveDate,
-    //        Path1080 = "a",
-    //        PathPoster = "b"
-    //    };
-    //    var expected = new List<SatelliteAwsProductEntity> { a, new() };
-    //    var ct = CancellationToken.None;
-    //    var cosmos = new Mock<IOlieCosmosRepository>();
-    //    cosmos.Setup(s => s.SatelliteAwsProductGetListAsync(effectiveDate, ct))
-    //        .ReturnsAsync(expected);
-    //    var testable = new EventsSource(cosmos.Object);
-
-    //    // Act
-    //    var result = await testable.GetSatelliteListAsync(effectiveDate, ct);
-
-    //    // Assert
-    //    Assert.Multiple(() =>
-    //    {
-    //        Assert.That(result, Is.EqualTo(expected));
-    //        Assert.That(result[0].Id, Is.EqualTo(id));
-    //        Assert.That(result[0].EffectiveDate, Is.EqualTo(effectiveDate));
-    //        Assert.That(result[0].BucketName, Is.EqualTo(bucketName));
-    //        Assert.That(result[0].Channel, Is.EqualTo(2));
-    //        Assert.That(result[0].DayPart, Is.EqualTo(3));
-    //        Assert.That(result[0].ScanTime, Is.Not.EqualTo(DateTime.MinValue));
-    //        Assert.That(result[0].Path1080, Is.EqualTo("a"));
-    //        Assert.That(result[0].PathPoster, Is.EqualTo("b"));
-    //    });
-    //}
-
-    //#endregion
-
-    //#region ToEffectiveDate
-
-    //[Test]
-    //public void ToEffectiveDate_String_Date()
-    //{
-    //    // Arrange
-    //    var value = new DateTime(2021, 7, 18);
-    //    const string expected = "2021-07-18";
-    //    var testable = new EventsSource(null!);
-
-    //    // Act
-    //    var result = testable.ToEffectiveDate(value);
-
-    //    // Assert
-    //    Assert.That(result, Is.EqualTo(expected));
-    //}
-
-    //#endregion
 }
