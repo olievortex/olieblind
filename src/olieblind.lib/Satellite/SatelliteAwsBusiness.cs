@@ -23,7 +23,7 @@ public class SatelliteAwsBusiness(ISatelliteSource source, ISatelliteAwsSource a
         var effectiveDate = source.GetEffectiveDate(product.EffectiveDate);
         var filename = Path.GetFileName(product.Id);
         var blobName = $"{source.GetPath(effectiveDate, "bronze")}/{filename}";
-        var localFilename = OlieCommon.CreateLocalTmpPath(".nc");
+        var localFilename = $"{Path.GetTempPath()}{filename}";
         var key = $"{awsSource.GetPrefix(product.ScanTime)}{filename}";
         var attempt = 0;
 
