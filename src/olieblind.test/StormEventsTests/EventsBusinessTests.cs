@@ -1,4 +1,5 @@
 using Moq;
+using olieblind.data;
 using olieblind.data.Entities;
 using olieblind.lib.StormEvents;
 using olieblind.lib.StormEvents.Interfaces;
@@ -103,128 +104,208 @@ public class EventsBusinessTests
 
     #endregion
 
-    //#region GetDailyOverview
+    #region GetDailyOverview
 
-    //[Test]
-    //public async Task GetDailyOverviewAsync_ShortCircuit_BadDate()
-    //{
-    //    // Arrange
-    //    var ct = CancellationToken.None;
-    //    const string effectiveDate = "2021-07-18";
-    //    const int year = 2021;
-    //    var sourceFk = Guid.NewGuid().ToString();
-    //    var source = new Mock<IEventsSource>();
-    //    var testable = new EventsBusiness(source.Object);
+    [Test]
+    public async Task GetDailyOverview_ShortCircuit_BadDate()
+    {
+        // Arrange
+        var ct = CancellationToken.None;
+        const string effectiveDate = "2021-07-18";
+        var sourceFk = Guid.NewGuid().ToString();
+        var source = new Mock<IStormEventsSource>();
+        var testable = new StormEventsBusiness(source.Object, null!);
 
-    //    // Act
-    //    var result = await testable.GetDailyOverviewAsync(effectiveDate, sourceFk, year, ct);
+        // Act
+        var result = await testable.GetDailyOverview(effectiveDate, sourceFk, ct);
 
-    //    // Assert
-    //    Assert.That(result, Is.Null);
-    //}
+        // Assert
+        Assert.That(result, Is.Null);
+    }
 
-    //[Test]
-    //public async Task GetDailyOverviewAsync_ShortCircuit_NoSummary()
-    //{
-    //    // Arrange
-    //    var ct = CancellationToken.None;
-    //    const string effectiveValue = "2021-07-18";
-    //    const int year = 2021;
-    //    var effectiveDate = new DateTime(2021, 7, 18);
-    //    var sourceFk = Guid.NewGuid().ToString();
-    //    var source = new Mock<IEventsSource>();
-    //    source.Setup(s => s.FromEffectiveDate(effectiveValue)).Returns(effectiveDate);
-    //    var testable = new EventsBusiness(source.Object);
+    [Test]
+    public async Task GetDailyOverview_ShortCircuit_NoSummary()
+    {
+        // Arrange
+        var ct = CancellationToken.None;
+        const string effectiveValue = "2021-07-18";
+        var effectiveDate = new DateTime(2021, 7, 18);
+        var sourceFk = Guid.NewGuid().ToString();
+        var source = new Mock<IStormEventsSource>();
+        source.Setup(s => s.FromEffectiveDate(effectiveValue)).Returns(effectiveDate);
+        var repo = new Mock<IMyRepository>();
+        var testable = new StormEventsBusiness(source.Object, repo.Object);
 
-    //    // Act
-    //    var result = await testable.GetDailyOverviewAsync(effectiveValue, sourceFk, year, ct);
+        // Act
+        var result = await testable.GetDailyOverview(effectiveValue, sourceFk, ct);
 
-    //    // Assert
-    //    Assert.That(result, Is.Null);
-    //}
+        // Assert
+        Assert.That(result, Is.Null);
+    }
 
-    //[Test]
-    //public async Task GetDailyOverviewAsync_CompletesAllSteps_ValidParameters()
-    //{
-    //    // Arrange
-    //    var ct = CancellationToken.None;
-    //    const string effectiveValue = "2021-07-18";
-    //    const int year = 2021;
-    //    var effectiveDate = new DateTime(2021, 7, 18);
-    //    var sourceFk = Guid.NewGuid().ToString();
-    //    var summary = new StormEventsDailySummaryEntity
-    //    {
-    //        HeadlineEventTime = effectiveDate,
-    //        SatellitePathPoster = "a",
-    //        SatellitePath1080 = "b"
-    //    };
-    //    var events = new List<StormEventsDailyDetailEntity>
-    //    {
-    //        new()
-    //        {
-    //            EventType = "Tornado",
-    //            DateFk = effectiveValue,
-    //            Timestamp = DateTime.UtcNow
-    //        },
-    //        new()
-    //        {
-    //            EventType = "Tornado",
-    //            DateFk = effectiveValue,
-    //            Timestamp = DateTime.UtcNow
-    //        },
-    //        new()
-    //        {
-    //            EventType = "Hail",
-    //            DateFk = effectiveValue,
-    //            Timestamp = DateTime.UtcNow
-    //        },
-    //        new()
-    //        {
-    //            EventType = "Hail",
-    //            DateFk = effectiveValue,
-    //            Timestamp = DateTime.UtcNow
-    //        },
-    //        new()
-    //        {
-    //            EventType = "Thunderstorm Wind",
-    //            DateFk = effectiveValue,
-    //            Timestamp = DateTime.UtcNow
-    //        },
-    //        new()
-    //        {
-    //            EventType = "Thunderstorm Wind",
-    //            DateFk = effectiveValue,
-    //            Timestamp = DateTime.UtcNow
-    //        }
-    //    };
-    //    var source = new Mock<IEventsSource>();
-    //    source.Setup(s => s.FromEffectiveDate(effectiveValue)).Returns(effectiveDate);
-    //    source.Setup(s => s.GetDailySummaryAsync(effectiveValue, sourceFk, year, ct))
-    //        .ReturnsAsync(summary);
-    //    source.Setup(s => s.GetDailyDetailListAsync(effectiveValue, sourceFk, ct))
-    //        .ReturnsAsync(events);
-    //    source.Setup(s => s.GetMesoCountAsync(effectiveValue, ct))
-    //        .ReturnsAsync(2);
-    //    var testable = new EventsBusiness(source.Object);
+    [Test]
+    public async Task GetDailyOverview_NoaaAttribution_RecentYears()
+    {
+        // Arrange
+        var ct = CancellationToken.None;
+        const string effectiveValue = "2021-07-18";
+        const int year = 2021;
+        var effectiveDate = new DateTime(2021, 7, 18);
+        var sourceFk = Guid.NewGuid().ToString();
+        var summary = new StormEventsDailySummaryEntity
+        {
+            HeadlineEventTime = effectiveDate,
+            SatellitePathPoster = "a",
+            SatellitePath1080 = "b"
+        };
+        var events = new List<StormEventsDailyDetailEntity>
+        {
+            new()
+            {
+                EventType = "Tornado",
+                DateFk = effectiveValue,
+                Timestamp = DateTime.UtcNow
+            },
+            new()
+            {
+                EventType = "Tornado",
+                DateFk = effectiveValue,
+                Timestamp = DateTime.UtcNow
+            },
+            new()
+            {
+                EventType = "Hail",
+                DateFk = effectiveValue,
+                Timestamp = DateTime.UtcNow
+            },
+            new()
+            {
+                EventType = "Hail",
+                DateFk = effectiveValue,
+                Timestamp = DateTime.UtcNow
+            },
+            new()
+            {
+                EventType = "Thunderstorm Wind",
+                DateFk = effectiveValue,
+                Timestamp = DateTime.UtcNow
+            },
+            new()
+            {
+                EventType = "Thunderstorm Wind",
+                DateFk = effectiveValue,
+                Timestamp = DateTime.UtcNow
+            }
+        };
+        var source = new Mock<IStormEventsSource>();
+        source.Setup(s => s.FromEffectiveDate(effectiveValue)).Returns(effectiveDate);
+        var repo = new Mock<IMyRepository>();
+        repo.Setup(s => s.StormEventsDailySummaryGet(effectiveValue, year, sourceFk, ct))
+            .ReturnsAsync(summary);
+        repo.Setup(s => s.StormEventsDailyDetailList(effectiveValue, sourceFk, ct))
+            .ReturnsAsync(events);
+        repo.Setup(s => s.SpcMesoProductGetCount(effectiveValue, ct))
+            .ReturnsAsync(2);
+        var testable = new StormEventsBusiness(source.Object, repo.Object);
 
-    //    // Act
-    //    var result = await testable.GetDailyOverviewAsync(effectiveValue, sourceFk, year, ct);
+        // Act
+        var result = await testable.GetDailyOverview(effectiveValue, sourceFk, ct);
 
-    //    // Assert
-    //    Assert.Multiple(() =>
-    //    {
-    //        Assert.That(result, Is.Not.Null);
-    //        Assert.That(result?.Events, Is.EqualTo(events));
-    //        Assert.That(result?.Tornadoes, Has.Count.EqualTo(2));
-    //        Assert.That(result?.SatelliteDateTime, Is.EqualTo(effectiveDate));
-    //        Assert.That(result?.Satellite1080Path, Is.EqualTo("b"));
-    //        Assert.That(result?.SatellitePosterPath, Is.EqualTo("a"));
-    //        Assert.That(result?.SatelliteAttribution, Does.StartWith("NOAA"));
-    //        Assert.That(result?.MesoCount, Is.EqualTo(2));
-    //    });
-    //}
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result?.Events, Is.EqualTo(events));
+            Assert.That(result?.Tornadoes, Has.Count.EqualTo(2));
+            Assert.That(result?.SatelliteDateTime, Is.EqualTo(effectiveDate));
+            Assert.That(result?.Satellite1080Path, Is.EqualTo("b"));
+            Assert.That(result?.SatellitePosterPath, Is.EqualTo("a"));
+            Assert.That(result?.SatelliteAttribution, Does.StartWith("NOAA"));
+            Assert.That(result?.MesoCount, Is.EqualTo(2));
+        }
+    }
 
-    //#endregion
+    [Test]
+    public async Task GetDailyOverview_IemAttribution_OlderYears()
+    {
+        // Arrange
+        var ct = CancellationToken.None;
+        const string effectiveValue = "2017-07-18";
+        const int year = 2017;
+        var effectiveDate = new DateTime(2017, 7, 18);
+        var sourceFk = Guid.NewGuid().ToString();
+        var summary = new StormEventsDailySummaryEntity
+        {
+            HeadlineEventTime = effectiveDate,
+        };
+        var events = new List<StormEventsDailyDetailEntity>
+        {
+            new()
+            {
+                EventType = "Tornado",
+                DateFk = effectiveValue,
+                Timestamp = DateTime.UtcNow
+            },
+            new()
+            {
+                EventType = "Tornado",
+                DateFk = effectiveValue,
+                Timestamp = DateTime.UtcNow
+            },
+            new()
+            {
+                EventType = "Hail",
+                DateFk = effectiveValue,
+                Timestamp = DateTime.UtcNow
+            },
+            new()
+            {
+                EventType = "Hail",
+                DateFk = effectiveValue,
+                Timestamp = DateTime.UtcNow
+            },
+            new()
+            {
+                EventType = "Thunderstorm Wind",
+                DateFk = effectiveValue,
+                Timestamp = DateTime.UtcNow
+            },
+            new()
+            {
+                EventType = "Thunderstorm Wind",
+                DateFk = effectiveValue,
+                Timestamp = DateTime.UtcNow
+            }
+        };
+        var source = new Mock<IStormEventsSource>();
+        source.Setup(s => s.FromEffectiveDate(effectiveValue)).Returns(effectiveDate);
+        var repo = new Mock<IMyRepository>();
+        repo.Setup(s => s.StormEventsDailySummaryGet(effectiveValue, year, sourceFk, ct))
+            .ReturnsAsync(summary);
+        repo.Setup(s => s.StormEventsDailyDetailList(effectiveValue, sourceFk, ct))
+            .ReturnsAsync(events);
+        repo.Setup(s => s.SpcMesoProductGetCount(effectiveValue, ct))
+            .ReturnsAsync(2);
+        var testable = new StormEventsBusiness(source.Object, repo.Object);
+
+        // Act
+        var result = await testable.GetDailyOverview(effectiveValue, sourceFk, ct);
+
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result?.Events, Is.EqualTo(events));
+            Assert.That(result?.Tornadoes, Has.Count.EqualTo(2));
+            Assert.That(result?.SatelliteDateTime, Is.EqualTo(effectiveDate));
+            Assert.That(result?.Hails, Has.Count.EqualTo(2));
+            Assert.That(result?.Winds, Has.Count.EqualTo(2));
+            Assert.That(result?.SatelliteAttribution, Does.StartWith("Iowa"));
+            Assert.That(result?.MesoCount, Is.EqualTo(2));
+        }
+    }
+
+    #endregion
 
     //#region GetSatelliteList
 

@@ -8,38 +8,38 @@ namespace olieblind.test.StormEventsTests;
 
 public class EventsSourceTests
 {
-    //#region FromEffectiveDate
+    #region FromEffectiveDate
 
-    //[Test]
-    //public void FromEffectiveDate_Void_Invalid()
-    //{
-    //    // Arrange
-    //    const string value = "Dillon";
-    //    var testable = new EventsSource(null!);
+    [Test]
+    public void FromEffectiveDate_Void_Invalid()
+    {
+        // Arrange
+        const string value = "Dillon";
+        var testable = new StormEventsSource(null!);
 
-    //    // Act
-    //    var result = testable.FromEffectiveDate(value);
+        // Act
+        var result = testable.FromEffectiveDate(value);
 
-    //    // Assert
-    //    Assert.That(result, Is.Null);
-    //}
+        // Assert
+        Assert.That(result, Is.Null);
+    }
 
-    //[Test]
-    //public void FromEffectiveDate_Date_Valid()
-    //{
-    //    // Arrange
-    //    const string value = "2021-07-18";
-    //    var expected = new DateTime(2021, 7, 18);
-    //    var testable = new EventsSource(null!);
+    [Test]
+    public void FromEffectiveDate_Date_Valid()
+    {
+        // Arrange
+        const string value = "2021-07-18";
+        var expected = new DateTime(2021, 7, 18);
+        var testable = new StormEventsSource(null!);
 
-    //    // Act
-    //    var result = testable.FromEffectiveDate(value);
+        // Act
+        var result = testable.FromEffectiveDate(value);
 
-    //    // Assert
-    //    Assert.That(result, Is.EqualTo(expected));
-    //}
+        // Assert
+        Assert.That(result, Is.EqualTo(expected));
+    }
 
-    //#endregion
+    #endregion
 
     #region GetAnnualSummaryList
 
@@ -91,99 +91,6 @@ public class EventsSourceTests
     }
 
     #endregion
-
-    //#region GetDailyDetailList
-
-    //[Test]
-    //public async Task GetDailyDetailListAsync_CompletesAllSteps_Valid()
-    //{
-    //    // Arrange
-    //    var ct = CancellationToken.None;
-    //    const string effectiveDate = "2021-07-18";
-    //    var county = Guid.NewGuid().ToString();
-    //    var now = DateTime.UtcNow;
-    //    var sourceFk = Guid.NewGuid().ToString();
-    //    var wfo = Guid.NewGuid().ToString();
-    //    var magnitude = Guid.NewGuid().ToString();
-    //    var narrative = Guid.NewGuid().ToString();
-    //    var radar = Guid.NewGuid().ToString();
-    //    const float lat = 45;
-    //    const float lon = -93;
-    //    var expected = new List<StormEventsDailyDetailEntity>
-    //    {
-    //        new()
-    //        {
-    //            County = county,
-    //            Id = effectiveDate,
-    //            SourceFk = sourceFk,
-    //            EffectiveTime = now,
-    //            ForecastOffice = wfo,
-    //            Magnitude = magnitude,
-    //            Narrative = narrative,
-    //            Longitude = lon,
-    //            Latitude = lat,
-    //            ClosestRadar = radar
-    //        }
-    //    };
-
-    //    var cosmos = new Mock<IOlieCosmosRepository>();
-    //    cosmos.Setup(s => s.StormEventsDailyDetailListByPkAsync(effectiveDate, sourceFk, ct))
-    //        .ReturnsAsync(expected);
-    //    var testable = new EventsSource(cosmos.Object);
-
-    //    // Act
-    //    var result = await testable.GetDailyDetailListAsync(effectiveDate, sourceFk, ct);
-
-    //    // Assert
-    //    Assert.Multiple(() =>
-    //    {
-    //        Assert.That(result, Has.Count.EqualTo(1));
-    //        Assert.That(result[0].County, Is.EqualTo(county));
-    //        Assert.That(result[0].Id, Is.EqualTo(effectiveDate));
-    //        Assert.That(result[0].SourceFk, Is.EqualTo(sourceFk));
-    //        Assert.That(result[0].EffectiveTime, Is.EqualTo(now));
-    //        Assert.That(result[0].ForecastOffice, Is.EqualTo(wfo));
-    //        Assert.That(result[0].Magnitude, Is.EqualTo(magnitude));
-    //        Assert.That(result[0].Narrative, Is.EqualTo(narrative));
-    //        Assert.That(result[0].Longitude, Is.EqualTo(lon));
-    //        Assert.That(result[0].Latitude, Is.EqualTo(lat));
-    //        Assert.That(result[0].ClosestRadar, Is.EqualTo(radar));
-    //    });
-    //}
-
-    //#endregion
-
-    //#region GetDailySummary
-
-    //[Test]
-    //public async Task GetDailySummaryAsync_CompletesAllSteps_Valid()
-    //{
-    //    // Arrange
-    //    var ct = CancellationToken.None;
-    //    const int year = 2021;
-    //    const string effectiveDate = "2021-07-18";
-    //    var sourceFk = Guid.NewGuid().ToString();
-    //    var expected = new StormEventsDailySummaryEntity
-    //    {
-    //        IsCurrent = true
-    //    };
-    //    var cosmos = new Mock<IOlieCosmosRepository>();
-    //    cosmos.Setup(s => s.StormEventsDailySummaryGetAsync(effectiveDate, sourceFk, year, ct))
-    //        .ReturnsAsync(expected);
-    //    var testable = new EventsSource(cosmos.Object);
-
-    //    // Act
-    //    var result = await testable.GetDailySummaryAsync(effectiveDate, sourceFk, year, ct);
-
-    //    // Assert
-    //    Assert.Multiple(() =>
-    //    {
-    //        Assert.That(result, Is.EqualTo(expected));
-    //        Assert.That(result?.IsCurrent, Is.True);
-    //    });
-    //}
-
-    //#endregion
 
     #region GetDailySummaryByDate
 
@@ -278,99 +185,77 @@ public class EventsSourceTests
 
     //#endregion
 
-    //#region GetMeso
+    #region GetMeso
 
-    //[Test]
-    //public async Task GetMesoAsync_AllSteps_ValidParameters()
-    //{
-    //    // Arrange
-    //    const int id = 42;
-    //    const string effectiveDate = "2021-07-18";
-    //    var expected = new SpcMesoProductEntity
-    //    {
-    //        Id = id,
-    //        EffectiveDate = effectiveDate,
+    [Test]
+    public async Task GetMeso_AllSteps_ValidParameters()
+    {
+        // Arrange
+        const int id = 42;
+        const int year = 2021;
+        const string effectiveDate = "2021-07-18";
+        var expected = new SpcMesoProductEntity
+        {
+            Id = id,
+            EffectiveDate = effectiveDate,
 
-    //        AreasAffected = "a",
-    //        Concerning = "b",
-    //        EffectiveTime = DateTime.UtcNow,
-    //        GraphicUrl = "c",
-    //        Html = "d",
-    //        Narrative = "e",
-    //        Timestamp = DateTime.UtcNow
-    //    };
-    //    var ct = CancellationToken.None;
-    //    var cosmos = new Mock<IOlieCosmosRepository>();
-    //    cosmos.Setup(s => s.SpcMesoProductsGetAsync(id, effectiveDate, ct))
-    //        .ReturnsAsync(expected);
-    //    var testable = new EventsSource(cosmos.Object);
+            AreasAffected = "a",
+            Concerning = "b",
+            EffectiveTime = DateTime.UtcNow,
+            GraphicUrl = "c",
+            Html = "d",
+            Narrative = "e",
+            Timestamp = DateTime.UtcNow
+        };
+        var ct = CancellationToken.None;
+        var repo = new Mock<IMyRepository>();
+        repo.Setup(s => s.SpcMesoProductGet(year, id, ct))
+            .ReturnsAsync(expected);
+        var testable = new StormEventsSource(repo.Object);
 
-    //    // Act
-    //    var result = await testable.GetMesoAsync(id, effectiveDate, ct);
+        // Act
+        var result = await testable.GetMeso(year, id, ct);
 
-    //    // Assert
-    //    Assert.Multiple(() =>
-    //    {
-    //        Assert.That(result, Is.Not.Null);
-    //        Assert.That(result?.Id, Is.EqualTo(id));
-    //        Assert.That(result?.EffectiveTime, Is.Not.EqualTo(DateTime.MinValue));
-    //        Assert.That(result?.Timestamp, Is.Not.EqualTo(DateTime.MinValue));
-    //        Assert.That(result?.EffectiveDate, Is.EqualTo(effectiveDate));
-    //        Assert.That(result?.AreasAffected, Is.EqualTo("a"));
-    //        Assert.That(result?.Concerning, Is.EqualTo("b"));
-    //        Assert.That(result?.GraphicUrl, Is.EqualTo("c"));
-    //        Assert.That(result?.Html, Is.EqualTo("d"));
-    //        Assert.That(result?.Narrative, Is.EqualTo("e"));
-    //    });
-    //}
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result?.Id, Is.EqualTo(id));
+            Assert.That(result?.EffectiveTime, Is.Not.EqualTo(DateTime.MinValue));
+            Assert.That(result?.Timestamp, Is.Not.EqualTo(DateTime.MinValue));
+            Assert.That(result?.EffectiveDate, Is.EqualTo(effectiveDate));
+            Assert.That(result?.AreasAffected, Is.EqualTo("a"));
+            Assert.That(result?.Concerning, Is.EqualTo("b"));
+            Assert.That(result?.GraphicUrl, Is.EqualTo("c"));
+            Assert.That(result?.Html, Is.EqualTo("d"));
+            Assert.That(result?.Narrative, Is.EqualTo("e"));
+        }
+    }
 
-    //#endregion
+    #endregion
 
-    //#region GetMesoCount
+    #region GetMesoList
 
-    //[Test]
-    //public async Task GetMesoCountAsync_AllSteps_ValidParameters()
-    //{
-    //    // Arrange
-    //    const string effectiveDate = "2021-07-18";
-    //    const int value = 2;
-    //    var ct = CancellationToken.None;
-    //    var cosmos = new Mock<IOlieCosmosRepository>();
-    //    cosmos.Setup(s => s.SpcMesoProductsGetCountAsync(effectiveDate, ct))
-    //        .ReturnsAsync(value);
-    //    var testable = new EventsSource(cosmos.Object);
+    [Test]
+    public async Task GetMesoListAsync_AllSteps_ValidParameters()
+    {
+        // Arrange
+        const string effectiveDate = "2021-08-19";
+        var expected = new List<SpcMesoProductEntity>();
+        var ct = CancellationToken.None;
+        var repo = new Mock<IMyRepository>();
+        repo.Setup(s => s.SpcMesoProductGetList(effectiveDate, ct))
+            .ReturnsAsync(expected);
+        var testable = new StormEventsSource(repo.Object);
 
-    //    // Act
-    //    var result = await testable.GetMesoCountAsync(effectiveDate, ct);
+        // Act
+        var result = await testable.GetMesoList(effectiveDate, ct);
 
-    //    // Assert
-    //    Assert.That(result, Is.EqualTo(value));
-    //}
+        // Assert
+        Assert.That(result, Is.EqualTo(expected));
+    }
 
-    //#endregion
-
-    //#region GetMesoList
-
-    //[Test]
-    //public async Task GetMesoListAsync_AllSteps_ValidParameters()
-    //{
-    //    // Arrange
-    //    const string effectiveDate = "2021-08-19";
-    //    var expected = new List<SpcMesoProductEntity>();
-    //    var ct = CancellationToken.None;
-    //    var cosmos = new Mock<IOlieCosmosRepository>();
-    //    cosmos.Setup(s => s.SpcMesoProductsGetListAsync(effectiveDate, ct))
-    //        .ReturnsAsync(expected);
-    //    var testable = new EventsSource(cosmos.Object);
-
-    //    // Act
-    //    var result = await testable.GetMesoListAsync(effectiveDate, ct);
-
-    //    // Assert
-    //    Assert.That(result, Is.EqualTo(expected));
-    //}
-
-    //#endregion
+    #endregion
 
     //#region GetRadarInventory
 
