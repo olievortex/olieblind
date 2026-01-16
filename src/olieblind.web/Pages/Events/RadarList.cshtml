@@ -1,0 +1,62 @@
+@page
+@model olieblind.web.Pages.Events.RadarList
+@{
+    ViewData["Title"] = "Analysis";
+}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-page="/Events/Years">Years</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-page="/Events/AnnualOverview" asp-route-year="@Model.Year">@Model.Year</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-page="/Events/DailyOverview" asp-route-year="@Model.Year"
+               asp-route-effectiveDate="@Model.EffectiveDate"
+               asp-route-sourceFk="@Model.SourceFk">@Model.EffectiveDate</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <a href="#">Level II Radar</a>
+        </li>
+    </ol>
+</nav>
+
+@if (Model.RadarInventory is null)
+{
+    <p>No radar products are in our inventory for this day. We only inventory radars on days when at least one tornado
+        report is closest to that radar.</p>
+}
+else
+{
+    <h2>Level II Radar</h2>
+    <p>Special software is required to view these files. Compatible with the web and most imagery software. Use
+        <a href="https://www.ncdc.noaa.gov/wct/" target="_blank">NOAAs Weather and Climate Toolkit (Free)</a>
+        or
+        <a href="https://www.grlevelx.com/gr2analyst_3/" target="_blank">GR2Analyst</a> (Their other product, GRLevel3,
+        cannot open these files).</p>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Time</th>
+            <th scope="col">Download</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var volumeScan in Model.RadarInventory.FileList)
+        {
+            <tr>
+                <th scope="row">@Model.FilenameToTime(volumeScan)</th>
+                <td><a target="_blank"
+                       href="https://@(Model.RadarInventory.BucketName).s3.amazonaws.com/@volumeScan">
+                        @System.IO.Path.GetFileName(volumeScan)
+                    </a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <p>Level II files are provided by NEXRAD on AWS.</p>
+}

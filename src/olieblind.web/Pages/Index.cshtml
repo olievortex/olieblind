@@ -16,3 +16,14 @@
 <h4>Latest Narrated Videos:</h4>
 
 @await Component.InvokeAsync("VideoPageHome", Model.VideoPageModel)
+
+<h4>Research past severe weather events.</h4>
+
+<div class="row">
+    <div class="container">
+        <a class="btn btn-outline-primary" asp-area="" asp-page="/Events/AnnualOverview"
+           asp-route-year="2026">2026 Severe Weather</a>
+
+        <a class="btn btn-outline-primary" asp-area="" asp-page="/Events/Years">Other Years</a>
+    </div>
+</div>

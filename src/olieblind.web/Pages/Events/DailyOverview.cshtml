@@ -1,0 +1,124 @@
+@page
+@model olieblind.web.Pages.Events.DailyOverview
+@{
+    ViewData["Title"] = "Analysis";
+}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-page="/Events/Years">Years</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-page="/Events/AnnualOverview" asp-route-year="@Model.Year">@Model.Year</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <a href="#">@Model.EffectiveDate</a>
+        </li>
+    </ol>
+</nav>
+@if (Model.DailyModel is null || Model.DailyModel.Events.Count == 0)
+{
+    <p>No severe reports were found for this day.</p>
+}
+
+@if (Model.DailyModel?.SatellitePosterPath is not null)
+{
+    <figure>
+        <a href="@Model.BlobBase/@Model.DailyModel.Satellite1080Path" target="_blank">
+            <img alt="visible satellite during active storm reports"
+                 class="img-fluid"
+                 src="@Model.BlobBase/@Model.DailyModel.SatellitePosterPath"
+                 width="1246" height="540"/>
+        </a>
+        <figcaption>Visible Satellite @($"{Model.DailyModel.SatelliteDateTime:HH:mm}Z") on @Model.EffectiveDate.
+            Satellite images are derived from the @Model.DailyModel.SatelliteAttribution.
+        </figcaption>
+    </figure>
+}
+<div class="container">
+    @if (Model.DailyModel?.Hails.Count > 0)
+    {
+        <a class="btn btn-success" asp-page="/Events/HailReports" asp-route-year="@Model.Year"
+           asp-route-effectiveDate="@Model.EffectiveDate" asp-route-sourceFk="@Model.SourceFk">
+            @Model.DailyModel.Hails.Count Hail Reports
+        </a>
+    }
+    @if (Model.DailyModel?.Winds.Count > 0)
+    {
+        <a class="btn btn-success" asp-page="/Events/WindReports" asp-route-year="@Model.Year"
+           asp-route-effectiveDate="@Model.EffectiveDate" asp-route-sourceFk="@Model.SourceFk">
+            @Model.DailyModel.Winds.Count Wind Reports
+        </a>
+    }
+    @if (Model.DailyModel?.MesoCount > 0)
+    {
+        <a class="btn btn-danger" asp-page="/Events/MesoList" asp-route-year="@Model.Year"
+           asp-route-effectiveDate="@Model.EffectiveDate" asp-route-sourceFk="@Model.SourceFk">
+            @Model.DailyModel.MesoCount Meso Scale Discussions
+        </a>
+    }
+    <a class="btn btn-danger" asp-page="/Events/SatelliteList" asp-route-year="@Model.Year"
+       asp-route-effectiveDate="@Model.EffectiveDate" asp-route-sourceFk="@Model.SourceFk">
+        Satellite
+    </a>
+    <a class="btn btn-danger" asp-page="/Events/MapList" asp-route-year="@Model.Year"
+       asp-route-effectiveDate="@Model.EffectiveDate" asp-route-sourceFk="@Model.SourceFk">
+        Weather Maps
+    </a>
+</div>
+@if (Model.DailyModel?.Tornadoes.Count == 0)
+{
+    <p>No tornado reports found for this day.</p>
+}
+@if (Model.DailyModel?.Tornadoes.Count > 0)
+{
+    <h2>Tornado Reports</h2>
+
+    <a class="btn @Model.TimeClass" asp-page="/Events/DailyOverview" asp-route-year="@Model.Year"
+       asp-route-effectiveDate="@Model.EffectiveDate" asp-route-sourceFk="@Model.SourceFk"
+       asp-route-sort="time">Sort by Time</a>
+    <a class="btn @Model.MagnitudeClass" asp-page="/Events/DailyOverview" asp-route-year="@Model.Year"
+       asp-route-effectiveDate="@Model.EffectiveDate" asp-route-sourceFk="@Model.SourceFk"
+       asp-route-sort="magnitude">Sort by Rating</a>
+    <a class="btn @Model.StateClass" asp-page="/Events/DailyOverview" asp-route-year="@Model.Year"
+       asp-route-effectiveDate="@Model.EffectiveDate" asp-route-sourceFk="@Model.SourceFk"
+       asp-route-sort="state">Sort by State</a>
+    <a class="btn @Model.CountyClass" asp-page="/Events/DailyOverview" asp-route-year="@Model.Year"
+       asp-route-effectiveDate="@Model.EffectiveDate" asp-route-sourceFk="@Model.SourceFk"
+       asp-route-sort="county">Sort by County</a>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Time</th>
+            <th scope="col">Rating</th>
+            <th scope="col">Radar</th>
+            <th scope="col">State</th>
+            <th scope="col">County</th>
+            <th scope="col">Location</th>
+            <th scope="col">Narrative</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var tornado in Model.EventList)
+        {
+            <tr>
+                <th scope="row">@($"{tornado.EffectiveTime:HH:mm}Z")</th>
+                <td>@tornado.Magnitude</td>
+                <td><a asp-page="/Events/RadarList"
+                       asp-route-year="@Model.Year"
+                       asp-route-effectiveDate="@Model.EffectiveDate"
+                       asp-route-sourceFk="@Model.SourceFk"
+                       asp-route-radarId="@tornado.ClosestRadar"
+                       asp-route-bucketName="@Model.LevelIiBucket">@tornado.ClosestRadar</a></td>
+                <td>@OlieWebCommon.StateToAbbr(tornado.State)</td>
+                <td>@OlieWebCommon.County(tornado.County)</td>
+                <td>@OlieWebCommon.ProperCase(tornado.City)</td>
+                <td>@tornado.Narrative</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    <p>Storm reports are derived from "The Storm Events Database" (National
+        Centers for Environmental Information) and/or "Past Storm Reports" (Storm Prediction Center).</p>
+}

@@ -1,0 +1,111 @@
+@page
+@model olieblind.web.Pages.Events.AnnualOverview
+@{
+    ViewData["Title"] = "Analysis";
+}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-page="/Events/Years">Years</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <a href="#">@Model.Year</a>
+        </li>
+    </ol>
+</nav>
+
+<form method="post">
+    <div class="input-group mb-3">
+        <span id="JumpToDate" class="input-group-text">Jump to Date</span>
+        <input class="form-control" type="date" asp-for="SelectedDate"
+               aria-label="Jump to specific date" aria-describedby="JumpToDate"/>
+        <button class="btn btn-outline-secondary" type="submit" id="JumpTpDateGo">Go</button>
+    </div>
+    <span asp-validation-for="SelectedDate" class="text-danger"></span>
+</form>
+
+@if (Model.Overview.Recent10.Count > 0 && Model.Year == DateTime.UtcNow.Year)
+{
+    <p>Most recent severe days</p>
+    <p>
+        @foreach (var recent in Model.Overview.Recent10)
+        {
+            <a asp-page="/Events/DailyOverview"
+               asp-route-year="@Model.Year"
+               asp-route-effectiveDate="@recent.Id"
+               asp-route-sourceFk="@recent.SourceFk">@recent.Id</a>
+        }
+    </p>
+}
+
+@if (Model.Overview.ExtremeTornadoes.Count > 0)
+{
+    <p>Extreme Tornado Days (EF4, EF5)</p>
+    <p>
+        @foreach (var extreme in Model.Overview.ExtremeTornadoes)
+        {
+            <a asp-page="/Events/DailyOverview"
+               asp-route-year="@Model.Year"
+               asp-route-effectiveDate="@extreme.Id"
+               asp-route-sourceFk="@extreme.SourceFk">@extreme.Id</a>
+        }
+    </p>
+}
+@if (Model.Overview.StrongTornadoes.Count > 0)
+{
+    <p>Violent Tornado Days (EF2, EF3)</p>
+    <p>
+        @foreach (var strong in Model.Overview.StrongTornadoes)
+        {
+            <a asp-page="/Events/DailyOverview"
+               asp-route-year="@Model.Year"
+               asp-route-effectiveDate="@strong.Id"
+               asp-route-sourceFk="@strong.SourceFk">@strong.Id</a>
+        }
+    </p>
+}
+@if (Model.Overview.TornadoTop10.Count > 0)
+{
+    <p>Top 10 Tornado Report Days</p>
+    <ul>
+        @foreach (var tornado in Model.Overview.TornadoTop10)
+        {
+            <li>
+                @tornado.TornadoCount Reports - <a asp-page="/Events/DailyOverview"
+                                                   asp-route-year="@Model.Year"
+                                                   asp-route-effectiveDate="@tornado.Id"
+                                                   asp-route-sourceFk="@tornado.SourceFk">@tornado.Id</a>
+            </li>
+        }
+    </ul>
+}
+@if (Model.Overview.HailTop10.Count > 0)
+{
+    <p>Top 10 Hail Report Days</p>
+    <ul>
+        @foreach (var hail in Model.Overview.HailTop10)
+        {
+            <li>
+                @hail.HailCount Reports - <a asp-page="/Events/DailyOverview"
+                                             asp-route-year="@Model.Year"
+                                             asp-route-effectiveDate="@hail.Id"
+                                             asp-route-sourceFk="@hail.SourceFk">@hail.Id</a>
+            </li>
+        }
+    </ul>
+}
+@if (Model.Overview.WindTop10.Count > 0)
+{
+    <p>Top 10 Severe Wind Report Days</p>
+    <ul>
+        @foreach (var wind in Model.Overview.WindTop10)
+        {
+            <li>
+                @wind.WindCount Reports - <a asp-page="/Events/DailyOverview"
+                                             asp-route-year="@Model.Year"
+                                             asp-route-effectiveDate="@wind.Id"
+                                             asp-route-sourceFk="@wind.SourceFk">@wind.Id</a>
+            </li>
+        }
+    </ul>
+}

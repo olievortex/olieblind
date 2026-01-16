@@ -1,0 +1,141 @@
+@page
+@model olieblind.web.Pages.Events.MapList
+@{
+    ViewData["Title"] = "Analysis";
+}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-page="/Events/Years">Years</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-page="/Events/AnnualOverview" asp-route-year="@Model.Year">@Model.Year</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-page="/Events/DailyOverview" asp-route-year="@Model.Year"
+               asp-route-effectiveDate="@Model.EffectiveDate"
+               asp-route-sourceFk="@Model.SourceFk">@Model.EffectiveDate</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <a href="#">Weather Maps</a>
+        </li>
+    </ol>
+</nav>
+
+<h2>Weather Maps</h2>
+<p>Scroll to the bottom for GRIB files.</p>
+
+<h4>Objectively Analyzed Maps</h4>
+<p>Upper air and surface weather maps that can be viewed with your browser.</p>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">Time</th>
+        @foreach (var level in Model.SpcLevelNames)
+        {
+            <th scope="col">@level</th>
+        }
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var time in new List<string> { "00", "12" })
+    {
+        <tr>
+            <th scope="row">@(time)Z</th>
+            @foreach (var filename in Model.SpcLevels
+                              .Select(level => $"{level}_{Model.EffectiveValue:yyMMdd}_{time}.gif"))
+            {
+                <td>
+                    <a target="_blank" href="https://www.spc.noaa.gov/obswx/maps/@filename">
+                        @filename
+                    </a>
+                </td>
+            }
+        </tr>
+    }
+    </tbody>
+</table>
+<p>Objectively analyzed maps provided by the <a target="_blank" href="https://spc.noaa.gov">Storm Prediction Center</a>.
+</p>
+
+@if (Model.EffectiveValue >= new DateTime(2011, 1, 8))
+{
+    <h4>Printable Weather Maps</h4>
+    <p>Maps you can print to perform your own analysis.</p>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Time</th>
+            @foreach (var level in Model.SpcLevelNames)
+            {
+                <th scope="col">@level</th>
+            }
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var time in new List<string> { "00", "12" })
+        {
+            <tr>
+                <th scope="row">@(time)Z</th>
+                @foreach (var filename in Model.SpcLevels
+                                  .Select(level => $"{level}_{Model.EffectiveValue:yyMMdd}_{time}.pdf"))
+                {
+                    <td>
+                        <a target="_blank" href="https://www.spc.noaa.gov/obswx/maps/@filename">
+                            @filename
+                        </a>
+                    </td>
+                }
+            </tr>
+        }
+        </tbody>
+    </table>
+    <p>Printable weather maps provided by the <a target="_blank" href="https://spc.noaa.gov">Storm Prediction Center</a>.
+    </p>
+}
+
+<h4>North American Mesoscale Model (NAM) Analysis GRIB</h4>
+<p>Create your own visualizations with these raw NAM GRIB files. Special software is required to read these files. Try
+    <a href="https://www.ssec.wisc.edu/mcidas/software/v/" target="_blank">McIDAS-V</a>. It's a free Java-based tool!
+</p>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">Time</th>
+        <th scope="col">File</th>
+    </tr>
+    </thead>
+    <tbody>
+    @{
+        var basePath =
+            Model.EffectiveValue < new DateTime(2020, 5, 18) ? "https://www.ncei.noaa.gov/data/north-american-mesoscale-model/access/historical/analysis/" : "https://www.ncei.noaa.gov/data/north-american-mesoscale-model/access/analysis/";
+        var folders = $"{Model.EffectiveValue:yyyyMM}/{Model.EffectiveValue:yyyyMMdd}/";
+        var baseFile =
+            Model.EffectiveValue < new DateTime(2020, 5, 18) ? $"namanl_218_{Model.EffectiveValue:yyyyMMdd}_{{hour}}_000.grb2" : $"nam_218_{Model.EffectiveValue:yyyyMMdd}_{{hour}}_000.grb2";
+        if (Model.EffectiveValue < new DateTime(2017, 4, 6))
+            baseFile = System.IO.Path.ChangeExtension(baseFile, "grb");
+        var baseUrl = $"{basePath}{folders}{baseFile}";
+    }
+    <tr>
+        <th scope="row">00Z</th>
+        <td>
+            <a class="btn btn-outline-secondary" target="_blank" href="@(baseUrl.Replace("{hour}", "0000"))">
+                Download
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <th scope="row">12Z</th>
+        <td>
+            <a class="btn btn-outline-secondary" target="_blank" href="@(baseUrl.Replace("{hour}", "1200"))">
+                Download
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<p>NAM GRIB files provided by the <a target="_blank" href="https://ncei.noaa.gov">National Centers for Environmental
+        Information</a>.</p>

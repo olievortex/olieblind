@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using olieblind.data.Entities;
 using olieblind.data.Enums;
+using olieblind.data.Models;
 using System.Diagnostics.CodeAnalysis;
 
 namespace olieblind.data;
@@ -8,6 +9,8 @@ namespace olieblind.data;
 [ExcludeFromCodeCoverage]
 public class MyRepository(MyContext context) : IMyRepository
 {
+    private const int VisibleSat = 2;
+
     #region ProductMap
 
     public async Task ProductMapCreate(ProductMapEntity entity, CancellationToken ct)
@@ -201,6 +204,18 @@ public class MyRepository(MyContext context) : IMyRepository
             .FirstOrDefaultAsync(ct);
     }
 
+    public async Task<List<SatelliteAwsProductEntity>> SatelliteAwsProductGetList(string effectiveDate, CancellationToken ct)
+    {
+        return await context.SatelliteAwsProducts
+            .AsNoTracking()
+            .Where(w =>
+                w.EffectiveDate == effectiveDate &&
+                w.Channel == VisibleSat &&
+                w.DayPart == DayPartsEnum.Afternoon)
+            .OrderBy(o => o.ScanTime)
+            .ToListAsync(ct);
+    }
+
     public async Task<List<SatelliteAwsProductEntity>> SatelliteAwsProductListNoPoster(CancellationToken ct)
     {
         return await context.SatelliteAwsProducts
@@ -237,6 +252,12 @@ public class MyRepository(MyContext context) : IMyRepository
             .SingleOrDefaultAsync(ct);
     }
 
+    public async Task<int> SpcMesoProductGetCount(string effectiveDate, CancellationToken ct)
+    {
+        return await context.SpcMesoProducts.CountAsync(c =>
+            c.EffectiveDate == effectiveDate, ct);
+    }
+
     public async Task<SpcMesoProductEntity?> SpcMesoProductGetLatest(int year, CancellationToken ct)
     {
         return await context.SpcMesoProducts
@@ -244,6 +265,14 @@ public class MyRepository(MyContext context) : IMyRepository
             .Where(w => w.EffectiveTime.Year == year)
             .OrderByDescending(o => o.Id)
             .FirstOrDefaultAsync(ct);
+    }
+
+    public async Task<List<SpcMesoProductEntity>> SpcMesoProductGetList(string effectiveDate, CancellationToken ct)
+    {
+        return await context.SpcMesoProducts
+            .AsNoTracking()
+            .Where(c => c.EffectiveDate == effectiveDate)
+            .ToListAsync(ct);
     }
 
     public async Task SpcMesoProductUpdate(SpcMesoProductEntity entity, CancellationToken ct)
@@ -254,7 +283,37 @@ public class MyRepository(MyContext context) : IMyRepository
 
     #endregion
 
+    #region StormEventsAnnualSummary
+
+    public async Task<List<StormEventsAnnualSummaryModel>> StormEventsAnnualSummaryList(CancellationToken ct)
+    {
+        return [.. context.StormEventsDailySummaries
+            .Where(w => w.IsCurrent)
+            .GroupBy(g => g.Year)
+            .Select(s => new StormEventsAnnualSummaryModel
+            {
+                Year = s.Key,
+                SevereDays = s.Count(),
+                HailReports = s.Sum(u => u.Hail),
+                WindReports = s.Sum(u => u.Wind),
+                ExtremeTornadoes = s.Sum(u => u.F5 + u.F4),
+                StrongTornadoes = s.Sum(u => u.F3 + u.F2),
+                OtherTornadoes = s.Sum(u => u.F1)
+            })
+            .OrderByDescending(d => d.Year)];
+    }
+
+    #endregion
+
     #region StormEventsDailyDetail
+
+    public async Task<int> StormEventsDailyDetailCount(string dateFk, string sourceFk, CancellationToken ct)
+    {
+        return await context.StormEventsDailyDetails
+            .CountAsync(w =>
+                w.DateFk == dateFk &&
+                w.SourceFk == sourceFk, ct);
+    }
 
     public async Task StormEventsDailyDetailCreate(List<StormEventsDailyDetailEntity> entities, CancellationToken ct)
     {
@@ -278,12 +337,14 @@ public class MyRepository(MyContext context) : IMyRepository
         await context.SaveChangesAsync(ct);
     }
 
-    public async Task<int> StormEventsDailyDetailCount(string dateFk, string sourceFk, CancellationToken ct)
+    public async Task<List<StormEventsDailyDetailEntity>> StormEventsDailyDetailList(string effectiveDate, string sourceFk, CancellationToken ct)
     {
         return await context.StormEventsDailyDetails
-            .CountAsync(w =>
-                w.DateFk == dateFk &&
-                w.SourceFk == sourceFk, ct);
+            .AsNoTracking()
+            .Where(w =>
+                w.DateFk == effectiveDate &&
+                w.SourceFk == sourceFk)
+            .ToListAsync(ct);
     }
 
     #endregion
@@ -296,13 +357,14 @@ public class MyRepository(MyContext context) : IMyRepository
         await context.SaveChangesAsync(ct);
     }
 
-    public async Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryListMissingPostersForYear(int year, CancellationToken ct)
+    public async Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryListByDate(string effectiveDate, int year, CancellationToken ct)
     {
         return await context.StormEventsDailySummaries
+            .AsNoTracking()
             .Where(w =>
                 w.Year == year &&
-                w.HeadlineEventTime != null &&
-                (w.SatellitePath1080 == null || w.SatellitePathPoster == null))
+                w.Id == effectiveDate &&
+                w.IsCurrent)
             .ToListAsync(ct);
     }
 
@@ -310,6 +372,16 @@ public class MyRepository(MyContext context) : IMyRepository
     {
         return await context.StormEventsDailySummaries
             .Where(w => w.Year == year)
+            .ToListAsync(ct);
+    }
+
+    public async Task<List<StormEventsDailySummaryEntity>> StormEventsDailySummaryListMissingPostersForYear(int year, CancellationToken ct)
+    {
+        return await context.StormEventsDailySummaries
+            .Where(w =>
+                w.Year == year &&
+                w.HeadlineEventTime != null &&
+                (w.SatellitePath1080 == null || w.SatellitePathPoster == null))
             .ToListAsync(ct);
     }
 
@@ -321,6 +393,16 @@ public class MyRepository(MyContext context) : IMyRepository
                 w.Id == effectiveDate &&
                 w.Year == year)
             .ToListAsync(ct);
+    }
+
+    public async Task<StormEventsDailySummaryEntity?> StormEventsDailySummaryGet(string effectiveDate, int year, string sourceFk, CancellationToken ct)
+    {
+        return await context.StormEventsDailySummaries
+            .AsNoTracking()
+            .SingleOrDefaultAsync(s =>
+                s.Id == effectiveDate &&
+                s.SourceFk == sourceFk &&
+                s.Year == year, ct);
     }
 
     public async Task StormEventsDailySummaryUpdate(StormEventsDailySummaryEntity entity, CancellationToken ct)
