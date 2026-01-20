@@ -38,3 +38,4 @@ export GOOGLE_APPLICATION_CREDENTIALS=/home/olievortex/environments/virtualstorm
 export OlieMySqlBackupContainer=https://stolieblinda3dd.blob.core.windows.net/mysql-backups
 export OlieMySqlBackupPath=C:/workspace/backup/mysql
 export OlieBlobBronzeContainerUri=https://stolieblinda3dd.blob.core.windows.net/bronze
+export OlieAwsServiceBus=xxxx.servicebus.windows.net

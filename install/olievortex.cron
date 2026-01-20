@@ -26,17 +26,19 @@
 5 1 * * * /home/olievortex/olieblind/olieblind_backup.sh
 10 1 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh deleteoldcontent
 
-#### The Full Monty
-#0 2,7,14,17,21 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh spcdayonevideo
-#0 7,18 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh spcdaytwovideo
-#0 8,20 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh spcdaythreevideo
-0 21 * * 4 /home/olievortex/olieblind/startOlieBlind.Cli.sh droughtmonitorvideo
+#### Severe Weather Maps
 0 3 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh dayonemaps
 
-#### MVP (Please go sparingly)
-0 7 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh spcdayonevideo
-0 7 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh spcdaytwovideo
-0 8 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh spcdaythreevideo
+#### Videos
+0 2,7,14,17,21 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh spcdayonevideo
+0 7,18 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh spcdaytwovideo
+0 8,20 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh spcdaythreevideo
+0 21 * * 4 /home/olievortex/olieblind/startOlieBlind.Cli.sh droughtmonitorvideo
+
+#### OlieHistorian
+15 1 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh eventsspc 2026
+20 1 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh spcmesos 2026
+25 1 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh satelliteinventory 2026
 
 #### Startup
 @reboot sleep 10; /home/olievortex/olieblind/startOlieBlind.Api.sh

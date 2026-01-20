@@ -1,7 +1,9 @@
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace olieblind.data.Entities;
 
+[PrimaryKey(nameof(Id), nameof(Year), nameof(SourceFk))]
 public class StormEventsDailySummaryEntity
 {
     [MaxLength(36)] public string Id { get; init; } = string.Empty;
