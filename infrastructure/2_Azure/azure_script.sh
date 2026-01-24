@@ -80,6 +80,12 @@ az servicebus queue create \
         --namespace-name sb-olieblind \
         --name satellite_aws_posters
 
+az servicebus queue create \
+        --subscription ${subscription_id} \
+        --resource-group ${resource_group} \
+        --namespace-name sb-olieblind \
+        --name satellite_adhoc
+
 MSYS_NO_PATHCONV=1 az role assignment create --assignee ${group_id} \
         --role "Azure Service Bus Data Owner" \
         --subscription ${subscription_id} \
