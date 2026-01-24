@@ -45,8 +45,9 @@ public static class Program
         app.Use(async (context, next) =>
         {
             // Connection: RemoteIp
-            app.Logger.LogInformation("Request RemoteIp: {RemoteIpAddress}",
-                context.Connection.RemoteIpAddress);
+            app.Logger.LogInformation("Request RemoteIp: {RemoteIpAddress}", context.Connection.RemoteIpAddress);
+            app.Logger.LogInformation("Request X-Forwarded-Host: {X-Forwarded-Host}", context.Request.Headers["X-Forwarded-Host"].ToString());
+            app.Logger.LogInformation("Request X-Original-Host: {X-Original-Host}", context.Request.Headers["X-Original-Host"].ToString());
 
             await next(context);
         });
