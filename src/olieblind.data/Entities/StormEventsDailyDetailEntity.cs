@@ -42,5 +42,6 @@ public class StormEventsDailyDetailEntity
 //  "Longitude" float NOT NULL,
 //  "Narrative" text NOT NULL,
 //  "ClosestRadar" varchar(16) NOT NULL,
-//  PRIMARY KEY("Id","DateFk","SourceFk")
+//  PRIMARY KEY("Id","DateFk","SourceFk"),
+//  KEY "StormEventsDailyDetails_DateFk_IDX" ("DateFk","SourceFk")
 //);
