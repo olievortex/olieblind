@@ -13,6 +13,7 @@ public class Logout : PageModel
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
 
-        return Redirect("https://antihoistentertainment.kinde.com/logout?redirect=http://localhost:5164/");
+        var returnUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/";
+        return Redirect($"https://antihoistentertainment.kinde.com/logout?redirect={returnUrl}");
     }
 }
