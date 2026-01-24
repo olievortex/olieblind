@@ -29,7 +29,7 @@ public static class Program
         builder.Services.Configure<ForwardedHeadersOptions>(options =>
         {
             options.ForwardedHeaders =
-                ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+                ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
             options.KnownProxies.Add(IPAddress.Parse("127.0.0.1"));
             options.KnownProxies.Add(IPAddress.Parse("::1"));
         });
@@ -47,7 +47,8 @@ public static class Program
             // Connection: RemoteIp
             app.Logger.LogInformation("Request RemoteIp: {RemoteIpAddress}", context.Connection.RemoteIpAddress);
             app.Logger.LogInformation("Request X-Forwarded-Host: {X-Forwarded-Host}", context.Request.Headers["X-Forwarded-Host"].ToString());
-            app.Logger.LogInformation("Request X-Original-Host: {X-Original-Host}", context.Request.Headers["X-Original-Host"].ToString());
+            app.Logger.LogInformation("Request X-Original-Host: {X-Forwarded-For}", context.Request.Headers["X-Forwarded-For"].ToString());
+            app.Logger.LogInformation("Request X-Forwarded-Proto: {X-Forwarded-Proto}", context.Request.Headers["X-Forwarded-Proto"].ToString());
 
             await next(context);
         });
