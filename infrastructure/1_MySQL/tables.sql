@@ -168,3 +168,12 @@ CREATE TABLE "UserCookieConsentLogs" (
   "Timestamp" datetime NOT NULL,
   PRIMARY KEY ("Id")
 );
+
+CREATE TABLE "UserSatelliteAdHocLogs" (
+  "Id" varchar(320) NOT NULL,
+  "Timestamp" datetime NOT NULL,
+  "EffectiveDate" varchar(32) NOT NULL,
+  "Channel" int NOT NULL,
+  "DayPart" int NOT NULL,
+  PRIMARY KEY ("Id","Timestamp")
+);

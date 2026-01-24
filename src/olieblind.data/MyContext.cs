@@ -20,6 +20,7 @@ public class MyContext(DbContextOptions<MyContext> options) : DbContext(options)
     public virtual DbSet<StormEventsDatabaseEntity> StormEventsDatabases { get; set; }
     public virtual DbSet<StormEventsReportEntity> StormEventsReports { get; set; }
     public virtual DbSet<UserCookieConsentLogEntity> UserCookieConsentLogs { get; set; }
+    public virtual DbSet<UserSatelliteAdHocLogEntity> UserSatelliteAdHocLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
