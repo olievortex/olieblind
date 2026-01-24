@@ -24,24 +24,23 @@ public class StormEventsDailyDetailEntity
     [MaxLength(16)] public string ClosestRadar { get; init; } = string.Empty;
 }
 
-// CREATE TABLE olieblind_dev.StormEventsDailyDetails (
-//	  Id varchar(36) NOT NULL,
-//    DateFk varchar(32) NOT NULL,
-//    SourceFk varchar(32) NOT NULL,
-//    EffectiveTime DATETIME NOT NULL,
-//	  State varchar(50) NOT NULL,
-//    County varchar(50) NOT NULL,
-//    City varchar(50) NOT NULL,
-//    EventType varchar(25) NOT NULL,
-//    ForecastOffice varchar(5) NOT NULL,
-//	  `Timestamp` DATETIME NOT NULL,
-//	  Magnitude varchar(8) NOT NULL,
-//    Latitude FLOAT NOT NULL,
-//	  Longitude FLOAT NOT NULL,
-//    Narrative text NOT NULL,
-//    ClosestRadar varchar(16) NOT NULL,
-//  CONSTRAINT StormEventsDailyDetails_PK PRIMARY KEY(Id, DateFk, SourceFk)
-//)
-//ENGINE=InnoDB
-//DEFAULT CHARSET=utf8mb4
-//COLLATE = utf8mb4_0900_ai_ci;
+//-- olieblind.StormEventsDailyDetails definition
+
+//CREATE TABLE "StormEventsDailyDetails" (
+//  "Id" varchar(36) NOT NULL,
+//  "DateFk" varchar(32) NOT NULL,
+//  "SourceFk" varchar(32) NOT NULL,
+//  "EffectiveTime" datetime NOT NULL,
+//  "State" varchar(50) NOT NULL,
+//  "County" varchar(50) NOT NULL,
+//  "City" varchar(50) NOT NULL,
+//  "EventType" varchar(25) NOT NULL,
+//  "ForecastOffice" varchar(5) NOT NULL,
+//  "Timestamp" datetime NOT NULL,
+//  "Magnitude" varchar(8) NOT NULL,
+//  "Latitude" float NOT NULL,
+//  "Longitude" float NOT NULL,
+//  "Narrative" text NOT NULL,
+//  "ClosestRadar" varchar(16) NOT NULL,
+//  PRIMARY KEY("Id","DateFk","SourceFk")
+//);

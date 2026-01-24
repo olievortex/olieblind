@@ -15,7 +15,7 @@ public class SatelliteAwsInventoryEntity
     public DateTime Timestamp { get; init; }
 }
 
-//-- olieblind_dev.SatelliteAwsInventories definition
+//-- olieblind.SatelliteAwsInventories definition
 
 //CREATE TABLE "SatelliteAwsInventories" (
 //  "Id" varchar(36) NOT NULL,
