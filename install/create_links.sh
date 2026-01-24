@@ -5,6 +5,7 @@ ln --symbolic --force ~/source/repos/olieblind/src/olieblind.cli/Resources/Mount
 
 mkdir -p ~/olieblind
 cd ~/olieblind
+chmod go-rx .
 ln --symbolic --force ~/source/repos/olieblind/scripts/deploy/deployOlieBlind.sh
 ln --symbolic --force ~/source/repos/olieblind/scripts/start/startOlieBlind.Cli.sh
 ln --symbolic --force ~/source/repos/olieblind/scripts/start/startOlieBlind.Api.sh
