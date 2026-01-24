@@ -1,3 +1,4 @@
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 using olieblind.lib.CookieConsent;
 using olieblind.lib.Services;
 using olieblind.web.Components;
@@ -15,7 +16,7 @@ public static class Program
         builder.AddDependencyInjection();
         builder.AddHttpClient(config);
         builder.Services.AddRazorPages();
-        builder.Services.AddApplicationInsightsTelemetry();
+        builder.Services.AddOpenTelemetry().UseAzureMonitor();
 
         var app = builder.Build();
 

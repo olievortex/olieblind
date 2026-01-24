@@ -1,3 +1,4 @@
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using olieblind.api.Endpoints;
 using olieblind.data;
@@ -8,6 +9,7 @@ using olieblind.lib.Services;
 using olieblind.lib.StormEvents;
 using olieblind.lib.StormEvents.Interfaces;
 using olieblind.lib.Video;
+using OpenTelemetry.Trace;
 
 namespace olieblind.api;
 
@@ -24,7 +26,10 @@ public static class Program
         builder.Services.AddAuthorization();
         builder.AddDependencyInjection();
         builder.AddEntityFramework(config);
-        builder.Services.AddApplicationInsightsTelemetry();
+        builder.Services.AddOpenTelemetry().UseAzureMonitor().WithTracing(builder =>
+        {
+            builder.AddSqlClientInstrumentation();
+        });
 
         var app = builder.Build();
         app.UseCors(AllowedCors);
