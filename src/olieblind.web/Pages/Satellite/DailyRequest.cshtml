@@ -1,0 +1,58 @@
+@page
+@model olieblind.web.Pages.Satellite.DailyRequest
+@{
+    ViewData["Title"] = "Analysis";
+}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-page="/Events/Years">Years</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-page="/Events/AnnualOverview" asp-route-year="@Model.Year">@Model.Year</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-page="/Events/DailyOverview" asp-route-year="@Model.Year"
+               asp-route-effectiveDate="@Model.EffectiveDate"
+               asp-route-sourceFk="@Model.SourceFk">@Model.EffectiveDate</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-page="/Satellite/DailyList" asp-route-year="@Model.Year"
+               asp-route-effectiveDate="@Model.EffectiveDate"
+               asp-route-sourceFk="@Model.SourceFk">Visible Satellite</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <a href="#">Request Satellite Previews</a>
+        </li>
+    </ol>
+</nav>
+
+<h2>Request Satellite Previews</h2>
+
+<p>Satellite image previews make it very convenient to select the best products for analysis. Request preview images for this date by clicking one of the buttons below.</p>
+
+<p>This process can take upwards of an hour depending on the server workload.</p>
+
+<p>Effective Date: @Model.EffectiveDate</p>
+
+<form method="post">
+    <button class="btn btn-outline-secondary" type="submit"
+            asp-page-handler="hourly"
+            asp-route-year="@Model.Year"
+            asp-route-effectiveDate="@Model.EffectiveDate"
+            asp-route-sourceFk="@Model.SourceFk">
+        Create Hourly Previews
+    </button>
+</form>
+
+<form method="post">
+    <button class="btn btn-outline-secondary" type="submit"
+            asp-page-handler="all"
+            asp-route-year="@Model.Year"
+            asp-route-effectiveDate="@Model.EffectiveDate"
+            asp-route-sourceFk="@Model.SourceFk">
+        Create Previews For ALL Available Images
+    </button>
+</form>
+
+<br />

@@ -1,5 +1,5 @@
 @page
-@model olieblind.web.Pages.Events.SatelliteList
+@model olieblind.web.Pages.Satellite.DailyList
 @{
     ViewData["Title"] = "Analysis";
 }
@@ -23,9 +23,71 @@
 </nav>
 
 <h2>Visible Satellite</h2>
+
 @if (Model.Satellite.AwsList.Count > 0)
 {
-    <p>Scroll to the bottom for NetCDF files.</p>
+    <h4>NetCDF Files</h4>
+    <p>
+        These files provide the highest quality images, but they require special software.
+        Try <a href="https://www.ncdc.noaa.gov/wct/install.php" target="_blank">
+            NOAA's Weather and Climate Toolkit
+        </a>. It's free! Channel 2 is the "visible red" channel and has the
+        highest resolution of any channel.
+    </p>
+
+    <p>
+        Generally only one satellite image per day is processed here. To create
+        additional preview images for this day, click the button below.
+
+        <br />
+
+        <a class="btn btn-outline-secondary" asp-page="/Satellite/DailyRequest" asp-route-year="@Model.Year"
+           asp-route-effectiveDate="@Model.EffectiveDate" asp-route-sourceFk="@Model.SourceFk">
+            Create Previews
+        </a>
+    </p>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Time</th>
+                <th scope="col">Channel</th>
+                <th scope="col">Download</th>
+                <th scope="col">Preview</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var sat in Model.Satellite.AwsList)
+            {
+                <tr>
+                    <th scope="row">@($"{sat.ScanTime:HH:mm}Z")</th>
+                    <td>@sat.Channel</td>
+                    <td>
+                        <a target="_blank"
+                           href="https://noaa-goes16.s3.amazonaws.com/ABI-L1b-RadC/@sat.ScanTime.Year/@($"{sat.ScanTime.DayOfYear:000}")/@($"{sat.ScanTime.Hour:00}")/@sat.Id">
+                            @sat.Id
+                        </a>
+                    </td>
+                    <td>
+                        @if (sat.Path1080 is not null)
+                        {
+                            var poster = sat.PathPoster ?? sat.Path1080;
+
+                            <a target="_blank" href="@Model.BlobBase/@sat.Path1080">
+                                <img src="@Model.BlobBase/@poster" alt="@sat.Id"
+                                     width="125" height="54" />
+                            </a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <p>
+        Source files provided by the "NOAA Geostationay Operational Environment
+        Satellites (GOES) 16, 17, 18 & 19" dataset on the AWS Data Exchange.
+    </p>
 }
 
 <h4>GeoTIFF files</h4>
@@ -73,68 +135,16 @@
 
 <p>GeoTiff files provided by the Iowa Environmental Mesonet of Iowa State University.</p>
 
-@if (Model.Satellite.AwsList.Count > 0)
-{
-    <h4>NetCDF Files</h4>
-    <p>
-        These files provide the highest quality images, but they require special software.
-        Try <a href="https://www.ncdc.noaa.gov/wct/install.php" target="_blank">
-            NOAA's Weather and Climate Toolkit
-        </a>. It's free! Channel 2 is the "visible red" channel and has the
-        highest resolution of any channel.
-    </p>
-
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th scope="col">Time</th>
-                <th scope="col">Channel</th>
-                <th scope="col">Download</th>
-                <th scope="col">Preview</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var sat in Model.Satellite.AwsList)
-            {
-                <tr>
-                    <th scope="row">@($"{sat.ScanTime:HH:mm}Z")</th>
-                    <td>@sat.Channel</td>
-                    <td>
-                        <a target="_blank"
-                           href="https://noaa-goes16.s3.amazonaws.com/ABI-L1b-RadC/@sat.ScanTime.Year/@($"{sat.ScanTime.DayOfYear:000}")/@($"{sat.ScanTime.Hour:00}")/@sat.Id">
-                            @sat.Id
-                        </a>
-                    </td>
-                    <td>
-                        @if (sat.Path1080 is not null)
-                        {
-                            var poster = sat.PathPoster ?? sat.Path1080;
-
-                            <a target="_blank" href="@Model.BlobBase/@sat.Path1080">
-                                <img src="@Model.BlobBase/@poster" alt="@sat.Id"
-                                     width="125" height="54" />
-                            </a>
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-
-    <p>
-        Source files provided by the "NOAA Geostationay Operational Environment
-        Satellites (GOES) 16, 17, 18 & 19" dataset on the AWS Data Exchange.
-    </p>
-
-    <form method="post">
-        <button class="btn btn-outline-secondary" type="submit"
-                asp-page-handler="hourly"
-                asp-route-year="@Model.Year"
-                asp-route-effectiveDate="@Model.EffectiveDate"
-                asp-route-sourceFk="@Model.SourceFk">
-            Create Hourly Previews
-        </button>
-    </form>
+<p>
+    Generally only one satellite image per day is processed here. To create
+    additional preview images for this day, click the button below.
 
     <br />
-}
+
+    <a class="btn btn-outline-secondary" asp-page="/Satellite/DailyRequest" asp-route-year="@Model.Year"
+       asp-route-effectiveDate="@Model.EffectiveDate" asp-route-sourceFk="@Model.SourceFk">
+        Create Previews
+    </a>
+</p>
+
+<br />

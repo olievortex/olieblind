@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace olieblind.web.Pages.Events;
 
-[Authorize]
 public class ComingSoon : PageModel
 {
     public int Year { get; set; }
