@@ -29,43 +29,45 @@
 }
 
 <h4>GeoTIFF files</h4>
-<p>These files can be viewed in most image viewers. Import into
+<p>
+    These files can be viewed in most image viewers. Import into
     <a href="https://www.google.com/earth/about/versions/">Google Earth Pro</a> (the desktop version) to
-    view as a layer on a map.</p>
+    view as a layer on a map.
+</p>
 
 <table class="table table-striped">
     <thead>
-    <tr>
-        <th scope="col">Time</th>
-        <th scope="col">Download</th>
-        <th scope="col">Preview</th>
-    </tr>
+        <tr>
+            <th scope="col">Time</th>
+            <th scope="col">Download</th>
+            <th scope="col">Preview</th>
+        </tr>
     </thead>
     <tbody>
-    @foreach (var iem in Model.Satellite.IemList)
-    {
-        var timecode = $"{iem.ScanTime:HHmm}";
+        @foreach (var iem in Model.Satellite.IemList)
+        {
+            var timecode = $"{iem.ScanTime:HHmm}";
 
-        <tr>
-            <th scope="row">@($"{iem.ScanTime:HH:mm}Z")</th>
-            <td>
-                <a href="https://mesonet.agron.iastate.edu/archive/data/@Model.Year/@Model.EffectiveDate[5..7]/@Model.EffectiveDate[8..10]/GIS/sat/conus_goes_vis4km_@(timecode).tif">
-                    conus_goes_vis4km_@(timecode).tif
-                </a>
-            </td>
-            <td>
-                @if (iem.Path1080 is not null)
-                {
-                    var poster = iem.PathPoster ?? iem.Path1080;
-
-                    <a target="_blank" href="@Model.BlobBase/@iem.Path1080">
-                        <img src="@Model.BlobBase/@poster" alt="@iem.Id"
-                             width="125" height="54"/>
+            <tr>
+                <th scope="row">@($"{iem.ScanTime:HH:mm}Z")</th>
+                <td>
+                    <a href="https://mesonet.agron.iastate.edu/archive/data/@Model.Year/@Model.EffectiveDate[5..7]/@Model.EffectiveDate[8..10]/GIS/sat/conus_goes_vis4km_@(timecode).tif">
+                        conus_goes_vis4km_@(timecode).tif
                     </a>
-                }
-            </td>
-        </tr>
-    }
+                </td>
+                <td>
+                    @if (iem.Path1080 is not null)
+                    {
+                        var poster = iem.PathPoster ?? iem.Path1080;
+
+                        <a target="_blank" href="@Model.BlobBase/@iem.Path1080">
+                            <img src="@Model.BlobBase/@poster" alt="@iem.Id"
+                                 width="125" height="54" />
+                        </a>
+                    }
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 
@@ -74,49 +76,65 @@
 @if (Model.Satellite.AwsList.Count > 0)
 {
     <h4>NetCDF Files</h4>
-    <p>These files provide the highest quality images, but they require special software.
+    <p>
+        These files provide the highest quality images, but they require special software.
         Try <a href="https://www.ncdc.noaa.gov/wct/install.php" target="_blank">
-            NOAA's Weather and Climate Toolkit</a>. It's free! Channel 2 is the "visible red" channel and has the
-        highest resolution of any channel.</p>
+            NOAA's Weather and Climate Toolkit
+        </a>. It's free! Channel 2 is the "visible red" channel and has the
+        highest resolution of any channel.
+    </p>
 
     <table class="table table-striped">
         <thead>
-        <tr>
-            <th scope="col">Time</th>
-            <th scope="col">Channel</th>
-            <th scope="col">Download</th>
-            <th scope="col">Preview</th>
-        </tr>
+            <tr>
+                <th scope="col">Time</th>
+                <th scope="col">Channel</th>
+                <th scope="col">Download</th>
+                <th scope="col">Preview</th>
+            </tr>
         </thead>
         <tbody>
-        @foreach (var sat in Model.Satellite.AwsList)
-        {
-            <tr>
-                <th scope="row">@($"{sat.ScanTime:HH:mm}Z")</th>
-                <td>@sat.Channel</td>
-                <td><a target="_blank"
-                       href="https://noaa-goes16.s3.amazonaws.com/ABI-L1b-RadC/@sat.ScanTime.Year/@($"{sat.ScanTime.DayOfYear:000}")/@($"{sat.ScanTime.Hour:00}")/@sat.Id">
-                        @sat.Id
-                    </a>
-                </td>
-                <td>
-                    @if (sat.Path1080 is not null)
-                    {
-                        var poster = sat.PathPoster ?? sat.Path1080;
-
-                        <a target="_blank" href="@Model.BlobBase/@sat.Path1080">
-                            <img src="@Model.BlobBase/@poster" alt="@sat.Id"
-                                 width="125" height="54"/>
+            @foreach (var sat in Model.Satellite.AwsList)
+            {
+                <tr>
+                    <th scope="row">@($"{sat.ScanTime:HH:mm}Z")</th>
+                    <td>@sat.Channel</td>
+                    <td>
+                        <a target="_blank"
+                           href="https://noaa-goes16.s3.amazonaws.com/ABI-L1b-RadC/@sat.ScanTime.Year/@($"{sat.ScanTime.DayOfYear:000}")/@($"{sat.ScanTime.Hour:00}")/@sat.Id">
+                            @sat.Id
                         </a>
-                    }
-                </td>
-            </tr>
-        }
+                    </td>
+                    <td>
+                        @if (sat.Path1080 is not null)
+                        {
+                            var poster = sat.PathPoster ?? sat.Path1080;
+
+                            <a target="_blank" href="@Model.BlobBase/@sat.Path1080">
+                                <img src="@Model.BlobBase/@poster" alt="@sat.Id"
+                                     width="125" height="54" />
+                            </a>
+                        }
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
 
-    <p>Source files provided by the "NOAA Geostationay Operational Environment
-        Satellites (GOES) 16, 17, 18 & 19" dataset on the AWS Data Exchange.</p>
+    <p>
+        Source files provided by the "NOAA Geostationay Operational Environment
+        Satellites (GOES) 16, 17, 18 & 19" dataset on the AWS Data Exchange.
+    </p>
 
-    <br/>
+    <form method="post">
+        <button class="btn btn-outline-secondary" type="submit"
+                asp-page-handler="hourly"
+                asp-route-year="@Model.Year"
+                asp-route-effectiveDate="@Model.EffectiveDate"
+                asp-route-sourceFk="@Model.SourceFk">
+            Create Hourly Previews
+        </button>
+    </form>
+
+    <br />
 }

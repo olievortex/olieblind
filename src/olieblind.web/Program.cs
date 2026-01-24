@@ -1,4 +1,6 @@
 using Azure.Monitor.OpenTelemetry.AspNetCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using olieblind.lib.CookieConsent;
 using olieblind.lib.Services;
 using olieblind.web.Components;
@@ -17,6 +19,11 @@ public static class Program
         builder.AddHttpClient(config);
         builder.Services.AddRazorPages();
         builder.Services.AddOpenTelemetry().UseAzureMonitor();
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+        }).AddCookie().AddOpenIdConnect();
 
         var app = builder.Build();
 
@@ -27,9 +34,8 @@ public static class Program
         }
 
         app.UseRouting();
-
+        app.UseAuthentication();
         app.UseAuthorization();
-
         app.MapStaticAssets();
         app.MapRazorPages()
            .WithStaticAssets();

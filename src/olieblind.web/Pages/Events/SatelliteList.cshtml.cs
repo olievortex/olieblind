@@ -26,4 +26,21 @@ public class SatelliteList(IHttpClientFactory client, IOlieConfig config) : Page
 
         return Page();
     }
+
+    public async Task<IActionResult> OnPostHourlyAsync(int year, string effectiveDate, string sourceFk, CancellationToken ct)
+    {
+        //await service.GetUserSession(ct);
+
+        //if (string.IsNullOrWhiteSpace(wrapper.Subscription))
+        return RedirectToPage("/Events/ComingSoon", new { year, effectiveDate, sourceFk });
+
+        //Satellite = await business.GetSatelliteListAsync(effectiveDate, ct);
+        //Year = year;
+        //EffectiveDate = effectiveDate;
+        //SourceFk = sourceFk;
+
+        //await eventsProcess.RequestHourlySatelliteAsync(effectiveDate, year, ct);
+
+        //return Page();
+    }
 }
