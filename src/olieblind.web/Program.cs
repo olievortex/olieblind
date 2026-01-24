@@ -57,7 +57,11 @@ public static class Program
         builder.Services.AddHttpClient(OlieBlue, httpClient =>
         {
             httpClient.BaseAddress = new Uri(config.BlueUrl);
-        });
+        })
+            .ConfigurePrimaryHttpMessageHandler(config => new HttpClientHandler
+            {
+                AutomaticDecompression = System.Net.DecompressionMethods.Brotli | System.Net.DecompressionMethods.GZip
+            });
     }
 
     public static HttpClient GetOlieBlue(IHttpClientFactory httpClientFactory)
