@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using olieblind.lib.CookieConsent;
 using olieblind.lib.Services;
 using olieblind.web.Components;
+using System.Net;
 
 namespace olieblind.web;
 
@@ -29,6 +30,8 @@ public static class Program
             options.ForwardedHeaders =
                 Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor |
                 Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
+            options.KnownProxies.Add(IPAddress.Parse("127.0.0.1"));
+            options.KnownProxies.Add(IPAddress.Parse("::1"));
         });
 
         var app = builder.Build();
