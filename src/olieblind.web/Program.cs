@@ -24,6 +24,12 @@ public static class Program
             options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
         }).AddCookie().AddOpenIdConnect();
+        builder.Services.Configure<ForwardedHeadersOptions>(options =>
+        {
+            options.ForwardedHeaders =
+                Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor |
+                Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
+        });
 
         var app = builder.Build();
 
@@ -33,6 +39,7 @@ public static class Program
             app.UseExceptionHandler("/Error");
         }
 
+        app.UseForwardedHeaders();
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
