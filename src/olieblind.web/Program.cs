@@ -1,6 +1,7 @@
 using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.HttpOverrides;
 using olieblind.lib.CookieConsent;
 using olieblind.lib.Services;
 using olieblind.web.Components;
@@ -28,13 +29,27 @@ public static class Program
         builder.Services.Configure<ForwardedHeadersOptions>(options =>
         {
             options.ForwardedHeaders =
-                Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor |
-                Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
+                ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
             options.KnownProxies.Add(IPAddress.Parse("127.0.0.1"));
             options.KnownProxies.Add(IPAddress.Parse("::1"));
         });
+        builder.Services.AddHttpLogging(options =>
+        {
+            options.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestPropertiesAndHeaders;
+        });
 
         var app = builder.Build();
+        app.UseForwardedHeaders();
+        app.UseHttpLogging();
+
+        app.Use(async (context, next) =>
+        {
+            // Connection: RemoteIp
+            app.Logger.LogInformation("Request RemoteIp: {RemoteIpAddress}",
+                context.Connection.RemoteIpAddress);
+
+            await next(context);
+        });
 
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
@@ -42,7 +57,6 @@ public static class Program
             app.UseExceptionHandler("/Error");
         }
 
-        app.UseForwardedHeaders();
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
