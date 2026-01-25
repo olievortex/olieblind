@@ -51,6 +51,14 @@ public class OlieConfig(IConfiguration config) : IOlieConfig
 
     public string AwsServiceBus => GetString("OlieAwsServiceBus");
 
+    public int SatelliteRequestGlobalLimit => GetInt("OlieSatelliteRequestGlobalLimit");
+
+    public int SatelliteRequestUserLimit => GetInt("OlieSatelliteRequestUserLimit");
+
+    public int SatelliteRequestLookbackHours => GetInt("OlieSatelliteRequestLookbackHours");
+
+    public string SatelliteRequestQueueName => GetString("OlieSatelliteRequestQueueName");
+
     private string GetString(string key)
     {
         return _config[key] ?? throw new ApplicationException($"{key} setting missing from configuration");

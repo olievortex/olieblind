@@ -3,6 +3,7 @@ using Amazon.S3.Model;
 using Azure;
 using Azure.AI.TextAnalytics;
 using Azure.Messaging.ServiceBus;
+using Azure.Messaging.ServiceBus.Administration;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Newtonsoft.Json;
@@ -284,6 +285,38 @@ public class OlieWebService(IHttpClientFactory httpClientFactory) : IOlieWebServ
 
     #endregion
 
+    #region Brown
+
+    public async Task<string> BrownShell(IOlieConfig config, string arguments, CancellationToken ct)
+    {
+        const string AppiKey = "APPLICATIONINSIGHTS_CONNECTION_STRING";
+        var sbStdOut = new StringBuilder();
+        var sbErrOut = new StringBuilder();
+
+        using var p = new Process();
+        p.StartInfo.UseShellExecute = false;
+        p.StartInfo.CreateNoWindow = true;
+        p.StartInfo.FileName = config.BrownCmdPath;
+        p.StartInfo.RedirectStandardError = true;
+        if (!p.StartInfo.EnvironmentVariables.ContainsKey(AppiKey))
+            p.StartInfo.EnvironmentVariables.Add(AppiKey, config.ApplicationInsightsConnectionString);
+        p.ErrorDataReceived += (_, args) => sbErrOut.AppendLine(args.Data);
+        p.StartInfo.RedirectStandardOutput = true;
+        p.OutputDataReceived += (_, args) => sbStdOut.AppendLine(args.Data);
+        p.StartInfo.Arguments = arguments;
+        p.Start();
+        p.BeginOutputReadLine();
+        p.BeginErrorReadLine();
+        await p.WaitForExitAsync(ct);
+
+        if (p.ExitCode != 0) throw new ApplicationException($"purple exit code {p.ExitCode}: {sbStdOut}\n{sbErrOut}");
+        p.Close();
+
+        return sbStdOut.ToString();
+    }
+
+    #endregion
+
     #region File
 
     public void CompressGzip(string sourceFile, string destinationFile)
@@ -341,38 +374,6 @@ public class OlieWebService(IHttpClientFactory httpClientFactory) : IOlieWebServ
 
     #endregion
 
-    #region Blue
-
-    public async Task<string> BrownShell(IOlieConfig config, string arguments, CancellationToken ct)
-    {
-        const string AppiKey = "APPLICATIONINSIGHTS_CONNECTION_STRING";
-        var sbStdOut = new StringBuilder();
-        var sbErrOut = new StringBuilder();
-
-        using var p = new Process();
-        p.StartInfo.UseShellExecute = false;
-        p.StartInfo.CreateNoWindow = true;
-        p.StartInfo.FileName = config.BrownCmdPath;
-        p.StartInfo.RedirectStandardError = true;
-        if (!p.StartInfo.EnvironmentVariables.ContainsKey(AppiKey))
-            p.StartInfo.EnvironmentVariables.Add(AppiKey, config.ApplicationInsightsConnectionString);
-        p.ErrorDataReceived += (_, args) => sbErrOut.AppendLine(args.Data);
-        p.StartInfo.RedirectStandardOutput = true;
-        p.OutputDataReceived += (_, args) => sbStdOut.AppendLine(args.Data);
-        p.StartInfo.Arguments = arguments;
-        p.Start();
-        p.BeginOutputReadLine();
-        p.BeginErrorReadLine();
-        await p.WaitForExitAsync(ct);
-
-        if (p.ExitCode != 0) throw new ApplicationException($"purple exit code {p.ExitCode}: {sbStdOut}\n{sbErrOut}");
-        p.Close();
-
-        return sbStdOut.ToString();
-    }
-
-    #endregion
-
     #region ServiceBus
 
     public async Task ServiceBusSendJson(ServiceBusSender sender, object data, CancellationToken ct)
@@ -384,6 +385,12 @@ public class OlieWebService(IHttpClientFactory httpClientFactory) : IOlieWebServ
         };
 
         await sender.SendMessageAsync(message, ct);
+    }
+
+    public async Task<int> ServiceBusQueueLength(ServiceBusAdministrationClient adminClient, string queueName, CancellationToken ct)
+    {
+        var properties = await adminClient.GetQueueRuntimePropertiesAsync(queueName, ct);
+        return (int)properties.Value.ActiveMessageCount;
     }
 
     #endregion

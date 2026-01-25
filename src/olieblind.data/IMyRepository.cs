@@ -163,4 +163,10 @@ public interface IMyRepository
     Task UserCookieConsentLogCreate(UserCookieConsentLogEntity entity, CancellationToken ct);
 
     #endregion
+
+    #region UserSatelliteAdHocLog
+
+    Task<Dictionary<string, int>> UserSatelliteAdHocLogUserStatistics(int lookbackHours, CancellationToken ct);
+
+    #endregion
 }

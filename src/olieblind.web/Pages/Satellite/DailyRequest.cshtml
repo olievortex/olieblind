@@ -33,7 +33,16 @@
 
 <p>This process can take upwards of an hour depending on the server workload.</p>
 
-<p>Effective Date: @Model.EffectiveDate</p>
+@if (Model.SatelliteRequestStatistics != null)
+{
+    <h4>Recent Requests</h4>
+    <p>All Users: @Model.SatelliteRequestStatistics.GlobalRequests</p>
+    <p>Your Requests: @Model.SatelliteRequestStatistics.UserRequests</p>
+    <p>Current Queue Length: @Model.SatelliteRequestStatistics.QueueLength</p>
+}
+
+<h4>Submit Request</h4>
+<p>Request Satellite preview for: <b>@Model.EffectiveDate</b></p>
 
 <form method="post">
     <button class="btn btn-outline-secondary" type="submit"
