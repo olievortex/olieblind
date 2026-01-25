@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using olieblind.lib.StormEvents.Interfaces;
 using System.Globalization;
 
 namespace olieblind.web.Pages.Events;
