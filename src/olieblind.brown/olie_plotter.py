@@ -156,12 +156,12 @@ class OliePlotter:
         v.h = gaussian_filter(v.h, 2)
         v.x = gaussian_filter(v.x, 2)
 
-        if np.max(v.x) > 210:
-            raise ValueError(f"Wind {v.x} exceedes handled range")
+        if np.max(v.x) > 245:
+            raise ValueError(f"Wind {np.max(v.x)} exceedes handled range")
         if (np.min(v.h) < 810  or np.max(v.h) > 1200):
             raise ValueError(f"Height exceeds handled range {np.min(v.h)} {np.max(v.h)}")
 
-        windf = np.linspace(70, 210, 8)
+        windf = np.linspace(70, 245, 10)
         windc = (0, 70)
         heights = np.linspace(810, 1200, 78)
         plt.contourf(v.lons, v.lats, v.x, windf, cmap='nipy_spectral', extend='max', alpha=0.25,
