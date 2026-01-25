@@ -14,13 +14,15 @@ public class ProductMapEntity
     public int ProductId { get; set; }
 }
 
-//CREATE TABLE `ProductMaps` (
-//  `Id` int NOT NULL AUTO_INCREMENT,
-//  `SourceUrl` varchar(1000) NOT NULL,
-//  `IsActive` bit(1) NOT NULL,
-//  `Effective` datetime NOT NULL,
-//  `Timestamp` datetime NOT NULL,
-//  `ForecastHour` int NOT NULL,
-//  `ProductId` int NOT NULL,
-//  PRIMARY KEY(`Id`)
-//) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
+//-- olieblind.ProductMaps definition
+
+//CREATE TABLE "ProductMaps" (
+//  "Id" int NOT NULL AUTO_INCREMENT,
+//  "SourceUrl" varchar(1000) NOT NULL,
+//  "IsActive" bit(1) NOT NULL,
+//  "Effective" datetime NOT NULL,
+//  "Timestamp" datetime NOT NULL,
+//  "ForecastHour" int NOT NULL,
+//  "ProductId" int NOT NULL,
+//  PRIMARY KEY("Id")
+//);

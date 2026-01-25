@@ -1,0 +1,26 @@
+@page
+@model olieblind.web.Pages.Events.ComingSoon
+@{
+    ViewData["Title"] = "Coming Soon";
+}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-page="/Events/Years">Years</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-page="/Events/AnnualOverview" asp-route-year="@Model.Year">@Model.Year</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-page="/Events/DailyOverview" asp-route-year="@Model.Year"
+               asp-route-effectiveDate="@Model.EffectiveDate"
+               asp-route-sourceFk="@Model.SourceFk">@Model.EffectiveDate</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <a href="#">Coming Soon</a>
+        </li>
+    </ol>
+</nav>
+<h2>Coming Soon!</h2>
+<p>This feature is still under development. If you are willing to become a beta tester for this feature,
+    send an email to olievortex at olievortex.com.</p>

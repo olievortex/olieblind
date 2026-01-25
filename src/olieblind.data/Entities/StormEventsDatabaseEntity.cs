@@ -15,15 +15,14 @@ public class StormEventsDatabaseEntity
     public bool IsActive { get; set; }
 }
 
-//CREATE TABLE olieblind_dev.StormEventsDatabases(
-//    Id varchar(36) NOT NULL,
-//	  `Year` INT NOT NULL,
-//	  BlobName varchar(320) NOT NULL,
-//    RowCount INT NOT NULL,
-//	  `Timestamp` DATETIME NOT NULL,
-//	  IsActive BOOL NOT NULL,
-//  CONSTRAINT StormEventsDatabases_PK PRIMARY KEY(Id,`Year`)
-//)
-//ENGINE=InnoDB
-//DEFAULT CHARSET=utf8mb4
-//COLLATE = utf8mb4_0900_ai_ci;
+//-- olieblind.StormEventsDatabases definition
+
+//CREATE TABLE "StormEventsDatabases" (
+//  "Id" varchar(36) NOT NULL,
+//  "Year" int NOT NULL,
+//  "BlobName" varchar(320) NOT NULL,
+//  "RowCount" int NOT NULL,
+//  "Timestamp" datetime NOT NULL,
+//  "IsActive" tinyint(1) NOT NULL,
+//  PRIMARY KEY("Id","Year")
+//);

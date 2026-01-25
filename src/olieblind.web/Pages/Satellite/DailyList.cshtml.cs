@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using olieblind.lib.Services;
 using olieblind.lib.StormEvents.Models;
 
-namespace olieblind.web.Pages.Events;
+namespace olieblind.web.Pages.Satellite;
 
-public class SatelliteList(IHttpClientFactory client, IOlieConfig config) : PageModel
+public class DailyList(IHttpClientFactory client, IOlieConfig config) : PageModel
 {
     public int Year { get; set; }
     public string EffectiveDate { get; set; } = string.Empty;

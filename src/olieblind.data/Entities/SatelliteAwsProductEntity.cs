@@ -24,7 +24,7 @@ public class SatelliteAwsProductEntity
     public int TimeTakenPoster { get; set; }
 }
 
-//-- olieblind_dev.SatelliteAwsProducts definition
+//-- olieblind.SatelliteAwsProducts definition
 
 //CREATE TABLE "SatelliteAwsProducts" (
 //  "Id" varchar(100) NOT NULL,

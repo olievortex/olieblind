@@ -1,6 +1,11 @@
+using Azure.Monitor.OpenTelemetry.AspNetCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.HttpOverrides;
 using olieblind.lib.CookieConsent;
 using olieblind.lib.Services;
 using olieblind.web.Components;
+using System.Net;
 
 namespace olieblind.web;
 
@@ -15,9 +20,22 @@ public static class Program
         builder.AddDependencyInjection();
         builder.AddHttpClient(config);
         builder.Services.AddRazorPages();
-        builder.Services.AddApplicationInsightsTelemetry();
+        builder.Services.AddOpenTelemetry().UseAzureMonitor();
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+        }).AddCookie().AddOpenIdConnect();
+        builder.Services.Configure<ForwardedHeadersOptions>(options =>
+        {
+            options.ForwardedHeaders =
+                ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
+            options.KnownProxies.Add(IPAddress.Parse("127.0.0.1"));
+            options.KnownProxies.Add(IPAddress.Parse("::1"));
+        });
 
         var app = builder.Build();
+        app.UseForwardedHeaders();
 
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
@@ -26,9 +44,8 @@ public static class Program
         }
 
         app.UseRouting();
-
+        app.UseAuthentication();
         app.UseAuthorization();
-
         app.MapStaticAssets();
         app.MapRazorPages()
            .WithStaticAssets();

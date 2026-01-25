@@ -75,6 +75,7 @@ CREATE TABLE "SatelliteAwsProducts" (
   "Path1080" varchar(320) DEFAULT NULL,
   "PathPoster" varchar(320) DEFAULT NULL,
   "PathSource" varchar(320) DEFAULT NULL,
+  "PathLocal" varchar(320) DEFAULT NULL,
   "ScanTime" datetime NOT NULL,
   "Timestamp" datetime NOT NULL,
   "TimeTaken1080" int NOT NULL,
@@ -88,13 +89,13 @@ CREATE TABLE "SpcMesoProducts" (
   "EffectiveDate" varchar(32) NOT NULL,
   "EffectiveTime" datetime NOT NULL,
   "AreasAffected" varchar(300) NOT NULL,
-  "Concerning" varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  "Concerning" varchar(300) NOT NULL,
   "GraphicUrl" varchar(320) DEFAULT NULL,
   "Narrative" text NOT NULL,
-  "Html" varchar(320) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  "Html" varchar(320) NOT NULL,
   "Timestamp" datetime NOT NULL,
   PRIMARY KEY ("Id","EffectiveDate"),
-  KEY "SpcMesoProducts_EffectiveTime_IDX" ("EffectiveTime")
+  KEY "SpcMesoProducts_EffectiveDate_IDX" ("EffectiveDate")
 );
 
 CREATE TABLE "StormEventsDailyDetails" (
@@ -108,12 +109,13 @@ CREATE TABLE "StormEventsDailyDetails" (
   "EventType" varchar(25) NOT NULL,
   "ForecastOffice" varchar(5) NOT NULL,
   "Timestamp" datetime NOT NULL,
-  "Magnitude" varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  "Magnitude" varchar(8) NOT NULL,
   "Latitude" float NOT NULL,
   "Longitude" float NOT NULL,
-  "Narrative" text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  "Narrative" text NOT NULL,
   "ClosestRadar" varchar(16) NOT NULL,
-  PRIMARY KEY ("Id","DateFk","SourceFk")
+  PRIMARY KEY ("Id","DateFk","SourceFk"),
+  KEY "StormEventsDailyDetails_DateFk_IDX" ("DateFk","SourceFk")
 );
 
 CREATE TABLE "StormEventsDailySummaries" (
@@ -165,4 +167,13 @@ CREATE TABLE "UserCookieConsentLogs" (
   "Status" varchar(100) NOT NULL,
   "Timestamp" datetime NOT NULL,
   PRIMARY KEY ("Id")
+);
+
+CREATE TABLE "UserSatelliteAdHocLogs" (
+  "Id" varchar(320) NOT NULL,
+  "Timestamp" datetime NOT NULL,
+  "EffectiveDate" varchar(32) NOT NULL,
+  "Channel" int NOT NULL,
+  "DayPart" int NOT NULL,
+  PRIMARY KEY ("Id","Timestamp")
 );

@@ -1,6 +1,6 @@
 #!/bin/sh
 mkdir -p /var/log/olieblind
-sudo chown olievortex:olievortex /var/log/olieblind
+chown olievortex:olievortex /var/log/olieblind
 
 mkdir -p /var/backup
 chown olievortex:olievortex /var/backup

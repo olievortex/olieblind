@@ -16,15 +16,17 @@ public class ProductMapItemEntity
     public int ProductMapId { get; set; }
 }
 
-//CREATE TABLE `ProductMapItems` (
-//  `Id` int NOT NULL AUTO_INCREMENT,
-//  `Url` varchar(1000) NOT NULL,
-//  `Title` varchar(1000) NOT NULL,
-//  `Timestamp` datetime NOT NULL,
-//  `ParameterId` int NOT NULL,
-//  `GeographyId` int NOT NULL,
-//  `LocalPath` varchar(1000) NOT NULL,
-//  `IsActive` bit(1) NOT NULL,
-//  `ProductMapId` int NOT NULL,
-//  PRIMARY KEY(`Id`)
-//) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
+//-- olieblind.ProductMapItems definition
+
+//CREATE TABLE "ProductMapItems" (
+//  "Id" int NOT NULL AUTO_INCREMENT,
+//  "Url" varchar(1000) NOT NULL,
+//  "Title" varchar(1000) NOT NULL,
+//  "Timestamp" datetime NOT NULL,
+//  "ParameterId" int NOT NULL,
+//  "GeographyId" int NOT NULL,
+//  "LocalPath" varchar(1000) NOT NULL,
+//  "IsActive" bit(1) NOT NULL,
+//  "ProductMapId" int NOT NULL,
+//  PRIMARY KEY("Id")
+//);

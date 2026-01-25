@@ -53,6 +53,11 @@ Using WinSCP, make a connection to your Linode.
 
 When you update the sourcing file in the next step, set the GOOGLE_APPLICATION_CREDENTIALS to the path of this file.
 
+Secure the file and prevent alterations.
+
+    # chmod go-r virtualstormchasing-*.json
+    # chmod u-w virtualstormchasing-*.json
+
 ## Create and parameterize the environment sourcing script
 The sourceOlieBlind_template.sh script is copied into the olieblind folder. This script is called by other scripts to load the proper environment variables.
 
@@ -63,12 +68,22 @@ Replace the placeholder values within the file and then rename it from **sourceO
 
     # mv sourceOlieBlind_template.sh sourceOlieBlind.sh
 
+Secure the file to prevent inadvertant revelations or alterations.
+
+    # chmod go-rx sourceOlieBlind.sh
+    # chmod u-w sourceOlieBlind.sh
+
 ## MySQL
 We will copy some MySQL scripts out of the repository and customize them.
 
     # cp ~/source/repos/olieblind/scripts/mysql/*.sh ~/olieblind
 
 Replace the asterisks with the appropriate host, port, username, and password for both scripts. Don't wrap the IPv6 adress in brackets. Run both scripts and confirm the sql dump files were created in /var/backup/mysql.
+
+Secure the files to prevent inadvertant revelations or alterations.
+
+    # chmod go-rx olieblind_*backup.sh
+    # chmod u-w olieblind_*backup.sh
 
 ## Install olieblind
     # ~/olieblind/deployOlieBlind.sh
