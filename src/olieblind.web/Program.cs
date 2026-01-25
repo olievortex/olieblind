@@ -21,18 +21,8 @@ public static class Program
         builder.AddHttpClient(config);
         builder.Services.AddRazorPages();
         builder.Services.AddOpenTelemetry().UseAzureMonitor();
-        builder.Services.AddAuthentication(options =>
-        {
-            options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-        }).AddCookie().AddOpenIdConnect();
-        builder.Services.Configure<ForwardedHeadersOptions>(options =>
-        {
-            options.ForwardedHeaders =
-                ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
-            options.KnownProxies.Add(IPAddress.Parse("127.0.0.1"));
-            options.KnownProxies.Add(IPAddress.Parse("::1"));
-        });
+        builder.AddOidcAuthentication();
+        builder.AddReverseProxySupport();
 
         var app = builder.Build();
         app.UseForwardedHeaders();
@@ -57,6 +47,37 @@ public static class Program
     {
         builder.Services.AddSingleton<IOlieConfig, OlieConfig>();
         builder.Services.AddScoped<ICookieConsentFrontEnd, CookieConsentFrontEnd>();
+    }
+
+    private static void AddOidcAuthentication(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+        })
+            .AddCookie()
+            .AddOpenIdConnect(options =>
+            {
+                //options.Authority = builder.Configuration["Authentication:Authority"];
+                //options.ClientId = builder.Configuration["Authentication:ClientId"];
+                //options.ClientSecret = builder.Configuration["Authentication:ClientSecret"];
+                //options.ResponseType = "code";
+                //options.SaveTokens = true;
+                options.Scope.Add("profile");
+                options.Scope.Add("email");
+            });
+    }
+
+    private static void AddReverseProxySupport(this WebApplicationBuilder builder)
+    {
+        builder.Services.Configure<ForwardedHeadersOptions>(options =>
+        {
+            options.ForwardedHeaders =
+                ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
+            options.KnownProxies.Add(IPAddress.Parse("127.0.0.1"));
+            options.KnownProxies.Add(IPAddress.Parse("::1"));
+        });
     }
 
     private static OlieConfig AddConfiguration(this WebApplicationBuilder builder)

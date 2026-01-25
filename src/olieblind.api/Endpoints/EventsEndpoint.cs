@@ -17,7 +17,6 @@ public static class EventsEndpoint
         app.MapGet("/api/events/mesos/{effectiveDate}", GetSpcMesos);
         app.MapGet("/api/events/mesos/{year:int}/{id:int}", GetSpcMeso);
         app.MapGet("/api/events/radar/{radarId}/{effectiveDate}/{bucketName}", GetRadarInventory);
-        app.MapGet("/api/events/satellite/{effectiveDate}", GetSatelliteInventory);
     }
 
     public static async Task<Ok<List<StormEventsAnnualSummaryModel>>> GetAnnualSummaryList(IStormEventsSource source, CancellationToken ct)
@@ -61,12 +60,6 @@ public static class EventsEndpoint
     public static async Task<Ok<RadarInventoryEntity>> GetRadarInventory(string radarId, string effectiveDate, string bucketName, IStormEventsSource source, CancellationToken ct)
     {
         var result = await source.GetRadarInventory(radarId, effectiveDate, bucketName, ct);
-        return TypedResults.Ok(result);
-    }
-
-    public static async Task<Ok<SatelliteListModel>> GetSatelliteInventory(string effectiveDate, IStormEventsBusiness business, CancellationToken ct)
-    {
-        var result = await business.GetSatelliteList(effectiveDate, ct);
         return TypedResults.Ok(result);
     }
 }

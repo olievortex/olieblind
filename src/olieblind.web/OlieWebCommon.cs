@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using olieblind.data;
 using olieblind.web.Interfaces;
+using System.Security.Claims;
 
 namespace olieblind.web;
 
@@ -102,5 +103,23 @@ public static class OlieWebCommon
             .SingleOrDefault(w => w.Equals(value, StringComparison.OrdinalIgnoreCase));
 
         return key is null ? value : OlieStates.FullToAbbr[key];
+    }
+
+    public static string? UserName(ClaimsPrincipal principal) => ReadClaim(principal, "name");
+
+    public static string? Email(ClaimsPrincipal principal) => ReadClaim(principal, "email");
+
+    private static string? ReadClaim(ClaimsPrincipal principal, string key)
+    {
+        var user = principal.Identity as ClaimsIdentity;
+
+        string? value = null;
+
+        if (user is not null)
+        {
+            value = user.Claims.FirstOrDefault(c => c.Type == key)?.Value;
+        }
+
+        return value;
     }
 }

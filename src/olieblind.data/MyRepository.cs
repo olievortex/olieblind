@@ -2,6 +2,7 @@
 using olieblind.data.Entities;
 using olieblind.data.Enums;
 using olieblind.data.Models;
+using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 
 namespace olieblind.data;
@@ -473,6 +474,24 @@ public class MyRepository(MyContext context) : IMyRepository
     {
         await context.UserCookieConsentLogs.AddAsync(entity, ct);
         await context.SaveChangesAsync(ct);
+    }
+
+    #endregion
+
+    #region UserSatelliteAdHocLog
+
+    public async Task<Dictionary<string, int>> UserSatelliteAdHocLogUserStatistics(int lookbackHours, CancellationToken ct)
+    {
+        return await context.UserSatelliteAdHocLogs
+            .AsNoTracking()
+            .Where(w => w.Timestamp >= DateTime.UtcNow.AddHours(-lookbackHours))
+            .GroupBy(g => g.Id)
+            .Select(s => new
+            {
+                UserId = s.Key,
+                Count = s.Count()
+            })
+            .ToDictionaryAsync(k => k.UserId, v => v.Count, ct);
     }
 
     #endregion

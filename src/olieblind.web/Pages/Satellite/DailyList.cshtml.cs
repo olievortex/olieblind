@@ -22,7 +22,7 @@ public class DailyList(IHttpClientFactory client, IOlieConfig config) : PageMode
         EffectiveDate = effectiveDate;
         SourceFk = sourceFk;
 
-        Satellite = await OlieWebCommon.ApiGet<SatelliteListModel>(client, $"/api/events/satellite/{effectiveDate}", ct) ?? new();
+        Satellite = await OlieWebCommon.ApiGet<SatelliteListModel>(client, $"/api/satellite/inventory/{effectiveDate}", ct) ?? new();
 
         return Page();
     }

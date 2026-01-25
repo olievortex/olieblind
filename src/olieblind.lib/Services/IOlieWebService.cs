@@ -1,6 +1,7 @@
 ﻿using Amazon.S3;
 using Azure.AI.TextAnalytics;
 using Azure.Messaging.ServiceBus;
+using Azure.Messaging.ServiceBus.Administration;
 using Azure.Storage.Blobs;
 using System.Net;
 using System.Net.Http.Headers;
@@ -47,6 +48,12 @@ public interface IOlieWebService
 
     #endregion
 
+    #region Brown
+
+    Task<string> BrownShell(IOlieConfig config, string arguments, CancellationToken ct);
+
+    #endregion
+
     #region File
 
     void CompressGzip(string sourceFile, string destinationFile);
@@ -60,15 +67,11 @@ public interface IOlieWebService
 
     #endregion
 
-    #region Brown
-
-    Task<string> BrownShell(IOlieConfig config, string arguments, CancellationToken ct);
-
-    #endregion
-
     #region ServiceBus
 
     Task ServiceBusSendJson(ServiceBusSender sender, object data, CancellationToken ct);
+
+    Task<int> ServiceBusQueueLength(ServiceBusAdministrationClient adminClient, string queueName, CancellationToken ct);
 
     #endregion
 }
