@@ -33,25 +33,9 @@ public static class Program
             options.KnownProxies.Add(IPAddress.Parse("127.0.0.1"));
             options.KnownProxies.Add(IPAddress.Parse("::1"));
         });
-        builder.Services.AddHttpLogging(options =>
-        {
-            options.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestPropertiesAndHeaders;
-        });
 
         var app = builder.Build();
         app.UseForwardedHeaders();
-        app.UseHttpLogging();
-
-        app.Use(async (context, next) =>
-        {
-            // Connection: RemoteIp
-            app.Logger.LogInformation("Request RemoteIp: {RemoteIpAddress}", context.Connection.RemoteIpAddress);
-            app.Logger.LogInformation("Request X-Forwarded-Host: {X-Forwarded-Host}", context.Request.Headers["X-Forwarded-Host"].ToString());
-            app.Logger.LogInformation("Request X-Original-Host: {X-Forwarded-For}", context.Request.Headers["X-Forwarded-For"].ToString());
-            app.Logger.LogInformation("Request X-Forwarded-Proto: {X-Forwarded-Proto}", context.Request.Headers["X-Forwarded-Proto"].ToString());
-
-            await next(context);
-        });
 
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
