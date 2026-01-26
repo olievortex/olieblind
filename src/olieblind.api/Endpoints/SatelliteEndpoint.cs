@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
+using olieblind.lib.Models;
 using olieblind.lib.Satellite.Interfaces;
 using olieblind.lib.Satellite.Models;
 using olieblind.lib.Services;
@@ -13,18 +14,26 @@ public static class SatelliteEndpoint
     {
         app.MapGet("/api/satellite/requestStatistics/{userId}", GetRequestStatistics);
         app.MapGet("/api/satellite/inventory/{effectiveDate}", GetInventory);
+        app.MapPost("/api/satellite/requestHourlyPreview", PostRequestHourlyPreview);
     }
 
-    public static async Task<Ok<SatelliteRequestStatisticsModel>> GetRequestStatistics(string userId, ISatelliteRequestProcess business, IOlieConfig config, CancellationToken ct)
+    public static async Task<Ok<SatelliteRequestStatisticsModel>> GetRequestStatistics(string userId, ISatelliteRequestProcess process, IOlieConfig config, CancellationToken ct)
     {
         var client = config.ServiceBusAdministrationClient();
-        var result = await business.GetStatistics(userId, client, ct);
+        var result = await process.GetStatistics(userId, client, ct);
         return TypedResults.Ok(result);
     }
 
     public static async Task<Ok<SatelliteListModel>> GetInventory(string effectiveDate, IStormEventsBusiness business, CancellationToken ct)
     {
         var result = await business.GetSatelliteList(effectiveDate, ct);
+        return TypedResults.Ok(result);
+    }
+
+    public static async Task<Ok<SatelliteRequestResultModel>> PostRequestHourlyPreview(SatelliteRequestModel model, ISatelliteRequestProcess process, IOlieConfig config, CancellationToken ct)
+    {
+        var sender = config.ServiceBusSender();
+        var result = await process.RequestHourlySatellite(model, sender, ct);
         return TypedResults.Ok(result);
     }
 }

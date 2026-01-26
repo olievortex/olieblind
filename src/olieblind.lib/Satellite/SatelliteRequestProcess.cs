@@ -1,6 +1,7 @@
 ﻿using Azure.Messaging.ServiceBus;
 using Azure.Messaging.ServiceBus.Administration;
 using olieblind.data;
+using olieblind.lib.Models;
 using olieblind.lib.Satellite.Interfaces;
 using olieblind.lib.Satellite.Models;
 using olieblind.lib.Services;
@@ -26,18 +27,18 @@ public class SatelliteRequestProcess(ISatelliteRequestBusiness business, IOlieWe
         };
     }
 
-    public async Task<SatelliteRequestResultModel> RequestHourlySatellite(string userId, string effectiveDate, string sourceFk, ServiceBusSender sender, CancellationToken ct)
+    public async Task<SatelliteRequestResultModel> RequestHourlySatellite(SatelliteRequestModel model, ServiceBusSender sender, CancellationToken ct)
     {
-        var productList = await business.GetHourlyProductList(effectiveDate, ct);
+        var productList = await business.GetHourlyProductList(model.EffectiveDate, ct);
         if (productList.Count == 0) return new SatelliteRequestResultModel(false, NothingToDoMessage);
 
-        var isFreeRequest = await business.IsFreeRequest(effectiveDate, sourceFk, ct);
+        var isFreeRequest = await business.IsFreeRequest(model.EffectiveDate, model.SourceFk, ct);
 
-        if (!isFreeRequest && await business.IsQuotaAvailable(userId, ct) is false)
+        if (!isFreeRequest && await business.IsQuotaAvailable(model.UserId, ct) is false)
             return new SatelliteRequestResultModel(false, QuotaExceededMessage);
 
         await business.Enqueue(productList, sender, ct);
-        await business.CreateLog(userId, effectiveDate, isFreeRequest, ct);
+        await business.CreateLog(model.UserId, model.EffectiveDate, isFreeRequest, ct);
 
         return new SatelliteRequestResultModel(true, SuccessMessage);
     }

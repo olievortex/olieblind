@@ -1,6 +1,7 @@
 ﻿using Azure.Messaging.ServiceBus.Administration;
 using Moq;
 using olieblind.data;
+using olieblind.lib.Models;
 using olieblind.lib.Satellite;
 using olieblind.lib.Satellite.Interfaces;
 using olieblind.lib.Services;
@@ -84,9 +85,15 @@ public class SatelliteRequestProcessTests
         business.Setup(s => s.GetHourlyProductList(It.IsAny<string>(), ct))
             .ReturnsAsync([]);
         var testable = new SatelliteRequestProcess(business.Object, null!, null!, null!);
+        var model = new SatelliteRequestModel
+        {
+            EffectiveDate = "20240101",
+            SourceFk = "sourceFk",
+            UserId = "testUser",
+        };
 
         // Act
-        var result = await testable.RequestHourlySatellite("testUser", "20240101", "sourceFk", null!, ct);
+        var result = await testable.RequestHourlySatellite(model, null!, ct);
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -109,9 +116,15 @@ public class SatelliteRequestProcessTests
         business.Setup(s => s.IsQuotaAvailable(It.IsAny<string>(), ct))
             .ReturnsAsync(false);
         var testable = new SatelliteRequestProcess(business.Object, null!, null!, null!);
+        var model = new SatelliteRequestModel
+        {
+            EffectiveDate = "20240101",
+            SourceFk = "sourceFk",
+            UserId = "testUser",
+        };
 
         // Act
-        var result = await testable.RequestHourlySatellite("testUser", "20240101", "sourceFk", null!, ct);
+        var result = await testable.RequestHourlySatellite(model, null!, ct);
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -134,9 +147,15 @@ public class SatelliteRequestProcessTests
         business.Setup(s => s.IsQuotaAvailable(It.IsAny<string>(), ct))
             .ReturnsAsync(true);
         var testable = new SatelliteRequestProcess(business.Object, null!, null!, null!);
+        var model = new SatelliteRequestModel
+        {
+            EffectiveDate = "20240101",
+            SourceFk = "sourceFk",
+            UserId = "testUser",
+        };
 
         // Act
-        var result = await testable.RequestHourlySatellite("testUser", "20240101", "sourceFk", null!, ct);
+        var result = await testable.RequestHourlySatellite(model, null!, ct);
 
         // Assert
         using (Assert.EnterMultipleScope())

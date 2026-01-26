@@ -1,3 +1,4 @@
+using Azure.Messaging.ServiceBus;
 using Azure.Messaging.ServiceBus.Administration;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Microsoft.EntityFrameworkCore;
@@ -118,5 +119,11 @@ public static class Program
     public static ServiceBusAdministrationClient ServiceBusAdministrationClient(this IOlieConfig config)
     {
         return new ServiceBusAdministrationClient(config.AwsServiceBus, config.Credential);
+    }
+
+    public static ServiceBusSender ServiceBusSender(this IOlieConfig config)
+    {
+        var client = new Azure.Messaging.ServiceBus.ServiceBusClient(config.AwsServiceBus, config.Credential);
+        return client.CreateSender(config.SatelliteRequestQueueName);
     }
 }

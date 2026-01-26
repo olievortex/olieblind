@@ -1,13 +1,7 @@
 ﻿namespace olieblind.lib.Satellite.Models;
 
-public class SatelliteRequestResultModel
+public class SatelliteRequestResultModel(bool IsSuccessful, string Message)
 {
-    public bool IsSuccessful { get; init; }
-    public string Message { get; init; }
-
-    public SatelliteRequestResultModel(bool IsSuccessful, string Message)
-    {
-        this.IsSuccessful = IsSuccessful;
-        this.Message = Message;
-    }
+    public bool IsSuccessful { get; } = IsSuccessful;
+    public string Message { get; } = Message;
 }
