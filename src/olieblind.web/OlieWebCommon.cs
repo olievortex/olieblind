@@ -28,6 +28,25 @@ public static class OlieWebCommon
         }
     }
 
+    public static async Task<T?> ApiPost<T>(IHttpClientFactory httpClientFactory, string url, object model, CancellationToken ct) where T : class
+    {
+        using var httpClient = Program.GetOlieBlue(httpClientFactory);
+        using var httpResponseMessage = await httpClient.PostAsJsonAsync(url, model, ct);
+
+        httpResponseMessage.EnsureSuccessStatusCode();
+
+        var body = await httpResponseMessage.Content.ReadAsStringAsync(ct);
+
+        try
+        {
+            return JsonConvert.DeserializeObject<T?>(body);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException($"Error deserializing response from {url}: {body}", ex);
+        }
+    }
+
     public static string County(string value)
     {
         value = value.Replace("county", string.Empty, StringComparison.OrdinalIgnoreCase).Trim();

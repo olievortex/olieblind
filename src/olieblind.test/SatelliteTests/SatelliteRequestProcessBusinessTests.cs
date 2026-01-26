@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Moq;
+﻿using Moq;
 using olieblind.data;
 using olieblind.data.Entities;
 using olieblind.data.Enums;
@@ -118,10 +117,10 @@ public class SatelliteRequestProcessBusinessTests
                 F2 = 4
             });
         var testable = new SatelliteRequestBusiness(repo.Object, null!, null!);
-        
+
         // Act
         var result = await testable.IsFreeRequest(effectiveDate, sourceFk, ct);
-        
+
         // Assert
         Assert.That(result, Is.True);
     }

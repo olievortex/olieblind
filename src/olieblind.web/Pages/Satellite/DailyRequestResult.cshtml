@@ -1,0 +1,41 @@
+﻿@page
+@model olieblind.web.Pages.Satellite.DailyRequestResultModel
+@{
+    ViewData["Title"] = "Analysis";
+}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-page="/Events/Years">Years</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-page="/Events/AnnualOverview" asp-route-year="@Model.Year">@Model.Year</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-page="/Events/DailyOverview" asp-route-year="@Model.Year"
+               asp-route-effectiveDate="@Model.EffectiveDate"
+               asp-route-sourceFk="@Model.SourceFk">@Model.EffectiveDate</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-page="/Satellite/DailyList" asp-route-year="@Model.Year"
+               asp-route-effectiveDate="@Model.EffectiveDate"
+               asp-route-sourceFk="@Model.SourceFk">Visible Satellite</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <a href="#">Satellite Preview Request</a>
+        </li>
+    </ol>
+</nav>
+
+<h2>Satellite Preview Request</h2>
+
+<p>@Model.Message</p>
+
+<p>Click below to monitor the queue length. When the queue length reaches 0, the previews should be completed!</p>
+
+<a class="btn btn-outline-secondary" asp-page="/Satellite/DailyRequest" asp-route-year="@Model.Year"
+   asp-route-effectiveDate="@Model.EffectiveDate" asp-route-sourceFk="@Model.SourceFk">
+    Monitor Queue Length
+</a>
+
+<br />
