@@ -166,6 +166,8 @@ public interface IMyRepository
 
     #region UserSatelliteAdHocLog
 
+    Task UserSatelliteAdHocLogCreate(UserSatelliteAdHocLogEntity entity, CancellationToken ct);
+
     Task<Dictionary<string, int>> UserSatelliteAdHocLogUserStatistics(int lookbackHours, CancellationToken ct);
 
     #endregion

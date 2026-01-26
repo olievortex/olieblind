@@ -59,11 +59,6 @@ public static class Program
             .AddCookie()
             .AddOpenIdConnect(options =>
             {
-                //options.Authority = builder.Configuration["Authentication:Authority"];
-                //options.ClientId = builder.Configuration["Authentication:ClientId"];
-                //options.ClientSecret = builder.Configuration["Authentication:ClientSecret"];
-                //options.ResponseType = "code";
-                //options.SaveTokens = true;
                 options.Scope.Add("profile");
                 options.Scope.Add("email");
             });

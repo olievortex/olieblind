@@ -479,11 +479,17 @@ public class MyRepository(MyContext context) : IMyRepository
 
     #region UserSatelliteAdHocLog
 
+    public async Task UserSatelliteAdHocLogCreate(UserSatelliteAdHocLogEntity entity, CancellationToken ct)
+    {
+        await context.UserSatelliteAdHocLogs.AddAsync(entity, ct);
+        await context.SaveChangesAsync(ct);
+    }
+
     public async Task<Dictionary<string, int>> UserSatelliteAdHocLogUserStatistics(int lookbackHours, CancellationToken ct)
     {
         return await context.UserSatelliteAdHocLogs
             .AsNoTracking()
-            .Where(w => w.Timestamp >= DateTime.UtcNow.AddHours(-lookbackHours))
+            .Where(w => w.Timestamp >= DateTime.UtcNow.AddHours(-lookbackHours) && !w.IsFree)
             .GroupBy(g => g.Id)
             .Select(s => new
             {

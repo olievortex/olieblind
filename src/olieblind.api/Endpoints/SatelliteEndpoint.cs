@@ -15,7 +15,7 @@ public static class SatelliteEndpoint
         app.MapGet("/api/satellite/inventory/{effectiveDate}", GetInventory);
     }
 
-    public static async Task<Ok<SatelliteRequestStatisticsModel>> GetRequestStatistics(string userId, ISatelliteRequestBusiness business, IOlieConfig config, CancellationToken ct)
+    public static async Task<Ok<SatelliteRequestStatisticsModel>> GetRequestStatistics(string userId, ISatelliteRequestProcess business, IOlieConfig config, CancellationToken ct)
     {
         var client = config.ServiceBusAdministrationClient();
         var result = await business.GetStatistics(userId, client, ct);
