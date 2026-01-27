@@ -31,14 +31,15 @@
 
 <p>Satellite image previews make it very convenient to select the best products for analysis. Request preview images for this date by clicking one of the buttons below.</p>
 
-<p>This process can take upwards of an hour depending on the server workload.</p>
-
 @if (Model.SatelliteRequestStatistics != null)
 {
-    <h4>Recent Requests</h4>
-    <p>All Users: @Model.SatelliteRequestStatistics.GlobalRequests</p>
-    <p>Your Requests: @Model.SatelliteRequestStatistics.UserRequests</p>
-    <p>Current Queue Length: @Model.SatelliteRequestStatistics.QueueLength</p>
+    <h4>Quota Status</h4>
+    <p>Daily global and user quotas are implemented to control costs. If there are no remaining requests, try back in an hour or a day.</p>
+    <p>Global Quota (All Users): @Model.GlobalQuota requests every @Model.HoursQuota hours (@(Model.GlobalQuota - Model.SatelliteRequestStatistics.GlobalRequests) requests remaining)</p>
+    <p>Your Quota: @Model.UserQuota requests every @Model.HoursQuota (@(Model.UserQuota - Model.SatelliteRequestStatistics.UserRequests) requests remaining)</p>
+    <h4>Queue Statistics</h4>
+    <p>Requests are placed in a queue. All items in the queue must be processed before getting to your request. Processing time takes about one minute per item.</p>
+    <p>Current Queue Length: @Model.SatelliteRequestStatistics.QueueLength requests</p>
 }
 
 <h4>Submit Request</h4>

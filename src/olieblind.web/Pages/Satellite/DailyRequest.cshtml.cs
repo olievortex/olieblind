@@ -3,13 +3,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using olieblind.lib.Models;
 using olieblind.lib.Satellite.Models;
+using olieblind.lib.Services;
 
 namespace olieblind.web.Pages.Satellite;
 
 [Authorize]
-public class DailyRequest(IHttpClientFactory client) : PageModel
+public class DailyRequest(IHttpClientFactory client, IOlieConfig config) : PageModel
 {
     public int Year { get; set; }
+    public int GlobalQuota => config.SatelliteRequestGlobalLimit;
+    public int UserQuota => config.SatelliteRequestUserLimit;
+    public int HoursQuota => config.SatelliteRequestLookbackHours;
     public string EffectiveDate { get; set; } = string.Empty;
     public string SourceFk { get; set; } = string.Empty;
     public SatelliteRequestStatisticsModel? SatelliteRequestStatistics { get; set; }
