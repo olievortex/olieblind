@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using olieblind.data.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace olieblind.data.Entities;
@@ -13,7 +14,8 @@ public class UserSatelliteAdHocLogEntity
     [MaxLength(32)]
     public string EffectiveDate { get; init; } = string.Empty;
     public int Channel { get; init; }
-    public int DayPart { get; init; }
+    public DayPartsEnum DayPart { get; init; }
+    public bool IsFree { get; init; }
 }
 
 //-- olieblind.UserSatelliteAdHocLogs definition
@@ -24,5 +26,6 @@ public class UserSatelliteAdHocLogEntity
 //  "EffectiveDate" varchar(32) NOT NULL,
 //  "Channel" int NOT NULL,
 //  "DayPart" int NOT NULL,
+//  "IsFree" tinyint(1) NOT NULL,
 //  PRIMARY KEY("Id","Timestamp")
 //);

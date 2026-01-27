@@ -45,4 +45,12 @@ public interface IOlieConfig
     string BlobBronzeContainerUri { get; }
 
     string AwsServiceBus { get; }
+
+    int SatelliteRequestGlobalLimit { get; }
+
+    int SatelliteRequestUserLimit { get; }
+
+    int SatelliteRequestLookbackHours { get; }
+
+    string SatelliteRequestQueueName { get; }
 }

@@ -1,23 +1,7 @@
-﻿@using System.Security.Principal
-@using Microsoft.AspNetCore.Authentication.OpenIdConnect
-@using Microsoft.Extensions.Options
-@using System.Security.Claims;
-
-@{
-    var user = User.Identity as ClaimsIdentity;
-
-    string? userName = null;
-
-    if (user is not null)
-    {
-        userName = user.Claims.FirstOrDefault(c => c.Type == "name")?.Value;
-    }
-}
-
-<ul class="navbar-nav">
+﻿<ul class="navbar-nav">
     @if (User.Identity?.IsAuthenticated == true)
     {
-        <span class="navbar-text text-dark">Hello @userName</span>
+        <span class="navbar-text text-dark">Hello @OlieWebCommon.UserName(User)</span>
 
         <li class="nav-item">
             <a class="nav-link text-dark" asp-area="" asp-page="/Logout">Sign out</a>

@@ -1,3 +1,5 @@
+using Azure.Messaging.ServiceBus;
+using Azure.Messaging.ServiceBus.Administration;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using olieblind.api.Endpoints;
@@ -5,6 +7,8 @@ using olieblind.data;
 using olieblind.lib.CookieConsent;
 using olieblind.lib.ForecastModels;
 using olieblind.lib.Models;
+using olieblind.lib.Satellite;
+using olieblind.lib.Satellite.Interfaces;
 using olieblind.lib.Services;
 using olieblind.lib.StormEvents;
 using olieblind.lib.StormEvents.Interfaces;
@@ -24,6 +28,7 @@ public static class Program
         builder.AddResponseMiddleware();
         builder.AddCors(config);
         builder.Services.AddAuthorization();
+        builder.Services.AddHttpClient();
         builder.AddDependencyInjection();
         builder.AddEntityFramework(config);
         builder.Services.AddOpenTelemetry().UseAzureMonitor().WithTracing(builder =>
@@ -43,11 +48,14 @@ public static class Program
     private static void AddDependencyInjection(this WebApplicationBuilder builder)
     {
         builder.Services.AddScoped<IOlieConfig, OlieConfig>();
+        builder.Services.AddScoped<IOlieWebService, OlieWebService>();
         builder.Services.AddScoped<IVideoBusiness, VideoBusiness>();
         builder.Services.AddScoped<IModelForecastBusiness, ModelForecastBusiness>();
         builder.Services.AddScoped<ICookieConsentBusiness, CookieConsentBusiness>();
         builder.Services.AddScoped<IStormEventsBusiness, StormEventsBusiness>();
         builder.Services.AddScoped<IStormEventsSource, StormEventsSource>();
+        builder.Services.AddScoped<ISatelliteRequestProcess, SatelliteRequestProcess>();
+        builder.Services.AddScoped<ISatelliteRequestBusiness, SatelliteRequestBusiness>();
     }
 
     private static void MapEndpoints(this WebApplication app)
@@ -56,6 +64,7 @@ public static class Program
         app.MapUserEndpoints();
         app.MapModelForecastEndpoints();
         app.MapEventsEndpoints();
+        app.MapSatelliteEndpoints();
     }
 
     private static void AddEntityFramework(this WebApplicationBuilder builder, IOlieConfig config)
@@ -106,5 +115,16 @@ public static class Program
                                   policy.WithHeaders(["content-type"]);
                               });
         });
+    }
+
+    public static ServiceBusAdministrationClient ServiceBusAdministrationClient(this IOlieConfig config)
+    {
+        return new ServiceBusAdministrationClient(config.AwsServiceBus, config.Credential);
+    }
+
+    public static ServiceBusSender ServiceBusSender(this IOlieConfig config)
+    {
+        var client = new Azure.Messaging.ServiceBus.ServiceBusClient(config.AwsServiceBus, config.Credential);
+        return client.CreateSender(config.SatelliteRequestQueueName);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using olieblind.data;
 using olieblind.web.Interfaces;
+using System.Security.Claims;
 
 namespace olieblind.web;
 
@@ -12,6 +13,25 @@ public static class OlieWebCommon
     {
         using var httpClient = Program.GetOlieBlue(httpClientFactory);
         using var httpResponseMessage = await httpClient.GetAsync(url, ct);
+
+        httpResponseMessage.EnsureSuccessStatusCode();
+
+        var body = await httpResponseMessage.Content.ReadAsStringAsync(ct);
+
+        try
+        {
+            return JsonConvert.DeserializeObject<T?>(body);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException($"Error deserializing response from {url}: {body}", ex);
+        }
+    }
+
+    public static async Task<T?> ApiPost<T>(IHttpClientFactory httpClientFactory, string url, object model, CancellationToken ct) where T : class
+    {
+        using var httpClient = Program.GetOlieBlue(httpClientFactory);
+        using var httpResponseMessage = await httpClient.PostAsJsonAsync(url, model, ct);
 
         httpResponseMessage.EnsureSuccessStatusCode();
 
@@ -102,5 +122,23 @@ public static class OlieWebCommon
             .SingleOrDefault(w => w.Equals(value, StringComparison.OrdinalIgnoreCase));
 
         return key is null ? value : OlieStates.FullToAbbr[key];
+    }
+
+    public static string? UserName(ClaimsPrincipal principal) => ReadClaim(principal, "name");
+
+    public static string? Email(ClaimsPrincipal principal) => ReadClaim(principal, "email");
+
+    private static string? ReadClaim(ClaimsPrincipal principal, string key)
+    {
+        var user = principal.Identity as ClaimsIdentity;
+
+        string? value = null;
+
+        if (user is not null)
+        {
+            value = user.Claims.FirstOrDefault(c => c.Type == key)?.Value;
+        }
+
+        return value;
     }
 }
