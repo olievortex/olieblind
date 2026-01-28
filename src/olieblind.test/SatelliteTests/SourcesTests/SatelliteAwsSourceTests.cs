@@ -22,7 +22,7 @@ public class SatelliteAwsSourceTests
                 It.IsAny<string>(), null!, ct))
             .Returns(Task.FromException(new AmazonS3Exception("Olie")))
             .Returns(Task.CompletedTask);
-        var testable = new SatelliteAwsSource { AmazonS3Client = null!, Ows = ows.Object, Repository = null! };
+        var testable = new SatelliteAwsSource { AmazonS3Client = null!, Ows = ows.Object };
         var product = new SatelliteProductEntity { Id = "Dillon.nc", EffectiveDate = effectiveDate };
 
         // Act
@@ -46,7 +46,7 @@ public class SatelliteAwsSourceTests
         ows.Setup(s => s.AwsDownload(It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<string>(), null!, ct))
             .Returns(Task.FromException(new AmazonS3Exception("Olie")));
-        var testable = new SatelliteAwsSource { AmazonS3Client = null!, Ows = ows.Object, Repository = null! };
+        var testable = new SatelliteAwsSource { AmazonS3Client = null!, Ows = ows.Object };
         var product = new SatelliteProductEntity { EffectiveDate = effectiveDate };
 
         // Act, Assert
@@ -77,7 +77,7 @@ public class SatelliteAwsSourceTests
         const int satellite = 16;
         const int channel = 7;
         var effectiveDate = new DateTime(2021, 5, 18);
-        var testable = new SatelliteAwsSource { AmazonS3Client = null!, Ows = ows.Object, Repository = null! };
+        var testable = new SatelliteAwsSource { AmazonS3Client = null!, Ows = ows.Object };
 
         // Act
         var result = await testable.ListKeys(dayValue, satellite, channel, dayPart, ct);
@@ -97,7 +97,7 @@ public class SatelliteAwsSourceTests
         const DayPartsEnum dayPart = DayPartsEnum.Afternoon;
         const int satellite = 16;
         const int channel = 13;
-        var testable = new SatelliteAwsSource { AmazonS3Client = null!, Ows = ows.Object, Repository = null! };
+        var testable = new SatelliteAwsSource { AmazonS3Client = null!, Ows = ows.Object };
 
         // Act
         var result = await testable.ListKeys(dayValue, satellite, channel, dayPart, ct);

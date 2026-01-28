@@ -149,15 +149,16 @@ public class SatelliteProcessTests
         const int satellite = 16;
         const int channel = 99;
         const DayPartsEnum dayPart = DayPartsEnum.Afternoon;
-        var repo = new Mock<IMyRepository>();
-        var source = new SatelliteTestSource { Repository = repo.Object, Ows = null! };
-        var testable = new SatelliteProcess(null!, null!, null!);
+        var business = new Mock<ISatelliteImageBusiness>();
+        var source = new SatelliteTestSource { Ows = null! };
+        var testable = new SatelliteProcess(business.Object, null!, null!);
 
         // Act
         await testable.DownloadInventory(effectiveDate, satellite, channel, dayPart, source, ct);
 
         // Assert
-        repo.Verify(v => v.SatelliteInventoryCreate(It.IsAny<SatelliteInventoryEntity>(), ct), Times.Never);
+        business.Verify(v => v.AddInventoryToDatabase(It.IsAny<string>(), It.IsAny<string>(),
+            It.IsAny<int>(), It.IsAny<DayPartsEnum>(), ct), Times.Never);
     }
 
     [Test]
@@ -171,7 +172,7 @@ public class SatelliteProcessTests
         const DayPartsEnum dayPart = DayPartsEnum.Afternoon;
         var repo = new Mock<IMyRepository>();
         var business = new Mock<ISatelliteImageBusiness>();
-        var source = new SatelliteTestSource { Repository = repo.Object, Ows = null! };
+        var source = new SatelliteTestSource { Ows = null! };
         var testable = new SatelliteProcess(business.Object, repo.Object, null!);
 
         // Act

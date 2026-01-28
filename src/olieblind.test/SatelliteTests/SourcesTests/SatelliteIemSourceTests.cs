@@ -2,7 +2,7 @@ using Moq;
 using olieblind.data;
 using olieblind.data.Entities;
 using olieblind.data.Enums;
-using olieblind.lib.Satellite;
+using olieblind.lib.Satellite.Sources;
 using olieblind.lib.Services;
 
 namespace olieblind.test.SatelliteTests.SourcesTests;
@@ -24,7 +24,7 @@ public class SatelliteIemSourceTests
             .ThrowsAsync(new ApplicationException("Olie"))
             .ReturnsAsync([]);
         var repo = new Mock<IMyRepository>();
-        var testable = new SatelliteIemSource { Ows = ows.Object, Repository = null! };
+        var testable = new SatelliteIemSource { Ows = ows.Object };
         var product = new SatelliteProductEntity { Id = "Dillon.tif", EffectiveDate = value };
 
         // Act
@@ -48,7 +48,7 @@ public class SatelliteIemSourceTests
         ows.Setup(s => s.ApiGetBytes(It.IsAny<string>(), ct))
             .ThrowsAsync(new ApplicationException("Olie"));
         var repo = new Mock<IMyRepository>();
-        var testable = new SatelliteIemSource { Ows = ows.Object, Repository = null! };
+        var testable = new SatelliteIemSource { Ows = ows.Object };
         var product = new SatelliteProductEntity { Id = "Dillon.tif", EffectiveDate = value };
 
         // Act, Assert
@@ -80,7 +80,7 @@ public class SatelliteIemSourceTests
         var ows = new Mock<IOlieWebService>();
         ows.Setup(s => s.ApiGetString(It.IsAny<string>(), ct))
             .ReturnsAsync(_html);
-        var testable = new SatelliteIemSource { Ows = ows.Object, Repository = null! };
+        var testable = new SatelliteIemSource { Ows = ows.Object };
 
         // Act
         var result = await testable.ListKeys(value, satellite, channel, dayPart, ct);
@@ -105,7 +105,7 @@ public class SatelliteIemSourceTests
         const int channel = 2;
         const DayPartsEnum dayPart = DayPartsEnum.Afternoon;
         var ct = CancellationToken.None;
-        var testable = new SatelliteIemSource { Ows = null!, Repository = null! };
+        var testable = new SatelliteIemSource { Ows = null! };
 
         // Act
         var result = await testable.ListKeys(value, satellite, channel, dayPart, ct);
@@ -127,7 +127,7 @@ public class SatelliteIemSourceTests
         var ows = new Mock<IOlieWebService>();
         ows.Setup(s => s.ApiGetString(It.IsAny<string>(), ct))
             .ReturnsAsync(_html);
-        var testable = new SatelliteIemSource { Ows = ows.Object, Repository = null! };
+        var testable = new SatelliteIemSource { Ows = ows.Object };
 
         // Act
         var result = await testable.IemList(url, ct);

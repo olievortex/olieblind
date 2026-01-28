@@ -1,10 +1,9 @@
 ﻿using olieblind.data.Entities;
 using olieblind.data.Enums;
 using olieblind.lib.Satellite.Models;
-using olieblind.lib.Satellite.Sources;
 using System.Text.RegularExpressions;
 
-namespace olieblind.lib.Satellite;
+namespace olieblind.lib.Satellite.Sources;
 
 public partial class SatelliteIemSource : ASatelliteSource
 {

@@ -20,8 +20,8 @@ public class SatelliteProcess(ISatelliteImageBusiness business, IMyRepository re
     public ASatelliteSource CreateSatelliteSource(int year, IAmazonS3 amazonS3Client)
     {
         return year < Goes16 ?
-            new SatelliteIemSource { Ows = ows, Repository = repo } :
-            new SatelliteAwsSource { AmazonS3Client = amazonS3Client, Ows = ows, Repository = repo };
+            new SatelliteIemSource { Ows = ows } :
+            new SatelliteAwsSource { AmazonS3Client = amazonS3Client, Ows = ows };
     }
 
     public async Task CreateThumbnailAndUpdateDailySummary(SatelliteProductEntity product, StormEventsDailySummaryEntity summary, Point finalSize, string goldPath, CancellationToken ct)

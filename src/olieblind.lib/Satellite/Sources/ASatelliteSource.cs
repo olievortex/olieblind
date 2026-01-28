@@ -1,5 +1,4 @@
-﻿using olieblind.data;
-using olieblind.data.Entities;
+﻿using olieblind.data.Entities;
 using olieblind.data.Enums;
 using olieblind.lib.Satellite.Models;
 using olieblind.lib.Services;
@@ -9,7 +8,6 @@ namespace olieblind.lib.Satellite.Sources;
 
 public abstract class ASatelliteSource
 {
-    public required IMyRepository Repository { get; init; }
     public required IOlieWebService Ows { get; init; }
 
     public abstract Task<(string, string)> Download(SatelliteProductEntity product, Func<int, Task> delayFunc, CancellationToken ct);
