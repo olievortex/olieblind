@@ -71,6 +71,10 @@ public interface IOlieWebService
 
     Task ServiceBusSendJson(ServiceBusSender sender, object data, CancellationToken ct);
 
+    Task ServiceBusCompleteMessage(ServiceBusReceiver receiver, ServiceBusReceivedMessage message, CancellationToken ct);
+
+    Task<(ServiceBusReceivedMessage?, T?)> ServiceBusReceiveJson<T>(ServiceBusReceiver receiver, CancellationToken ct);
+
     Task<int> ServiceBusQueueLength(ServiceBusAdministrationClient adminClient, string queueName, CancellationToken ct);
 
     #endregion

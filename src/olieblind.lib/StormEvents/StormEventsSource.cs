@@ -61,15 +61,15 @@ public class StormEventsSource(IMyRepository repo) : IStormEventsSource
         return topRows;
     }
 
-    public List<SatelliteAwsProductEntity> GetIemSatelliteList()
+    public List<SatelliteProductEntity> GetIemSatelliteList()
     {
         var current = new TimeSpan(0, 18, 0, 0);
         var stop = new TimeSpan(0, 24, 0, 0);
-        var result = new List<SatelliteAwsProductEntity>();
+        var result = new List<SatelliteProductEntity>();
 
         while (current < stop)
         {
-            var entity = new SatelliteAwsProductEntity
+            var entity = new SatelliteProductEntity
             {
                 ScanTime = new DateTime(2010, 1, 1,
                     current.Hours, current.Minutes, 0, DateTimeKind.Utc)

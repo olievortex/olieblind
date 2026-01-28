@@ -1,11 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using olieblind.data.Enums;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace olieblind.data.Entities;
 
 [PrimaryKey(nameof(Id), nameof(EffectiveDate))]
-public class SatelliteAwsProductEntity
+[Table("SatelliteAwsProducts")]
+public class SatelliteProductEntity
 {
     [MaxLength(100)] public string Id { get; init; } = string.Empty; // AWS Key
     [MaxLength(32)] public string EffectiveDate { get; init; } = string.Empty; // Partition Key cannot be DateTime

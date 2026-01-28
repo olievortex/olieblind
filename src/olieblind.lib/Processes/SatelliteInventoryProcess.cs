@@ -32,7 +32,7 @@ public class SatelliteInventoryProcess(
         var stormDays = (await stormy.GetSevereByYear(year, ct))
             .Select(s => s.Id)
             .ToList();
-        var inventoryDays = (await repo.SatelliteAwsInventoryListByYear(year, Channel, DayPart, ct))
+        var inventoryDays = (await repo.SatelliteInventoryListByYear(year, Channel, DayPart, ct))
             .Select(s => s.EffectiveDate)
             .ToList();
 

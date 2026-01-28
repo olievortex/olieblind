@@ -1,27 +1,95 @@
-﻿using olieblind.lib.Satellite.Interfaces;
+﻿using Amazon.S3;
+using olieblind.data.Entities;
+using olieblind.data.Enums;
+using olieblind.lib.Satellite.Models;
+using olieblind.lib.Services;
 
 namespace olieblind.lib.Satellite;
 
-public class SatelliteAwsSource : ISatelliteAwsSource
+public class SatelliteAwsSource : ASatelliteSource
 {
-    public string GetBucketName(int satellite)
+    public required IOlieWebService Ows { get; init; }
+    public required IAmazonS3 AmazonS3Client { get; init; }
+
+    public override async Task<(string, string)> Download(SatelliteProductEntity product, CancellationToken ct)
+    {
+        var effectiveDate = GetEffectiveDate(product.EffectiveDate);
+        var filename = Path.GetFileName(product.Id);
+        var blobName = $"{GetPath(effectiveDate, "bronze")}/{filename}";
+        var localFilename = $"{Path.GetTempPath()}{filename}";
+        var key = $"{GetPrefix(product.ScanTime)}{filename}";
+        var attempt = 0;
+
+        while (true)
+        {
+            try
+            {
+                await Ows.AwsDownload(localFilename, product.BucketName, key, AmazonS3Client, ct);
+                break;
+            }
+            catch (AmazonS3Exception)
+            {
+                attempt++;
+                if (attempt > 2) throw;
+            }
+
+            await DelayFunc(attempt);
+        }
+
+        return (blobName, localFilename);
+    }
+
+    public override async Task<SatelliteSourceKeysModel?> ListKeys(string dayValue, int satellite, int channel, DayPartsEnum dayPart, CancellationToken ct)
+    {
+        var effectiveDate = GetEffectiveDate(dayValue);
+        if (effectiveDate < new DateTime(2018, 1, 1)) return null;
+
+        var start = GetEffectiveStart(effectiveDate, dayPart);
+        var stop = GetEffectiveStop(effectiveDate, dayPart);
+        var keys = new List<string>();
+        var bucketName = GetBucketName(satellite);
+        var startLoop = start.AddMinutes(-start.Minute);
+        var finishLoop = stop.AddMinutes(-stop.Minute).AddHours(1);
+
+        while (startLoop < finishLoop)
+        {
+            var prefix = GetPrefix(startLoop);
+            var listFiles = await Ows.AwsList(bucketName, prefix, AmazonS3Client, ct);
+
+            keys.AddRange(listFiles
+                .Where(item => channel == GetChannelFromAwsKey(item)));
+
+            startLoop = startLoop.AddHours(1);
+        }
+
+        return new SatelliteSourceKeysModel
+        {
+            Bucket = GetBucketName(satellite),
+            Keys = [.. keys.OrderBy(o => o)],
+            GetScanTimeFunc = GetScanTime
+        };
+    }
+
+    public static string GetBucketName(int satellite)
     {
         return $"noaa-goes{satellite}";
     }
 
-    public int GetChannelFromAwsKey(string key)
+    public static int GetChannelFromAwsKey(string key)
     {
         var fileName = key.Split('/')[^1];
-        return int.Parse(fileName.Split('_')[1][^2..]);
+        var channel = int.Parse(fileName.Split('_')[1][^2..]);
+
+        return channel;
     }
 
-    public string GetPrefix(DateTime effectiveHour)
+    public static string GetPrefix(DateTime effectiveHour)
     {
         var dateTimeFolder = $"{effectiveHour:yyyy}/{effectiveHour.DayOfYear:000}/{effectiveHour:HH}/";
         return $"ABI-L1b-RadC/{dateTimeFolder}";
     }
 
-    public DateTime GetScanTime(string filename)
+    public static DateTime GetScanTime(string filename)
     {
         // OR_ABI-L1b-RadF-M3C02_G16_s20171671145342_e20171671156109_c20171671156144.nc
         var parts = filename.Split('_');

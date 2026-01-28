@@ -1,6 +1,6 @@
 namespace olieblind.lib.Satellite.Models;
 
-public class AwsKeysModel
+public class SatelliteSourceKeysModel
 {
     public string Bucket { get; init; } = string.Empty;
     public string[] Keys { get; init; } = [];

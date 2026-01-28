@@ -27,8 +27,8 @@ public class SatelliteInventoryProcessTests
             );
         var process = new Mock<ISatelliteProcess>();
         var repo = new Mock<IMyRepository>();
-        repo.Setup(s => s.SatelliteAwsInventoryListByYear(year, It.IsAny<int>(), It.IsAny<DayPartsEnum>(), ct))
-            .ReturnsAsync([new SatelliteAwsInventoryEntity { EffectiveDate = "2021-07-10" }]);
+        repo.Setup(s => s.SatelliteInventoryListByYear(year, It.IsAny<int>(), It.IsAny<DayPartsEnum>(), ct))
+            .ReturnsAsync([new SatelliteInventoryEntity { EffectiveDate = "2021-07-10" }]);
         var testable = new SatelliteInventoryProcess(business.Object, process.Object, repo.Object);
 
         // Act
@@ -61,7 +61,7 @@ public class SatelliteInventoryProcessTests
             .ReturnsAsync([new StormEventsDailySummaryEntity() { Id = missingDay }]);
         var process = new Mock<ISatelliteProcess>();
         var repo = new Mock<IMyRepository>();
-        repo.Setup(s => s.SatelliteAwsInventoryListByYear(year, channel, dayPart, ct))
+        repo.Setup(s => s.SatelliteInventoryListByYear(year, channel, dayPart, ct))
             .ReturnsAsync([]);
         var testable = new SatelliteInventoryProcess(stormy.Object, process.Object, repo.Object);
 
@@ -87,7 +87,7 @@ public class SatelliteInventoryProcessTests
             .ReturnsAsync([new StormEventsDailySummaryEntity() { Id = missingDay }]);
         var process = new Mock<ISatelliteProcess>();
         var repo = new Mock<IMyRepository>();
-        repo.Setup(s => s.SatelliteAwsInventoryListByYear(year, channel, dayPart, ct))
+        repo.Setup(s => s.SatelliteInventoryListByYear(year, channel, dayPart, ct))
             .ReturnsAsync([]);
         var testable = new SatelliteInventoryProcess(stormy.Object, process.Object, repo.Object);
 

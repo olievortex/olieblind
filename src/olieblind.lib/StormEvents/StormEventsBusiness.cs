@@ -127,7 +127,7 @@ public class StormEventsBusiness(IStormEventsSource source, IMyRepository repo) 
 
     public async Task<SatelliteListModel> GetSatelliteList(string effectiveDate, CancellationToken ct)
     {
-        var satList = await repo.SatelliteAwsProductGetList(effectiveDate, ct);
+        var satList = await repo.SatelliteProductGetList(effectiveDate, ct);
         var awsList = satList.Where(w => w.BucketName != IowaMesonetBucket).ToList();
         var iemList = satList.Where(w => w.BucketName == IowaMesonetBucket).ToList();
 

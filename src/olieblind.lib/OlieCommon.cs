@@ -121,10 +121,6 @@ public static class OlieCommon
         services.AddScoped<IOutlookProductScript, OutlookProductScript>();
         services.AddScoped<IRadarBusiness, RadarBusiness>();
         services.AddScoped<IRadarSource, RadarSource>();
-        services.AddScoped<ISatelliteIemBusiness, SatelliteIemBusiness>();
-        services.AddScoped<ISatelliteIemSource, SatelliteIemSource>();
-        services.AddScoped<ISatelliteAwsBusiness, SatelliteAwsBusiness>();
-        services.AddScoped<ISatelliteAwsSource, SatelliteAwsSource>();
         services.AddScoped<ISatelliteMarqueeProcess, SatelliteMarqueeProcess>();
         services.AddScoped<ISatelliteProcess, SatelliteProcess>();
         services.AddScoped<ISatelliteSource, SatelliteSource>();

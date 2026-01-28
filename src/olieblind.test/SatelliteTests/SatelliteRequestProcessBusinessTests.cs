@@ -48,7 +48,7 @@ public class SatelliteRequestProcessBusinessTests
         var ows = new Mock<IOlieWebService>();
         var testable = new SatelliteRequestBusiness(null!, ows.Object, null!);
         var sender = Mock.Of<Azure.Messaging.ServiceBus.ServiceBusSender>();
-        var products = new List<SatelliteAwsProductEntity>
+        var products = new List<SatelliteProductEntity>
         {
             new() { Id = "prod1", EffectiveDate = "20240101" },
             new() { Id = "prod2", EffectiveDate = "20240101" }
@@ -72,7 +72,7 @@ public class SatelliteRequestProcessBusinessTests
         var ct = CancellationToken.None;
         const string effectiveDate = "20240101";
         var repo = new Mock<IMyRepository>();
-        repo.Setup(s => s.SatelliteAwsProductGetList(effectiveDate, ct))
+        repo.Setup(s => s.SatelliteProductGetList(effectiveDate, ct))
             .ReturnsAsync(
             [
                 new() { Id = "1", ScanTime = new DateTime(2024, 1, 1, 10, 0, 0), Path1080 = null, PathPoster = null },

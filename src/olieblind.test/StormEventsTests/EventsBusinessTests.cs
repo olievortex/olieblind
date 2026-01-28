@@ -317,10 +317,10 @@ public class EventsBusinessTests
         const string effectiveDay = "2020-07-18";
         var source = new Mock<IStormEventsSource>();
         source.Setup(s => s.GetIemSatelliteList())
-            .Returns([new SatelliteAwsProductEntity()]);
+            .Returns([new SatelliteProductEntity()]);
         var repo = new Mock<IMyRepository>();
-        repo.Setup(s => s.SatelliteAwsProductGetList(effectiveDay, ct))
-            .ReturnsAsync([new SatelliteAwsProductEntity { BucketName = "Dillon" }]);
+        repo.Setup(s => s.SatelliteProductGetList(effectiveDay, ct))
+            .ReturnsAsync([new SatelliteProductEntity { BucketName = "Dillon" }]);
         var testable = new StormEventsBusiness(source.Object, repo.Object);
 
         // Act

@@ -25,7 +25,7 @@ public class SatelliteMarqueeProcess(
 
     private async Task AdhocProcess(string goldPath, CancellationToken ct)
     {
-        var missingPosters = await repo.SatelliteAwsProductListNoPoster(ct);
+        var missingPosters = await repo.SatelliteProductListNoPoster(ct);
 
         foreach (var missingPoster in missingPosters)
             await satelliteSource.MakeThumbnail(missingPoster, _finalSize, goldPath, ct);

@@ -387,6 +387,21 @@ public class OlieWebService(IHttpClientFactory httpClientFactory) : IOlieWebServ
         await sender.SendMessageAsync(message, ct);
     }
 
+    public async Task ServiceBusCompleteMessage(ServiceBusReceiver receiver, ServiceBusReceivedMessage message, CancellationToken ct)
+    {
+        await receiver.CompleteMessageAsync(message, ct);
+    }
+
+    public async Task<(ServiceBusReceivedMessage?, T?)> ServiceBusReceiveJson<T>(ServiceBusReceiver receiver, CancellationToken ct)
+    {
+        var message = await receiver.ReceiveMessageAsync(TimeSpan.FromSeconds(5), ct);
+        if (message is null) return (null, default);
+        var json = message.Body.ToString();
+        var data = JsonConvert.DeserializeObject<T>(json);
+        await receiver.CompleteMessageAsync(message, ct);
+        return (message, data);
+    }
+
     public async Task<int> ServiceBusQueueLength(ServiceBusAdministrationClient adminClient, string queueName, CancellationToken ct)
     {
         var properties = await adminClient.GetQueueRuntimePropertiesAsync(queueName, ct);

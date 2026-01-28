@@ -2,6 +2,7 @@
 using olieblind.data;
 using olieblind.data.Entities;
 using olieblind.data.Enums;
+using olieblind.lib.Models;
 using olieblind.lib.Satellite.Interfaces;
 using olieblind.lib.Services;
 
@@ -24,23 +25,23 @@ public class SatelliteRequestBusiness(IMyRepository repo, IOlieWebService ows, I
         await repo.UserSatelliteAdHocLogCreate(entity, ct);
     }
 
-    public async Task Enqueue(List<SatelliteAwsProductEntity> products, ServiceBusSender sender, CancellationToken ct)
+    public async Task Enqueue(List<SatelliteProductEntity> products, ServiceBusSender sender, CancellationToken ct)
     {
         foreach (var product in products)
         {
-            var message = new
+            var message = new SatelliteRequestQueueModel
             {
-                product.Id,
-                product.EffectiveDate,
+                Id = product.Id,
+                EffectiveDate = product.EffectiveDate,
             };
 
             await ows.ServiceBusSendJson(sender, message, ct);
         }
     }
 
-    public async Task<List<SatelliteAwsProductEntity>> GetHourlyProductList(string effectiveDate, CancellationToken ct)
+    public async Task<List<SatelliteProductEntity>> GetHourlyProductList(string effectiveDate, CancellationToken ct)
     {
-        var productList = await repo.SatelliteAwsProductGetList(effectiveDate, ct);
+        var productList = await repo.SatelliteProductGetList(effectiveDate, ct);
 
         var hourly = productList
             .Where(w => w.Path1080 is null || w.PathPoster is null)
