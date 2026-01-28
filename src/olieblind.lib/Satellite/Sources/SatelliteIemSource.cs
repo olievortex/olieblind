@@ -1,7 +1,7 @@
 ﻿using olieblind.data.Entities;
 using olieblind.data.Enums;
 using olieblind.lib.Satellite.Models;
-using olieblind.lib.Services;
+using olieblind.lib.Satellite.Sources;
 using System.Text.RegularExpressions;
 
 namespace olieblind.lib.Satellite;
@@ -10,9 +10,7 @@ public partial class SatelliteIemSource : ASatelliteSource
 {
     private const string UrlBase = "https://mesonet.agron.iastate.edu/archive/data/";
 
-    public required IOlieWebService Ows { get; init; }
-
-    public override async Task<(string, string)> Download(SatelliteProductEntity product, CancellationToken ct)
+    public override async Task<(string, string)> Download(SatelliteProductEntity product, Func<int, Task> delayFunc, CancellationToken ct)
     {
         var effectiveDate = GetEffectiveDate(product.EffectiveDate);
         var filename = Path.GetFileName(product.Id);
@@ -35,7 +33,7 @@ public partial class SatelliteIemSource : ASatelliteSource
                 if (attempt > 2) throw;
             }
 
-            await DelayFunc(attempt);
+            await delayFunc(attempt);
         }
 
         return (blobName, localFilename);

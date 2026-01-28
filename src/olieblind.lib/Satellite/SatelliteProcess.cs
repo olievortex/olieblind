@@ -5,27 +5,33 @@ using olieblind.data;
 using olieblind.data.Entities;
 using olieblind.data.Enums;
 using olieblind.lib.Satellite.Interfaces;
+using olieblind.lib.Satellite.Sources;
 using olieblind.lib.Services;
 using SixLabors.ImageSharp;
 using System.Diagnostics;
 
 namespace olieblind.lib.Satellite;
 
-public class SatelliteProcess(ASatelliteSource awsSource, ASatelliteSource iemSource,
-    ISatelliteSource source, IMyRepository repo, IOlieWebService ows) : ISatelliteProcess
+public class SatelliteProcess(ISatelliteImageBusiness business, IMyRepository repo, IOlieWebService ows) : ISatelliteProcess
 {
     // GOES 16 became operational during December 2017
     private const int Goes16 = 2018;
 
-    public async Task CreateThumbnailAndUpdateDailySummary(SatelliteProductEntity satellite, StormEventsDailySummaryEntity summary,
-        Point finalSize, string goldPath, CancellationToken ct)
+    public ASatelliteSource CreateSatelliteSource(int year, IAmazonS3 amazonS3Client)
+    {
+        return year < Goes16 ?
+            new SatelliteIemSource { Ows = ows, Repository = repo } :
+            new SatelliteAwsSource { AmazonS3Client = amazonS3Client, Ows = ows, Repository = repo };
+    }
+
+    public async Task CreateThumbnailAndUpdateDailySummary(SatelliteProductEntity product, StormEventsDailySummaryEntity summary, Point finalSize, string goldPath, CancellationToken ct)
     {
         if (summary.SatellitePath1080 is not null && summary.SatellitePathPoster is null)
         {
-            if (satellite.PathPoster is null)
-                await source.MakeThumbnail(satellite, finalSize, goldPath, ct);
+            if (product.PathPoster is null)
+                await business.MakeThumbnail(product, finalSize, goldPath, ct);
 
-            summary.SatellitePathPoster = satellite.PathPoster;
+            summary.SatellitePathPoster = product.PathPoster;
             summary.Timestamp = DateTime.UtcNow;
             await repo.StormEventsDailySummaryUpdate(summary, ct);
         }
@@ -36,56 +42,55 @@ public class SatelliteProcess(ASatelliteSource awsSource, ASatelliteSource iemSo
         if (summary.HeadlineEventTime is null) return null;
         if (summary.SatellitePathPoster is not null && summary.SatellitePath1080 is not null) return null;
 
-        var satellite = await source.GetMarqueeSatelliteProduct(summary.Id, summary.HeadlineEventTime.Value, ct);
+        var satellite = await business.GetMarqueeSatelliteProduct(summary.Id, summary.HeadlineEventTime.Value, ct);
 
         return satellite;
     }
 
-    public async Task ProcessMissingDay(int year, string missingDay, int satellite, int channel,
-        DayPartsEnum dayPart, IAmazonS3 client, CancellationToken ct)
+    public async Task DownloadInventory(string effectiveDate, int satellite, int channel, DayPartsEnum dayPart, ASatelliteSource source, CancellationToken ct)
     {
-        var source = year < Goes16 ? iemSource : awsSource;
-
-        var result = await source.ListKeys(missingDay, satellite, channel, dayPart, ct);
+        var result = await source.ListKeys(effectiveDate, satellite, channel, dayPart, ct);
         if (result is null || result.Keys.Length == 0) return;
 
-        await source.AddProductsToDatabase(result.Keys, missingDay, result.Bucket, channel, dayPart, result.GetScanTimeFunc, ct);
-        await source.AddInventoryToDatabase(missingDay, result.Bucket, channel, dayPart, ct);
+        await business.AddProductsToDatabase(result.Keys, effectiveDate, result.Bucket, channel, dayPart, result.GetScanTimeFunc, ct);
+        await business.AddInventoryToDatabase(effectiveDate, result.Bucket, channel, dayPart, ct);
     }
 
-    public async Task DownloadSatelliteFile(int year, SatelliteProductEntity satellite, Func<int, Task> delayFunc,
-        ServiceBusSender sender, BlobContainerClient blobClient, IAmazonS3 awsClient, CancellationToken ct)
+    public async Task DownloadSatelliteFile(SatelliteProductEntity product, ServiceBusSender sender, BlobContainerClient blobClient, ASatelliteSource source, CancellationToken ct)
     {
         string? blobName, localFilename;
 
-        if (satellite.PathSource is not null) return;
+        if (product.PathSource is not null) return;
 
         var stopwatch = new Stopwatch();
         stopwatch.Start();
 
-        if (year < Goes16)
-            (blobName, localFilename) = await iemSource.Download(satellite, ct);
-        else
-            (blobName, localFilename) = await awsSource.Download(satellite, ct);
+        (blobName, localFilename) = await source.Download(product, CreateDelayFunc(ct), ct);
 
         await ows.BlobUploadFile(blobClient, blobName, localFilename, ct);
 
-        satellite.PathLocal = localFilename;
-        satellite.PathSource = blobName;
-        satellite.TimeTakenDownload = (int)stopwatch.Elapsed.TotalSeconds;
-        satellite.Timestamp = DateTime.UtcNow;
-        await repo.SatelliteProductUpdate(satellite, ct);
-
-        await source.MessagePurple(satellite, sender, ct);
+        product.PathLocal = localFilename;
+        product.PathSource = blobName;
+        product.TimeTakenDownload = (int)stopwatch.Elapsed.TotalSeconds;
+        product.Timestamp = DateTime.UtcNow;
+        await repo.SatelliteProductUpdate(product, ct);
     }
 
-    public async Task UpdateDailySummary(SatelliteProductEntity satellite, StormEventsDailySummaryEntity summary, CancellationToken ct)
+    public async Task UpdateDailySummary(SatelliteProductEntity product, StormEventsDailySummaryEntity summary, CancellationToken ct)
     {
-        if (summary.SatellitePath1080 is null && satellite.Path1080 is not null)
+        if (summary.SatellitePath1080 is null && product.Path1080 is not null)
         {
-            summary.SatellitePath1080 = satellite.Path1080;
+            summary.SatellitePath1080 = product.Path1080;
             summary.Timestamp = DateTime.UtcNow;
             await repo.StormEventsDailySummaryUpdate(summary, ct);
         }
+    }
+
+    private static Func<int, Task> CreateDelayFunc(CancellationToken ct)
+    {
+        return (async attempt =>
+        {
+            await Task.Delay(30 * attempt, ct);
+        });
     }
 }

@@ -51,14 +51,14 @@ public class SatelliteInventoryProcessTests
     {
         // Arrange
         const int year = 2022;
-        const string missingDay = "2022-06-10";
+        const string effectiveDate = "2022-06-10";
         const int satellite = 16;
         const int channel = 2;
         const DayPartsEnum dayPart = DayPartsEnum.Afternoon;
         var ct = CancellationToken.None;
         var stormy = new Mock<IDailySummaryBusiness>();
         stormy.Setup(s => s.GetSevereByYear(year, ct))
-            .ReturnsAsync([new StormEventsDailySummaryEntity() { Id = missingDay }]);
+            .ReturnsAsync([new StormEventsDailySummaryEntity() { Id = effectiveDate }]);
         var process = new Mock<ISatelliteProcess>();
         var repo = new Mock<IMyRepository>();
         repo.Setup(s => s.SatelliteInventoryListByYear(year, channel, dayPart, ct))
@@ -69,7 +69,7 @@ public class SatelliteInventoryProcessTests
         await testable.Run(year, null!, ct);
 
         // Assert
-        process.Verify(v => v.ProcessMissingDay(year, missingDay, satellite, channel, dayPart, null!, ct), Times.Exactly(1));
+        process.Verify(v => v.DownloadInventory(effectiveDate, satellite, channel, dayPart, null!, ct), Times.Exactly(1));
     }
 
     [Test]
@@ -77,14 +77,14 @@ public class SatelliteInventoryProcessTests
     {
         // Arrange
         const int year = 2025;
-        const string missingDay = "2025-06-10";
+        const string effectiveDate = "2025-06-10";
         const int satellite = 19;
         const int channel = 2;
         const DayPartsEnum dayPart = DayPartsEnum.Afternoon;
         var ct = CancellationToken.None;
         var stormy = new Mock<IDailySummaryBusiness>();
         stormy.Setup(s => s.GetSevereByYear(year, ct))
-            .ReturnsAsync([new StormEventsDailySummaryEntity() { Id = missingDay }]);
+            .ReturnsAsync([new StormEventsDailySummaryEntity() { Id = effectiveDate }]);
         var process = new Mock<ISatelliteProcess>();
         var repo = new Mock<IMyRepository>();
         repo.Setup(s => s.SatelliteInventoryListByYear(year, channel, dayPart, ct))
@@ -95,7 +95,7 @@ public class SatelliteInventoryProcessTests
         await testable.Run(year, null!, ct);
 
         // Assert
-        process.Verify(v => v.ProcessMissingDay(year, missingDay, satellite, channel, dayPart, null!, ct), Times.Exactly(1));
+        process.Verify(v => v.DownloadInventory(effectiveDate, satellite, channel, dayPart, null!, ct), Times.Exactly(1));
     }
 
     #endregion

@@ -7,6 +7,7 @@ using olieblind.lib.StormEvents.Interfaces;
 
 namespace olieblind.lib.Processes;
 
+
 public class SatelliteInventoryProcess(
     IDailySummaryBusiness stormy,
     ISatelliteProcess process,
@@ -19,11 +20,12 @@ public class SatelliteInventoryProcess(
     public async Task Run(int year, IAmazonS3 client, CancellationToken ct)
     {
         var missingDays = await GetMissingDays(year, ct);
+        var source = process.CreateSatelliteSource(year, client);
 
         foreach (var missingDay in missingDays)
         {
             var satellite = string.Compare(missingDay, Goes19, StringComparison.Ordinal) < 1 ? 16 : 19;
-            await process.ProcessMissingDay(year, missingDay, satellite, Channel, DayPart, client, ct);
+            await process.DownloadInventory(missingDay, satellite, Channel, DayPart, source, ct);
         }
     }
 

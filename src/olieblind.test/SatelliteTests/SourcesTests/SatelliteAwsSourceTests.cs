@@ -2,10 +2,10 @@ using Amazon.S3;
 using Moq;
 using olieblind.data.Entities;
 using olieblind.data.Enums;
-using olieblind.lib.Satellite;
+using olieblind.lib.Satellite.Sources;
 using olieblind.lib.Services;
 
-namespace olieblind.test.SatelliteTests;
+namespace olieblind.test.SatelliteTests.SourcesTests;
 
 public class SatelliteAwsSourceTests
 {
@@ -22,11 +22,11 @@ public class SatelliteAwsSourceTests
                 It.IsAny<string>(), null!, ct))
             .Returns(Task.FromException(new AmazonS3Exception("Olie")))
             .Returns(Task.CompletedTask);
-        var testable = new SatelliteAwsSource { AmazonS3Client = null!, DelayFunc = Delay, Ows = ows.Object, Repository = null! };
+        var testable = new SatelliteAwsSource { AmazonS3Client = null!, Ows = ows.Object, Repository = null! };
         var product = new SatelliteProductEntity { Id = "Dillon.nc", EffectiveDate = effectiveDate };
 
         // Act
-        var (blobName, localFileName) = await testable.Download(product, ct);
+        var (blobName, localFileName) = await testable.Download(product, Delay, ct);
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -46,11 +46,11 @@ public class SatelliteAwsSourceTests
         ows.Setup(s => s.AwsDownload(It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<string>(), null!, ct))
             .Returns(Task.FromException(new AmazonS3Exception("Olie")));
-        var testable = new SatelliteAwsSource { AmazonS3Client = null!, DelayFunc = Delay, Ows = ows.Object, Repository = null! };
+        var testable = new SatelliteAwsSource { AmazonS3Client = null!, Ows = ows.Object, Repository = null! };
         var product = new SatelliteProductEntity { EffectiveDate = effectiveDate };
 
         // Act, Assert
-        Assert.ThrowsAsync<AmazonS3Exception>(() => testable.Download(product, ct));
+        Assert.ThrowsAsync<AmazonS3Exception>(() => testable.Download(product, Delay, ct));
     }
 
     private static Task Delay(int _)
@@ -77,7 +77,7 @@ public class SatelliteAwsSourceTests
         const int satellite = 16;
         const int channel = 7;
         var effectiveDate = new DateTime(2021, 5, 18);
-        var testable = new SatelliteAwsSource { AmazonS3Client = null!, DelayFunc = null!, Ows = ows.Object, Repository = null! };
+        var testable = new SatelliteAwsSource { AmazonS3Client = null!, Ows = ows.Object, Repository = null! };
 
         // Act
         var result = await testable.ListKeys(dayValue, satellite, channel, dayPart, ct);
@@ -97,7 +97,7 @@ public class SatelliteAwsSourceTests
         const DayPartsEnum dayPart = DayPartsEnum.Afternoon;
         const int satellite = 16;
         const int channel = 13;
-        var testable = new SatelliteAwsSource { AmazonS3Client = null!, DelayFunc = null!, Ows = ows.Object, Repository = null! };
+        var testable = new SatelliteAwsSource { AmazonS3Client = null!, Ows = ows.Object, Repository = null! };
 
         // Act
         var result = await testable.ListKeys(dayValue, satellite, channel, dayPart, ct);

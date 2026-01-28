@@ -29,7 +29,7 @@ public class CommandSatelliteMarquee(ILogger<CommandSatelliteMarquee> logger, IS
             var sbc = new ServiceBusClient(config.AwsServiceBus, config.Credential);
             var sender = sbc.CreateSender(Queue);
 
-            await process.Run(year, sender, Delay, blobClient, goldPath, awsClient, ct);
+            await process.Run(year, sender, blobClient, goldPath, awsClient, ct);
 
             return 0;
         }
@@ -39,11 +39,6 @@ public class CommandSatelliteMarquee(ILogger<CommandSatelliteMarquee> logger, IS
             logger.LogError(ex, "{_loggerName} Error: {error}", LoggerName, ex);
 
             return 1;
-        }
-
-        async Task Delay(int attempt)
-        {
-            await Task.Delay(30 * attempt, ct);
         }
     }
 }

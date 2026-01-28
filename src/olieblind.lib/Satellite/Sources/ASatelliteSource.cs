@@ -2,64 +2,19 @@
 using olieblind.data.Entities;
 using olieblind.data.Enums;
 using olieblind.lib.Satellite.Models;
+using olieblind.lib.Services;
+using SixLabors.ImageSharp;
 
-namespace olieblind.lib.Satellite;
+namespace olieblind.lib.Satellite.Sources;
 
 public abstract class ASatelliteSource
 {
-    public required Func<int, Task> DelayFunc { get; init; }
     public required IMyRepository Repository { get; init; }
+    public required IOlieWebService Ows { get; init; }
 
-    public abstract Task<(string, string)> Download(SatelliteProductEntity product, CancellationToken ct);
+    public abstract Task<(string, string)> Download(SatelliteProductEntity product, Func<int, Task> delayFunc, CancellationToken ct);
 
     public abstract Task<SatelliteSourceKeysModel?> ListKeys(string dayValue, int satellite, int channel, DayPartsEnum dayPart, CancellationToken ct);
-
-    public async Task AddInventoryToDatabase(string effectiveDate, string bucket, int channel, DayPartsEnum dayPart, CancellationToken ct)
-    {
-        var entity = new SatelliteInventoryEntity
-        {
-            Id = bucket,
-            EffectiveDate = effectiveDate,
-
-            Channel = channel,
-            DayPart = dayPart,
-            Timestamp = DateTime.UtcNow
-        };
-
-        await Repository.SatelliteInventoryCreate(entity, ct);
-    }
-
-    public async Task AddProductsToDatabase(string[] keys, string effectiveDate, string bucket, int channel, DayPartsEnum dayPart,
-        Func<string, DateTime> scanTimeFunc, CancellationToken ct)
-    {
-        var items = new List<SatelliteProductEntity>();
-
-        foreach (var key in keys)
-        {
-            var entity = new SatelliteProductEntity
-            {
-                Id = Path.GetFileName(key),
-                EffectiveDate = effectiveDate,
-
-                BucketName = bucket,
-                Channel = channel,
-                DayPart = dayPart,
-                Path1080 = null,
-                PathPoster = null,
-                PathSource = null,
-                ScanTime = scanTimeFunc(key),
-                Timestamp = DateTime.UtcNow,
-                TimeTaken1080 = 0,
-                TimeTakenDownload = 0,
-                TimeTakenPoster = 0
-            };
-
-            items.Add(entity);
-        }
-
-        await Repository.SatelliteProductCreate(items, ct);
-    }
-
 
     public static DateTime GetEffectiveDate(string value)
     {

@@ -1,6 +1,6 @@
-﻿using Azure.Messaging.ServiceBus;
-using olieblind.data;
+﻿using olieblind.data;
 using olieblind.data.Entities;
+using olieblind.data.Enums;
 using olieblind.lib.Satellite.Interfaces;
 using olieblind.lib.Services;
 using SixLabors.ImageSharp;
@@ -8,8 +8,53 @@ using System.Diagnostics;
 
 namespace olieblind.lib.Satellite;
 
-public class SatelliteSource(IMyRepository repo, IOlieWebService ows, IOlieImageService ois) : ISatelliteSource
+public class SatelliteImageBusiness(IOlieWebService ows, IOlieImageService ois, IMyRepository repo) : ISatelliteImageBusiness
 {
+    public async Task AddInventoryToDatabase(string effectiveDate, string bucket, int channel, DayPartsEnum dayPart, CancellationToken ct)
+    {
+        var entity = new SatelliteInventoryEntity
+        {
+            Id = bucket,
+            EffectiveDate = effectiveDate,
+
+            Channel = channel,
+            DayPart = dayPart,
+            Timestamp = DateTime.UtcNow
+        };
+
+        await repo.SatelliteInventoryCreate(entity, ct);
+    }
+
+    public async Task AddProductsToDatabase(string[] keys, string effectiveDate, string bucket, int channel, DayPartsEnum dayPart, Func<string, DateTime> scanTimeFunc, CancellationToken ct)
+    {
+        var items = new List<SatelliteProductEntity>();
+
+        foreach (var key in keys)
+        {
+            var entity = new SatelliteProductEntity
+            {
+                Id = Path.GetFileName(key),
+                EffectiveDate = effectiveDate,
+
+                BucketName = bucket,
+                Channel = channel,
+                DayPart = dayPart,
+                Path1080 = null,
+                PathPoster = null,
+                PathSource = null,
+                ScanTime = scanTimeFunc(key),
+                Timestamp = DateTime.UtcNow,
+                TimeTaken1080 = 0,
+                TimeTakenDownload = 0,
+                TimeTakenPoster = 0
+            };
+
+            items.Add(entity);
+        }
+
+        await repo.SatelliteProductCreate(items, ct);
+    }
+
     public async Task<SatelliteProductEntity?> GetMarqueeSatelliteProduct(string effectiveDate, DateTime eventTime, CancellationToken ct)
     {
         var result =
@@ -43,12 +88,5 @@ public class SatelliteSource(IMyRepository repo, IOlieWebService ows, IOlieImage
         satellite.Timestamp = DateTime.UtcNow;
         satellite.TimeTakenPoster = (int)stopwatch.Elapsed.TotalSeconds;
         await repo.SatelliteProductUpdate(satellite, ct);
-    }
-
-    public async Task MessagePurple(SatelliteProductEntity satellite, ServiceBusSender sender, CancellationToken ct)
-    {
-        if (satellite.Path1080 is not null || satellite.PathSource is null) return;
-
-        await ows.ServiceBusSendJson(sender, satellite, ct);
     }
 }

@@ -10,16 +10,16 @@ namespace olieblind.lib.Processes;
 
 public class SatelliteMarqueeProcess(
     ISatelliteProcess satelliteProcess,
-    ISatelliteSource satelliteSource,
+    ISatelliteImageBusiness business,
     IMyRepository repo) : ISatelliteMarqueeProcess
 {
     private readonly Point _finalSize = new(1246, 540);
 
-    public async Task Run(int year, ServiceBusSender sender, Func<int, Task> delayFunc,
-        BlobContainerClient bronzeClient, string goldPath, IAmazonS3 awsClient,
+    public async Task Run(int year, ServiceBusSender sender,
+        BlobContainerClient bronzeClient, string goldPath, IAmazonS3 amazonS3Client,
         CancellationToken ct)
     {
-        await AnnualProcess(year, delayFunc, sender, bronzeClient, goldPath, awsClient, ct);
+        await AnnualProcess(year, sender, bronzeClient, goldPath, amazonS3Client, ct);
         await AdhocProcess(goldPath, ct);
     }
 
@@ -28,20 +28,22 @@ public class SatelliteMarqueeProcess(
         var missingPosters = await repo.SatelliteProductListNoPoster(ct);
 
         foreach (var missingPoster in missingPosters)
-            await satelliteSource.MakeThumbnail(missingPoster, _finalSize, goldPath, ct);
+        {
+            await business.MakeThumbnail(missingPoster, _finalSize, goldPath, ct);
+        }
     }
 
-    public async Task AnnualProcess(int year, Func<int, Task> delayFunc, ServiceBusSender sender,
-        BlobContainerClient bronzeClient, string goldPath, IAmazonS3 awsClient, CancellationToken ct)
+    public async Task AnnualProcess(int year, ServiceBusSender sender, BlobContainerClient bronzeClient, string goldPath, IAmazonS3 amazonS3Client, CancellationToken ct)
     {
         var missingPosters = await repo.StormEventsDailySummaryListMissingPostersForYear(year, ct);
+        var source = satelliteProcess.CreateSatelliteSource(year, amazonS3Client);
 
         foreach (var missingPoster in missingPosters)
         {
             var satellite = await satelliteProcess.GetMarqueeSatelliteProduct(missingPoster, ct);
             if (satellite is null) continue;
 
-            await satelliteProcess.DownloadSatelliteFile(year, satellite, delayFunc, sender, bronzeClient, awsClient, ct);
+            await satelliteProcess.DownloadSatelliteFile(satellite, sender, bronzeClient, source, ct);
             await satelliteProcess.UpdateDailySummary(satellite, missingPoster, ct);
             await satelliteProcess.CreateThumbnailAndUpdateDailySummary(satellite, missingPoster, _finalSize, goldPath, ct);
         }

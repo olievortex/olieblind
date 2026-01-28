@@ -20,20 +20,20 @@ public class SatelliteMarqueeProcessTests
         var process = new Mock<ISatelliteProcess>();
         process.Setup(s => s.GetMarqueeSatelliteProduct(It.IsAny<StormEventsDailySummaryEntity>(), ct))
             .ReturnsAsync(new SatelliteProductEntity());
-        var source = new Mock<ISatelliteSource>();
         var repo = new Mock<IMyRepository>();
         repo.Setup(s => s.SatelliteProductListNoPoster(ct))
             .ReturnsAsync([new SatelliteProductEntity()]);
         repo.Setup(s => s.StormEventsDailySummaryListMissingPostersForYear(It.IsAny<int>(), ct))
             .ReturnsAsync([new StormEventsDailySummaryEntity()]);
-        var testable = new SatelliteMarqueeProcess(process.Object, source.Object, repo.Object);
+        var business = new Mock<ISatelliteImageBusiness>();
+        var testable = new SatelliteMarqueeProcess(process.Object, business.Object, repo.Object);
 
         // Act
-        await testable.Run(year, null!, null!, null!, null!, null!, ct);
+        await testable.Run(year, null!, null!, null!, null!, ct);
 
         // Assert
-        source.Verify(v => v.MakeThumbnail(It.IsAny<SatelliteProductEntity>(), It.IsAny<Point>(), null!, ct),
-            Times.Exactly(1));
+        business.Verify(v => v.MakeThumbnail(It.IsAny<SatelliteProductEntity>(), It.IsAny<Point>(), null!, ct),
+            Times.Once());
     }
 
     #endregion
@@ -47,14 +47,14 @@ public class SatelliteMarqueeProcessTests
         var ct = CancellationToken.None;
         const int year = 2021;
         var process = new Mock<ISatelliteProcess>();
-        var source = new Mock<ISatelliteSource>();
+        var business = new Mock<ISatelliteImageBusiness>();
         var repo = new Mock<IMyRepository>();
         repo.Setup(s => s.StormEventsDailySummaryListMissingPostersForYear(year, ct))
             .ReturnsAsync([new StormEventsDailySummaryEntity()]);
-        var testable = new SatelliteMarqueeProcess(process.Object, source.Object, repo.Object);
+        var testable = new SatelliteMarqueeProcess(process.Object, business.Object, repo.Object);
 
         // Act
-        await testable.AnnualProcess(year, null!, null!, null!, null!, null!, ct);
+        await testable.AnnualProcess(year, null!, null!, null!, null!, ct);
 
         // Assert
         process.Verify(v => v.UpdateDailySummary(It.IsAny<SatelliteProductEntity>(),
@@ -70,14 +70,14 @@ public class SatelliteMarqueeProcessTests
         var process = new Mock<ISatelliteProcess>();
         process.Setup(s => s.GetMarqueeSatelliteProduct(It.IsAny<StormEventsDailySummaryEntity>(), ct))
             .ReturnsAsync(new SatelliteProductEntity());
-        var source = new Mock<ISatelliteSource>();
+        var business = new Mock<ISatelliteImageBusiness>();
         var repo = new Mock<IMyRepository>();
         repo.Setup(s => s.StormEventsDailySummaryListMissingPostersForYear(year, ct))
             .ReturnsAsync([new StormEventsDailySummaryEntity()]);
-        var testable = new SatelliteMarqueeProcess(process.Object, source.Object, repo.Object);
+        var testable = new SatelliteMarqueeProcess(process.Object, business.Object, repo.Object);
 
         // Act
-        await testable.AnnualProcess(year, null!, null!, null!, null!, null!, ct);
+        await testable.AnnualProcess(year, null!, null!, null!, null!, ct);
 
         // Assert
         process.Verify(v => v.UpdateDailySummary(It.IsAny<SatelliteProductEntity>(),

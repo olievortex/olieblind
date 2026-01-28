@@ -2,16 +2,14 @@
 using olieblind.data.Entities;
 using olieblind.data.Enums;
 using olieblind.lib.Satellite.Models;
-using olieblind.lib.Services;
 
-namespace olieblind.lib.Satellite;
+namespace olieblind.lib.Satellite.Sources;
 
 public class SatelliteAwsSource : ASatelliteSource
 {
-    public required IOlieWebService Ows { get; init; }
     public required IAmazonS3 AmazonS3Client { get; init; }
 
-    public override async Task<(string, string)> Download(SatelliteProductEntity product, CancellationToken ct)
+    public override async Task<(string, string)> Download(SatelliteProductEntity product, Func<int, Task> delayFunc, CancellationToken ct)
     {
         var effectiveDate = GetEffectiveDate(product.EffectiveDate);
         var filename = Path.GetFileName(product.Id);
@@ -33,7 +31,7 @@ public class SatelliteAwsSource : ASatelliteSource
                 if (attempt > 2) throw;
             }
 
-            await DelayFunc(attempt);
+            await delayFunc(attempt);
         }
 
         return (blobName, localFilename);

@@ -5,7 +5,7 @@ using olieblind.data.Enums;
 using olieblind.lib.Satellite;
 using olieblind.lib.Services;
 
-namespace olieblind.test.SatelliteTests;
+namespace olieblind.test.SatelliteTests.SourcesTests;
 
 public class SatelliteIemSourceTests
 {
@@ -24,11 +24,11 @@ public class SatelliteIemSourceTests
             .ThrowsAsync(new ApplicationException("Olie"))
             .ReturnsAsync([]);
         var repo = new Mock<IMyRepository>();
-        var testable = new SatelliteIemSource { DelayFunc = Delay, Ows = ows.Object, Repository = null! };
+        var testable = new SatelliteIemSource { Ows = ows.Object, Repository = null! };
         var product = new SatelliteProductEntity { Id = "Dillon.tif", EffectiveDate = value };
 
         // Act
-        var (blobName, localFilename) = await testable.Download(product, ct);
+        var (blobName, localFilename) = await testable.Download(product, Delay, ct);
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -48,11 +48,11 @@ public class SatelliteIemSourceTests
         ows.Setup(s => s.ApiGetBytes(It.IsAny<string>(), ct))
             .ThrowsAsync(new ApplicationException("Olie"));
         var repo = new Mock<IMyRepository>();
-        var testable = new SatelliteIemSource { DelayFunc = Delay, Ows = ows.Object, Repository = null! };
+        var testable = new SatelliteIemSource { Ows = ows.Object, Repository = null! };
         var product = new SatelliteProductEntity { Id = "Dillon.tif", EffectiveDate = value };
 
         // Act, Assert
-        Assert.ThrowsAsync<ApplicationException>(() => testable.Download(product, ct));
+        Assert.ThrowsAsync<ApplicationException>(() => testable.Download(product, Delay, ct));
     }
 
     private static Task Delay(int _)
@@ -80,7 +80,7 @@ public class SatelliteIemSourceTests
         var ows = new Mock<IOlieWebService>();
         ows.Setup(s => s.ApiGetString(It.IsAny<string>(), ct))
             .ReturnsAsync(_html);
-        var testable = new SatelliteIemSource { DelayFunc = null!, Ows = ows.Object, Repository = null! };
+        var testable = new SatelliteIemSource { Ows = ows.Object, Repository = null! };
 
         // Act
         var result = await testable.ListKeys(value, satellite, channel, dayPart, ct);
@@ -105,7 +105,7 @@ public class SatelliteIemSourceTests
         const int channel = 2;
         const DayPartsEnum dayPart = DayPartsEnum.Afternoon;
         var ct = CancellationToken.None;
-        var testable = new SatelliteIemSource { DelayFunc = null!, Ows = null!, Repository = null! };
+        var testable = new SatelliteIemSource { Ows = null!, Repository = null! };
 
         // Act
         var result = await testable.ListKeys(value, satellite, channel, dayPart, ct);
@@ -127,7 +127,7 @@ public class SatelliteIemSourceTests
         var ows = new Mock<IOlieWebService>();
         ows.Setup(s => s.ApiGetString(It.IsAny<string>(), ct))
             .ReturnsAsync(_html);
-        var testable = new SatelliteIemSource { DelayFunc = null!, Ows = ows.Object, Repository = null! };
+        var testable = new SatelliteIemSource { Ows = ows.Object, Repository = null! };
 
         // Act
         var result = await testable.IemList(url, ct);
