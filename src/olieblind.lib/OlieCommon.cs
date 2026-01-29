@@ -122,7 +122,7 @@ public static class OlieCommon
         services.AddScoped<IRadarBusiness, RadarBusiness>();
         services.AddScoped<IRadarSource, RadarSource>();
         services.AddScoped<ISatelliteMarqueeProcess, SatelliteMarqueeProcess>();
-        services.AddScoped<ISatelliteProcess, SatelliteProcess>();
+        services.AddScoped<ISatelliteImageProcess, SatelliteImageProcess>();
         services.AddScoped<ISpcBusiness, SpcBusiness>();
         services.AddScoped<ISpcProcess, SpcProcess>();
         services.AddScoped<ISpcSource, SpcSource>();

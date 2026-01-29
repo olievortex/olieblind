@@ -145,16 +145,19 @@ public class OlieWebService(IHttpClientFactory httpClientFactory) : IOlieWebServ
     private async static Task<HttpResponseMessage> ApiGetResponseMessage(string url, HttpClient hc, int maxTries, CancellationToken ct)
     {
         var tries = -2;
+        var lastStatusCode = HttpStatusCode.OK;
 
         while (tries++ < (maxTries - 1))
         {
             if (tries >= 0) await Task.Delay(TimeSpan.FromSeconds(2 ^ tries), ct);
             var result = await hc.GetAsync(url, ct);
 
-            if (result.StatusCode == System.Net.HttpStatusCode.OK) return result;
+            if (result.StatusCode == HttpStatusCode.OK) return result;
+
+            lastStatusCode = result.StatusCode;
         }
 
-        throw new ApplicationException($"Failed to get {url} after {maxTries} tries");
+        throw new ApplicationException($"Failed to get {url} status code {lastStatusCode} after {maxTries} tries");
     }
 
     public async Task<byte[]> ApiGetBytes(string url, CancellationToken ct)

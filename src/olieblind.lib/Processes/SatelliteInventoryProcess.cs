@@ -10,7 +10,8 @@ namespace olieblind.lib.Processes;
 
 public class SatelliteInventoryProcess(
     IDailySummaryBusiness stormy,
-    ISatelliteProcess process,
+    ISatelliteImageProcess process,
+    ISatelliteImageBusiness business,
     IMyRepository repo) : ISatelliteInventoryProcess
 {
     private const int Channel = 2;
@@ -20,7 +21,7 @@ public class SatelliteInventoryProcess(
     public async Task Run(int year, IAmazonS3 client, CancellationToken ct)
     {
         var missingDays = await GetMissingDays(year, ct);
-        var source = process.CreateSatelliteSource(year, client);
+        var source = business.CreateSatelliteSource(year, client);
 
         foreach (var missingDay in missingDays)
         {

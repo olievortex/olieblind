@@ -18,18 +18,19 @@ public class SatelliteInventoryProcessTests
         // Arrange
         const int year = 2021;
         var ct = CancellationToken.None;
-        var business = new Mock<IDailySummaryBusiness>();
-        business.Setup(s => s.GetSevereByYear(year, ct))
+        var summaryBusiness = new Mock<IDailySummaryBusiness>();
+        summaryBusiness.Setup(s => s.GetSevereByYear(year, ct))
             .ReturnsAsync([
                     new StormEventsDailySummaryEntity { Id = "2021-07-10" },
                     new StormEventsDailySummaryEntity { Id = "2021-07-11" }
                 ]
             );
-        var process = new Mock<ISatelliteProcess>();
+        var process = new Mock<ISatelliteImageProcess>();
         var repo = new Mock<IMyRepository>();
         repo.Setup(s => s.SatelliteInventoryListByYear(year, It.IsAny<int>(), It.IsAny<DayPartsEnum>(), ct))
             .ReturnsAsync([new SatelliteInventoryEntity { EffectiveDate = "2021-07-10" }]);
-        var testable = new SatelliteInventoryProcess(business.Object, process.Object, repo.Object);
+        var imageBusiness = new Mock<ISatelliteImageBusiness>();
+        var testable = new SatelliteInventoryProcess(summaryBusiness.Object, process.Object, imageBusiness.Object, repo.Object);
 
         // Act
         var result = await testable.GetMissingDays(year, ct);
@@ -56,14 +57,15 @@ public class SatelliteInventoryProcessTests
         const int channel = 2;
         const DayPartsEnum dayPart = DayPartsEnum.Afternoon;
         var ct = CancellationToken.None;
-        var stormy = new Mock<IDailySummaryBusiness>();
-        stormy.Setup(s => s.GetSevereByYear(year, ct))
+        var summaryBusiness = new Mock<IDailySummaryBusiness>();
+        summaryBusiness.Setup(s => s.GetSevereByYear(year, ct))
             .ReturnsAsync([new StormEventsDailySummaryEntity() { Id = effectiveDate }]);
-        var process = new Mock<ISatelliteProcess>();
+        var process = new Mock<ISatelliteImageProcess>();
         var repo = new Mock<IMyRepository>();
         repo.Setup(s => s.SatelliteInventoryListByYear(year, channel, dayPart, ct))
             .ReturnsAsync([]);
-        var testable = new SatelliteInventoryProcess(stormy.Object, process.Object, repo.Object);
+        var imageBusiness = new Mock<ISatelliteImageBusiness>();
+        var testable = new SatelliteInventoryProcess(summaryBusiness.Object, process.Object, imageBusiness.Object, repo.Object);
 
         // Act
         await testable.Run(year, null!, ct);
@@ -82,14 +84,15 @@ public class SatelliteInventoryProcessTests
         const int channel = 2;
         const DayPartsEnum dayPart = DayPartsEnum.Afternoon;
         var ct = CancellationToken.None;
-        var stormy = new Mock<IDailySummaryBusiness>();
-        stormy.Setup(s => s.GetSevereByYear(year, ct))
+        var summaryBusiness = new Mock<IDailySummaryBusiness>();
+        summaryBusiness.Setup(s => s.GetSevereByYear(year, ct))
             .ReturnsAsync([new StormEventsDailySummaryEntity() { Id = effectiveDate }]);
-        var process = new Mock<ISatelliteProcess>();
+        var process = new Mock<ISatelliteImageProcess>();
         var repo = new Mock<IMyRepository>();
         repo.Setup(s => s.SatelliteInventoryListByYear(year, channel, dayPart, ct))
             .ReturnsAsync([]);
-        var testable = new SatelliteInventoryProcess(stormy.Object, process.Object, repo.Object);
+        var imageBusiness = new Mock<ISatelliteImageBusiness>();
+        var testable = new SatelliteInventoryProcess(summaryBusiness.Object, process.Object, imageBusiness.Object, repo.Object);
 
         // Act
         await testable.Run(year, null!, ct);

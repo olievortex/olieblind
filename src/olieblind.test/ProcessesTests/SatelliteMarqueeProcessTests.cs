@@ -17,8 +17,8 @@ public class SatelliteMarqueeProcessTests
         // Arrange
         const int year = 2021;
         var ct = CancellationToken.None;
-        var process = new Mock<ISatelliteProcess>();
-        process.Setup(s => s.GetMarqueeSatelliteProduct(It.IsAny<StormEventsDailySummaryEntity>(), ct))
+        var process = new Mock<ISatelliteImageProcess>();
+        process.Setup(s => s.GetMarqueeProduct(It.IsAny<StormEventsDailySummaryEntity>(), ct))
             .ReturnsAsync(new SatelliteProductEntity());
         var repo = new Mock<IMyRepository>();
         repo.Setup(s => s.SatelliteProductListNoPoster(ct))
@@ -29,7 +29,7 @@ public class SatelliteMarqueeProcessTests
         var testable = new SatelliteMarqueeProcess(process.Object, business.Object, repo.Object);
 
         // Act
-        await testable.Run(year, null!, null!, null!, null!, ct);
+        await testable.Run(year, null!, null!, null!, ct);
 
         // Assert
         business.Verify(v => v.MakeThumbnail(It.IsAny<SatelliteProductEntity>(), It.IsAny<Point>(), null!, ct),
@@ -46,7 +46,7 @@ public class SatelliteMarqueeProcessTests
         // Arrange
         var ct = CancellationToken.None;
         const int year = 2021;
-        var process = new Mock<ISatelliteProcess>();
+        var process = new Mock<ISatelliteImageProcess>();
         var business = new Mock<ISatelliteImageBusiness>();
         var repo = new Mock<IMyRepository>();
         repo.Setup(s => s.StormEventsDailySummaryListMissingPostersForYear(year, ct))
@@ -54,10 +54,10 @@ public class SatelliteMarqueeProcessTests
         var testable = new SatelliteMarqueeProcess(process.Object, business.Object, repo.Object);
 
         // Act
-        await testable.AnnualProcess(year, null!, null!, null!, null!, ct);
+        await testable.AnnualProcess(year, null!, null!, null!, ct);
 
         // Assert
-        process.Verify(v => v.UpdateDailySummary(It.IsAny<SatelliteProductEntity>(),
+        business.Verify(v => v.UpdateDailySummary(It.IsAny<SatelliteProductEntity>(),
             It.IsAny<StormEventsDailySummaryEntity>(), ct), Times.Never);
     }
 
@@ -67,8 +67,8 @@ public class SatelliteMarqueeProcessTests
         // Arrange
         var ct = CancellationToken.None;
         const int year = 2021;
-        var process = new Mock<ISatelliteProcess>();
-        process.Setup(s => s.GetMarqueeSatelliteProduct(It.IsAny<StormEventsDailySummaryEntity>(), ct))
+        var process = new Mock<ISatelliteImageProcess>();
+        process.Setup(s => s.GetMarqueeProduct(It.IsAny<StormEventsDailySummaryEntity>(), ct))
             .ReturnsAsync(new SatelliteProductEntity());
         var business = new Mock<ISatelliteImageBusiness>();
         var repo = new Mock<IMyRepository>();
@@ -77,10 +77,10 @@ public class SatelliteMarqueeProcessTests
         var testable = new SatelliteMarqueeProcess(process.Object, business.Object, repo.Object);
 
         // Act
-        await testable.AnnualProcess(year, null!, null!, null!, null!, ct);
+        await testable.AnnualProcess(year, null!, null!, null!, ct);
 
         // Assert
-        process.Verify(v => v.UpdateDailySummary(It.IsAny<SatelliteProductEntity>(),
+        business.Verify(v => v.UpdateDailySummary(It.IsAny<SatelliteProductEntity>(),
             It.IsAny<StormEventsDailySummaryEntity>(), ct), Times.Exactly(1));
     }
 

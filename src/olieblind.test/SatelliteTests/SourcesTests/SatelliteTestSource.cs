@@ -7,9 +7,9 @@ namespace olieblind.test.SatelliteTests.SourcesTests;
 
 internal class SatelliteTestSource : ASatelliteSource
 {
-    public override Task<(string, string)> Download(SatelliteProductEntity product, Func<int, Task> funcDelay, CancellationToken ct)
+    public async override Task<(string, string)> Download(SatelliteProductEntity product, Func<int, Task> funcDelay, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        return ("a", "b");
     }
 
     public async override Task<SatelliteSourceKeysModel?> ListKeys(string dayValue, int satellite, int channel, DayPartsEnum dayPart, CancellationToken ct)

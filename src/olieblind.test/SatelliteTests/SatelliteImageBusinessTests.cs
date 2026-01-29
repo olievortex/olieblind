@@ -3,7 +3,9 @@ using olieblind.data;
 using olieblind.data.Entities;
 using olieblind.data.Enums;
 using olieblind.lib.Satellite;
+using olieblind.lib.Satellite.Sources;
 using olieblind.lib.Services;
+using olieblind.test.SatelliteTests.SourcesTests;
 using SixLabors.ImageSharp;
 
 namespace olieblind.test.SatelliteTests;
@@ -87,6 +89,97 @@ public class SatelliteImageBusinessTests
 
     #endregion
 
+    #region CreateDelayFunc
+
+    [Test]
+    public async Task CreateDelayFunc_ValidTask_ValidParameters()
+    {
+        // Arrange
+        const int attempt = 0;
+        var ct = CancellationToken.None;
+        var task = SatelliteImageBusiness.CreateDelayFunc(ct);
+
+        // Act
+        await task(attempt);
+
+        // Assert
+        Assert.Pass();
+    }
+
+    #endregion
+
+    #region CreateSatelliteSource
+
+    [Test]
+    public void CreateSatelliteSource_ReturnsAws_ModernYear()
+    {
+        // Arrange
+        const int year = 2021;
+        var testable = new SatelliteImageBusiness(null!, null!, null!);
+
+        // Act
+        var result = testable.CreateSatelliteSource(year, null!);
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<SatelliteAwsSource>());
+    }
+
+    [Test]
+    public void CreateSatelliteSource_ReturnsIem_ModernYear()
+    {
+        // Arrange
+        const int year = 2015;
+        var testable = new SatelliteImageBusiness(null!, null!, null!);
+
+        // Act
+        var result = testable.CreateSatelliteSource(year, null!);
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<SatelliteIemSource>());
+    }
+
+    #endregion
+
+    #region DownloadProduct
+
+    [Test]
+    public async Task DownloadProduct_UpdatesProduct_ValidParameters()
+    {
+        // Arrange
+        var ows = new Mock<IOlieWebService>();
+        var repo = new Mock<IMyRepository>();
+        var testable = new SatelliteImageBusiness(ows.Object, null!, repo.Object);
+        var ct = CancellationToken.None;
+        var product = new SatelliteProductEntity();
+        var source = new SatelliteTestSource { Ows = ows.Object };
+
+        // Act
+        await testable.DownloadProduct(product, source, null!, ct);
+
+        // Assert
+        repo.Verify(v => v.SatelliteProductUpdate(product, ct), Times.Once);
+    }
+
+    [Test]
+    public async Task DownloadProduct_ShortCircuit_AlreadyDownloaded()
+    {
+        // Arrange
+        var ows = new Mock<IOlieWebService>();
+        var repo = new Mock<IMyRepository>();
+        var testable = new SatelliteImageBusiness(ows.Object, null!, repo.Object);
+        var ct = CancellationToken.None;
+        var product = new SatelliteProductEntity { PathSource = "a" };
+        var source = new SatelliteTestSource { Ows = ows.Object };
+
+        // Act
+        await testable.DownloadProduct(product, source, null!, ct);
+
+        // Assert
+        repo.Verify(v => v.SatelliteProductUpdate(product, ct), Times.Never);
+    }
+
+    #endregion
+
     #region GetMarqueeSatelliteProduct
 
     [Test]
@@ -103,7 +196,7 @@ public class SatelliteImageBusinessTests
             .ReturnsAsync(expected);
 
         // Act
-        var result = await testable.GetMarqueeSatelliteProduct(effectiveDate, eventTime, ct);
+        var result = await testable.GetMarqueeProduct(effectiveDate, eventTime, ct);
 
         // Assert
         Assert.That(result, Is.EqualTo(expected));
@@ -166,6 +259,50 @@ public class SatelliteImageBusinessTests
 
         // Assert
         Assert.That(satellite.Timestamp, Is.Not.EqualTo(DateTime.MinValue));
+    }
+
+    #endregion
+
+    #region UpdateDailySummary
+
+    [Test]
+    public async Task UpdateDailySummary_DoesNothing_AlreadyUpdated()
+    {
+        // Arrange
+        var repo = new Mock<IMyRepository>();
+        var testable = new SatelliteImageBusiness(null!, null!, repo.Object);
+        var ct = CancellationToken.None;
+        var summary = new StormEventsDailySummaryEntity()
+        {
+            SatellitePath1080 = "a"
+        };
+        var satellite = new SatelliteProductEntity();
+
+        // Act
+        await testable.UpdateDailySummary(satellite, summary, ct);
+
+        // Assert
+        repo.Verify(v => v.StormEventsDailySummaryUpdate(summary, ct), Times.Never);
+    }
+
+    [Test]
+    public async Task UpdateDailySummary_CompletesAllSteps_ValidParameters()
+    {
+        // Arrange
+        var repo = new Mock<IMyRepository>();
+        var testable = new SatelliteImageBusiness(null!, null!, repo.Object);
+        var ct = CancellationToken.None;
+        var summary = new StormEventsDailySummaryEntity();
+        var satellite = new SatelliteProductEntity
+        {
+            Path1080 = "a"
+        };
+
+        // Act
+        await testable.UpdateDailySummary(satellite, summary, ct);
+
+        // Assert
+        Assert.That(summary.SatellitePath1080, Is.EqualTo("a"));
     }
 
     #endregion

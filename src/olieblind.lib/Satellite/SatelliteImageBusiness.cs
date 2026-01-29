@@ -1,7 +1,10 @@
-﻿using olieblind.data;
+﻿using Amazon.S3;
+using Azure.Storage.Blobs;
+using olieblind.data;
 using olieblind.data.Entities;
 using olieblind.data.Enums;
 using olieblind.lib.Satellite.Interfaces;
+using olieblind.lib.Satellite.Sources;
 using olieblind.lib.Services;
 using SixLabors.ImageSharp;
 using System.Diagnostics;
@@ -10,6 +13,9 @@ namespace olieblind.lib.Satellite;
 
 public class SatelliteImageBusiness(IOlieWebService ows, IOlieImageService ois, IMyRepository repo) : ISatelliteImageBusiness
 {
+    // GOES 16 became operational during December 2017
+    private const int Goes16 = 2018;
+
     public async Task AddInventoryToDatabase(string effectiveDate, string bucket, int channel, DayPartsEnum dayPart, CancellationToken ct)
     {
         var entity = new SatelliteInventoryEntity
@@ -55,7 +61,44 @@ public class SatelliteImageBusiness(IOlieWebService ows, IOlieImageService ois, 
         await repo.SatelliteProductCreate(items, ct);
     }
 
-    public async Task<SatelliteProductEntity?> GetMarqueeSatelliteProduct(string effectiveDate, DateTime eventTime, CancellationToken ct)
+    public static Func<int, Task> CreateDelayFunc(CancellationToken ct)
+    {
+        return (async attempt =>
+        {
+            await Task.Delay(30 * attempt, ct);
+        });
+    }
+
+    public ASatelliteSource CreateSatelliteSource(int year, IAmazonS3 amazonS3Client)
+    {
+        return year < Goes16 ?
+            new SatelliteIemSource { Ows = ows } :
+            new SatelliteAwsSource { AmazonS3Client = amazonS3Client, Ows = ows };
+    }
+
+    public async Task DownloadProduct(SatelliteProductEntity product, ASatelliteSource source, BlobContainerClient blobClient, CancellationToken ct)
+    {
+        string? blobName, localFilename;
+
+        // Sanity check
+        if (product.PathSource is not null) return;
+
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
+
+        (blobName, localFilename) = await source.Download(product, CreateDelayFunc(ct), ct);
+
+        await ows.BlobUploadFile(blobClient, blobName, localFilename, ct);
+
+        // Update database
+        product.PathLocal = localFilename;
+        product.PathSource = blobName;
+        product.TimeTakenDownload = (int)stopwatch.Elapsed.TotalSeconds;
+        product.Timestamp = DateTime.UtcNow;
+        await repo.SatelliteProductUpdate(product, ct);
+    }
+
+    public async Task<SatelliteProductEntity?> GetMarqueeProduct(string effectiveDate, DateTime eventTime, CancellationToken ct)
     {
         var result =
             await repo.SatelliteProductGetPoster(effectiveDate, eventTime, ct) ??
@@ -64,17 +107,17 @@ public class SatelliteImageBusiness(IOlieWebService ows, IOlieImageService ois, 
         return result;
     }
 
-    public async Task MakeThumbnail(SatelliteProductEntity satellite, Point finalSize, string goldPath, CancellationToken ct)
+    public async Task MakeThumbnail(SatelliteProductEntity product, Point finalSize, string goldPath, CancellationToken ct)
     {
         var stopwatch = new Stopwatch();
         stopwatch.Start();
 
         // Sanity check
-        if (satellite.PathPoster is not null) return;
-        if (satellite.Path1080 is null) throw new NullReferenceException($"Missing Path1080 for {satellite.Id}");
+        if (product.PathPoster is not null) return;
+        if (product.Path1080 is null) throw new NullReferenceException($"Missing Path1080 for {product.Id}");
 
         // Download full sized image
-        var filename1080 = $"{goldPath}/{satellite.Path1080}";
+        var filename1080 = $"{goldPath}/{product.Path1080}";
         var bytes = await ows.FileReadAllBytes(filename1080, ct);
 
         // Convert to poster image
@@ -83,10 +126,20 @@ public class SatelliteImageBusiness(IOlieWebService ows, IOlieImageService ois, 
         var resizedBytes = await ois.Resize(bytes, finalSizePoint, ct);
         await ows.FileWriteAllBytes(filenamePoster, resizedBytes, ct);
 
-        // Update CosmosDb
-        satellite.PathPoster = satellite.Path1080.Replace(".png", "_poster.png");
-        satellite.Timestamp = DateTime.UtcNow;
-        satellite.TimeTakenPoster = (int)stopwatch.Elapsed.TotalSeconds;
-        await repo.SatelliteProductUpdate(satellite, ct);
+        // Update Product
+        product.PathPoster = product.Path1080.Replace(".png", "_poster.png");
+        product.Timestamp = DateTime.UtcNow;
+        product.TimeTakenPoster = (int)stopwatch.Elapsed.TotalSeconds;
+        await repo.SatelliteProductUpdate(product, ct);
+    }
+
+    public async Task UpdateDailySummary(SatelliteProductEntity product, StormEventsDailySummaryEntity summary, CancellationToken ct)
+    {
+        if (summary.SatellitePath1080 is null && product.Path1080 is not null)
+        {
+            summary.SatellitePath1080 = product.Path1080;
+            summary.Timestamp = DateTime.UtcNow;
+            await repo.StormEventsDailySummaryUpdate(summary, ct);
+        }
     }
 }

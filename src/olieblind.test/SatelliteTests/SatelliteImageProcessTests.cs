@@ -9,7 +9,7 @@ using SixLabors.ImageSharp;
 
 namespace olieblind.test.SatelliteTests;
 
-public class SatelliteProcessTests
+public class SatelliteImageProcessTests
 {
     #region CreateThumbnailAndUpdateDailySummary
 
@@ -18,7 +18,7 @@ public class SatelliteProcessTests
     {
         // Arrange
         var repo = new Mock<IMyRepository>();
-        var testable = new SatelliteProcess(null!, repo.Object, null!);
+        var testable = new SatelliteImageProcess(null!, repo.Object);
         var ct = CancellationToken.None;
         var finalSize = new Point(128, 128);
         var summary = new StormEventsDailySummaryEntity
@@ -39,7 +39,7 @@ public class SatelliteProcessTests
     {
         // Arrange
         var repo = new Mock<IMyRepository>();
-        var testable = new SatelliteProcess(null!, repo.Object, null!);
+        var testable = new SatelliteImageProcess(null!, repo.Object);
         var ct = CancellationToken.None;
         var finalSize = new Point(128, 128);
         var summary = new StormEventsDailySummaryEntity();
@@ -57,7 +57,7 @@ public class SatelliteProcessTests
         // Arrange
         var repo = new Mock<IMyRepository>();
         var business = new Mock<ISatelliteImageBusiness>();
-        var testable = new SatelliteProcess(business.Object, repo.Object, null!);
+        var testable = new SatelliteImageProcess(business.Object, repo.Object);
         var ct = CancellationToken.None;
         var finalSize = new Point(128, 128);
         var summary = new StormEventsDailySummaryEntity
@@ -81,12 +81,12 @@ public class SatelliteProcessTests
     public async Task GetMarqueeSatelliteProduct_Null_NoHeadlineEvent()
     {
         // Arrange
-        var testable = new SatelliteProcess(null!, null!, null!);
+        var testable = new SatelliteImageProcess(null!, null!);
         var ct = CancellationToken.None;
         var summary = new StormEventsDailySummaryEntity();
 
         // Act
-        var result = await testable.GetMarqueeSatelliteProduct(summary, ct);
+        var result = await testable.GetMarqueeProduct(summary, ct);
 
         // Assert
         Assert.That(result, Is.Null);
@@ -96,7 +96,7 @@ public class SatelliteProcessTests
     public async Task GetMarqueeSatelliteProduct_Null_IsComplete()
     {
         // Arrange
-        var testable = new SatelliteProcess(null!, null!, null!);
+        var testable = new SatelliteImageProcess(null!, null!);
         var ct = CancellationToken.None;
         var summary = new StormEventsDailySummaryEntity
         {
@@ -106,7 +106,7 @@ public class SatelliteProcessTests
         };
 
         // Act
-        var result = await testable.GetMarqueeSatelliteProduct(summary, ct);
+        var result = await testable.GetMarqueeProduct(summary, ct);
 
         // Assert
         Assert.That(result, Is.Null);
@@ -117,7 +117,7 @@ public class SatelliteProcessTests
     {
         // Arrange
         var business = new Mock<ISatelliteImageBusiness>();
-        var testable = new SatelliteProcess(business.Object, null!, null!);
+        var testable = new SatelliteImageProcess(business.Object, null!);
         var ct = CancellationToken.None;
         var time = new DateTime(2021, 7, 18, 18, 0, 0);
         var summary = new StormEventsDailySummaryEntity
@@ -126,11 +126,11 @@ public class SatelliteProcessTests
             HeadlineEventTime = time
         };
         var expected = new SatelliteProductEntity();
-        business.Setup(s => s.GetMarqueeSatelliteProduct("2021-07-18", time, ct))
+        business.Setup(s => s.GetMarqueeProduct("2021-07-18", time, ct))
             .ReturnsAsync(expected);
 
         // Act
-        var result = await testable.GetMarqueeSatelliteProduct(summary, ct);
+        var result = await testable.GetMarqueeProduct(summary, ct);
 
         // Assert
         Assert.That(result, Is.EqualTo(expected));
@@ -151,7 +151,7 @@ public class SatelliteProcessTests
         const DayPartsEnum dayPart = DayPartsEnum.Afternoon;
         var business = new Mock<ISatelliteImageBusiness>();
         var source = new SatelliteTestSource { Ows = null! };
-        var testable = new SatelliteProcess(business.Object, null!, null!);
+        var testable = new SatelliteImageProcess(business.Object, null!);
 
         // Act
         await testable.DownloadInventory(effectiveDate, satellite, channel, dayPart, source, ct);
@@ -173,98 +173,13 @@ public class SatelliteProcessTests
         var repo = new Mock<IMyRepository>();
         var business = new Mock<ISatelliteImageBusiness>();
         var source = new SatelliteTestSource { Ows = null! };
-        var testable = new SatelliteProcess(business.Object, repo.Object, null!);
+        var testable = new SatelliteImageProcess(business.Object, repo.Object);
 
         // Act
         await testable.DownloadInventory(effectiveDate, satellite, channel, dayPart, source, ct);
 
         // Assert
         business.Verify(v => v.AddInventoryToDatabase("2021-07-21", "", channel, dayPart, ct), Times.Once);
-    }
-
-    #endregion
-
-    //#region DownloadSatelliteFile
-
-    //[Test]
-    //public async Task DownloadSatelliteFile_AwsProcess_ValidParameters()
-    //{
-    //    // Arrange
-    //    const int year = 2021;
-    //    var awsBusiness = new Mock<ISatelliteAwsBusiness>();
-    //    var source = new Mock<ISatelliteSource>();
-    //    var testable = new SatelliteProcess(awsBusiness.Object, null!, source.Object, null!);
-    //    var ct = CancellationToken.None;
-
-    //    // Act
-    //    await testable.DownloadSatelliteFile(year, null!, null!, null!, null!, null!, ct);
-
-    //    // Assert
-    //    awsBusiness.Verify(v => v.Download(It.IsAny<SatelliteAwsProductEntity>(),
-    //            It.IsAny<Func<int, Task>>(), null!, null!, ct),
-    //        Times.Once);
-    //}
-
-    //[Test]
-    //public async Task DownloadSatelliteFile_IemProcess_ValidParameters()
-    //{
-    //    // Arrange
-    //    const int year = 2011;
-    //    var iemBusiness = new Mock<ISatelliteIemBusiness>();
-    //    var source = new Mock<ISatelliteSource>();
-    //    var testable = new SatelliteProcess(null!, iemBusiness.Object, source.Object, null!);
-    //    var ct = CancellationToken.None;
-
-    //    // Act
-    //    await testable.DownloadSatelliteFile(year, null!, null!, null!, null!, null!, ct);
-
-    //    // Assert
-    //    iemBusiness.Verify(v => v.Download(It.IsAny<SatelliteAwsProductEntity>(), It.IsAny<Func<int, Task>>(), null!, ct),
-    //        Times.Exactly(1));
-    //}
-
-    //#endregion
-
-    #region UpdateDailySummary
-
-    [Test]
-    public async Task UpdateDailySummary_DoesNothing_AlreadyUpdated()
-    {
-        // Arrange
-        var repo = new Mock<IMyRepository>();
-        var testable = new SatelliteProcess(null!, repo.Object, null!);
-        var ct = CancellationToken.None;
-        var summary = new StormEventsDailySummaryEntity()
-        {
-            SatellitePath1080 = "a"
-        };
-        var satellite = new SatelliteProductEntity();
-
-        // Act
-        await testable.UpdateDailySummary(satellite, summary, ct);
-
-        // Assert
-        repo.Verify(v => v.StormEventsDailySummaryUpdate(summary, ct), Times.Never);
-    }
-
-    [Test]
-    public async Task UpdateDailySummary_CompletesAllSteps_ValidParameters()
-    {
-        // Arrange
-        var repo = new Mock<IMyRepository>();
-        var testable = new SatelliteProcess(null!, repo.Object, null!);
-        var ct = CancellationToken.None;
-        var summary = new StormEventsDailySummaryEntity();
-        var satellite = new SatelliteProductEntity
-        {
-            Path1080 = "a"
-        };
-
-        // Act
-        await testable.UpdateDailySummary(satellite, summary, ct);
-
-        // Assert
-        Assert.That(summary.SatellitePath1080, Is.EqualTo("a"));
     }
 
     #endregion
