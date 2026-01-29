@@ -157,7 +157,7 @@ public class SatelliteImageBusinessTests
         await testable.DownloadProduct(product, source, null!, ct);
 
         // Assert
-        repo.Verify(v => v.SatelliteProductUpdate(product, ct), Times.Once);
+        Assert.That(product.PathLocal, Is.EqualTo("b"));
     }
 
     [Test]
@@ -200,6 +200,29 @@ public class SatelliteImageBusinessTests
 
         // Assert
         Assert.That(result, Is.EqualTo(expected));
+    }
+
+    #endregion
+
+    #region MakePoster
+
+    [Test]
+    public async Task MakePoster_NoException_ValidData()
+    {
+        // Arrange
+        const string purpleCmdPath = "purple.sh";
+        var ct = CancellationToken.None;
+        var config = new Mock<IOlieConfig>();
+        config.SetupGet(g => g.PurpleCmdPath).Returns(purpleCmdPath);
+        var ows = new Mock<IOlieWebService>();
+        var testable = new SatelliteImageBusiness(ows.Object, null!, null!);
+        var product = new SatelliteProductEntity { Id = "a", EffectiveDate = "b" };
+
+        // Act
+        await testable.MakePoster(product, config.Object, ct);
+
+        // Assert
+        ows.Verify(v => v.Shell(It.IsAny<IOlieConfig>(), purpleCmdPath, "olievortex_purple_nc_2_png.py a b", ct));
     }
 
     #endregion

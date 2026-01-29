@@ -48,12 +48,6 @@ public interface IOlieWebService
 
     #endregion
 
-    #region Brown
-
-    Task<string> BrownShell(IOlieConfig config, string arguments, CancellationToken ct);
-
-    #endregion
-
     #region File
 
     void CompressGzip(string sourceFile, string destinationFile);
@@ -64,6 +58,12 @@ public interface IOlieWebService
     Task<byte[]> FileReadAllBytes(string path, CancellationToken ct);
     Task<string> FileReadAllTextFromGz(string path, CancellationToken ct);
     Task FileWriteAllBytes(string path, byte[] data, CancellationToken ct);
+
+    #endregion
+
+    #region Shell
+
+    Task<string> Shell(IOlieConfig config, string fileName, string arguments, CancellationToken ct);
 
     #endregion
 

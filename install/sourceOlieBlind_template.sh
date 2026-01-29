@@ -22,6 +22,7 @@ export OlieBlueUrl=https://www.olievortex.com
 export OlieCookieConsentVersion=1
 export OlieModelForecastPath=/var/www/videos
 export OlieBrownCmdPath=/opt/olieblind.brown/shell_fedora.sh
+export OliePurpleCmdPath=/opt/olievortex_purple/shell_fedora.sh
 #### The following settings are to create tokens from the ar-olieblind Application Registration.
 #### Open the ar-olieblind Application Registration in the Azure portal to get the following values.
 #### Replace __tenent_id__ with the "Directory (tenent) Id" from the portal

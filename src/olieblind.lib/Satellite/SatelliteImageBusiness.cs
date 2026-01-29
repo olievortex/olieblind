@@ -107,6 +107,15 @@ public class SatelliteImageBusiness(IOlieWebService ows, IOlieImageService ois, 
         return result;
     }
 
+    public async Task MakePoster(SatelliteProductEntity product, IOlieConfig config, CancellationToken ct)
+    {
+        const string pythonScript = "olievortex_purple_nc_2_png.py";
+
+        var args = $"{pythonScript} {product.Id} {product.EffectiveDate}";
+
+        await ows.Shell(config, config.PurpleCmdPath, args, ct);
+    }
+
     public async Task MakeThumbnail(SatelliteProductEntity product, Point finalSize, string goldPath, CancellationToken ct)
     {
         var stopwatch = new Stopwatch();

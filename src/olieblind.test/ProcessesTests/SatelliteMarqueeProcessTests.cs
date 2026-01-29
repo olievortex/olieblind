@@ -3,6 +3,7 @@ using olieblind.data;
 using olieblind.data.Entities;
 using olieblind.lib.Processes;
 using olieblind.lib.Satellite.Interfaces;
+using olieblind.lib.Services;
 using SixLabors.ImageSharp;
 
 namespace olieblind.test.ProcessesTests;
@@ -26,7 +27,8 @@ public class SatelliteMarqueeProcessTests
         repo.Setup(s => s.StormEventsDailySummaryListMissingPostersForYear(It.IsAny<int>(), ct))
             .ReturnsAsync([new StormEventsDailySummaryEntity()]);
         var business = new Mock<ISatelliteImageBusiness>();
-        var testable = new SatelliteMarqueeProcess(process.Object, business.Object, repo.Object);
+        var config = new Mock<IOlieConfig>();
+        var testable = new SatelliteMarqueeProcess(process.Object, business.Object, config.Object, repo.Object);
 
         // Act
         await testable.Run(year, null!, null!, null!, ct);
@@ -51,7 +53,8 @@ public class SatelliteMarqueeProcessTests
         var repo = new Mock<IMyRepository>();
         repo.Setup(s => s.StormEventsDailySummaryListMissingPostersForYear(year, ct))
             .ReturnsAsync([new StormEventsDailySummaryEntity()]);
-        var testable = new SatelliteMarqueeProcess(process.Object, business.Object, repo.Object);
+        var config = new Mock<IOlieConfig>();
+        var testable = new SatelliteMarqueeProcess(process.Object, business.Object, config.Object, repo.Object);
 
         // Act
         await testable.AnnualProcess(year, null!, null!, null!, ct);
@@ -74,7 +77,8 @@ public class SatelliteMarqueeProcessTests
         var repo = new Mock<IMyRepository>();
         repo.Setup(s => s.StormEventsDailySummaryListMissingPostersForYear(year, ct))
             .ReturnsAsync([new StormEventsDailySummaryEntity()]);
-        var testable = new SatelliteMarqueeProcess(process.Object, business.Object, repo.Object);
+        var config = new Mock<IOlieConfig>();
+        var testable = new SatelliteMarqueeProcess(process.Object, business.Object, config.Object, repo.Object);
 
         // Act
         await testable.AnnualProcess(year, null!, null!, null!, ct);

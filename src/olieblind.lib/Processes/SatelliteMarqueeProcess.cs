@@ -3,6 +3,7 @@ using Azure.Storage.Blobs;
 using olieblind.data;
 using olieblind.lib.Processes.Interfaces;
 using olieblind.lib.Satellite.Interfaces;
+using olieblind.lib.Services;
 using SixLabors.ImageSharp;
 
 namespace olieblind.lib.Processes;
@@ -10,6 +11,7 @@ namespace olieblind.lib.Processes;
 public class SatelliteMarqueeProcess(
     ISatelliteImageProcess satelliteProcess,
     ISatelliteImageBusiness business,
+    IOlieConfig config,
     IMyRepository repo) : ISatelliteMarqueeProcess
 {
     private readonly Point _finalSize = new(1246, 540);
@@ -41,6 +43,7 @@ public class SatelliteMarqueeProcess(
             if (satellite is null) continue;
 
             await business.DownloadProduct(satellite, source, bronzeClient, ct);
+            await business.MakePoster(satellite, config, ct);
             await business.UpdateDailySummary(satellite, missingPoster, ct);
             await satelliteProcess.CreateThumbnailAndUpdateDailySummary(satellite, missingPoster, _finalSize, goldPath, ct);
         }
