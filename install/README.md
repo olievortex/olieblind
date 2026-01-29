@@ -169,7 +169,8 @@ Out of the box Apache isn't allowed to relay network traffic. Nor can it follow 
     # sudo setsebool -P httpd_can_network_relay 1
     # #sudo chcon -h -t httpd_sys_content_t /var/www/videos (not sure if this is needed)
     # sudo chcon -Rv --type=httpd_sys_content_t /mnt/olieblind-video/videos
-    # sudo semanage fcontext -a -t httpd_sys_content_t /mnt/olieblind-video/videos
+    # sudo semanage fcontext -a -t httpd_sys_content_t "/mnt/olieblind-video/videos(/.*)?"
+    # sudo restorecon -Rv /mnt/olieblind-video/videos
 
 
 ### Apache SSL Site
