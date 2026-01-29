@@ -17,7 +17,7 @@ class PipelineConvectiveOutlookMaps:
 
     def create_300_wind(self):
         """Create a 300mb weather map"""
-        self.logger.info("Olieblind.Purple Create 300mb Wind")
+        self.logger.info("Olieblind.Brown Create 300mb Wind")
 
         grib = self.grib.select_by_isobar(300)
         ef = dg.get_timestamp(grib)
@@ -40,7 +40,7 @@ class PipelineConvectiveOutlookMaps:
 
     def create_500_vorticity(self):
         """Create a 500mb voriticity map"""
-        self.logger.info("Olieblind.Purple Create 500mb Vorticity")
+        self.logger.info("Olieblind.Brown Create 500mb Vorticity")
 
         grib = self.grib.select_by_isobar(500)
         ef = dg.get_timestamp(grib)
@@ -58,7 +58,7 @@ class PipelineConvectiveOutlookMaps:
 
     def create_500_wind(self):
         """Create a 500mb weather map"""
-        self.logger.info("Olieblind.Purple Create 500mb Wind")
+        self.logger.info("Olieblind.Brown Create 500mb Wind")
 
         grib = self.grib.select_by_isobar(500)
         ef = dg.get_timestamp(grib)
@@ -79,7 +79,7 @@ class PipelineConvectiveOutlookMaps:
 
     def create_700_rh(self):
         """Create a 700mb relative humidity map"""
-        self.logger.info("Olieblind.Purple Create 700mb Rh")
+        self.logger.info("Olieblind.Brown Create 700mb Rh")
 
         grib = self.grib.select_by_isobar(700)
         ef = dg.get_timestamp(grib)
@@ -99,7 +99,7 @@ class PipelineConvectiveOutlookMaps:
 
     def create_700_temp(self):
         """Create a 700mb Temperature map"""
-        self.logger.info("Olieblind.Purple Create 700mb Temp")
+        self.logger.info("Olieblind.Brown Create 700mb Temp")
 
         grib = self.grib.select_by_isobar(700)
         ef = dg.get_timestamp(grib)
@@ -119,7 +119,7 @@ class PipelineConvectiveOutlookMaps:
 
     def create_850_wind(self):
         """Create a 850mb wind map"""
-        self.logger.info("Olieblind.Purple Create 850mb Wind")
+        self.logger.info("Olieblind.Brown Create 850mb Wind")
 
         grib = self.grib.select_by_isobar(850)
         ef = dg.get_timestamp(grib)
@@ -140,7 +140,7 @@ class PipelineConvectiveOutlookMaps:
 
     def create_cape(self):
         """Create a severe parameter CAPE map"""
-        self.logger.info("Olieblind.Purple Create CAPE")
+        self.logger.info("Olieblind.Brown Create CAPE")
 
         grib = self.grib.select_by_surface('instant')
         ef = dg.get_timestamp(grib)
@@ -158,7 +158,7 @@ class PipelineConvectiveOutlookMaps:
 
     def create_cin(self):
         """Create convective inversion weather map"""
-        self.logger.info("Olieblind.Purple Create CIN")
+        self.logger.info("Olieblind.Brown Create CIN")
 
         grib = self.grib.select_by_surface('instant')
         ef = dg.get_timestamp(grib)
@@ -176,7 +176,7 @@ class PipelineConvectiveOutlookMaps:
 
     def create_lcl(self):
         """Create a lifted condensation level weather map"""
-        self.logger.info("Olieblind.Purple Create LCL")
+        self.logger.info("Olieblind.Brown Create LCL")
 
         grib = self.grib.select_by_hag(2)
         ef = dg.get_timestamp(grib)
@@ -196,7 +196,7 @@ class PipelineConvectiveOutlookMaps:
 
     def create_scp(self):
         """Create a map using Olie's supercell composite algorithm"""
-        self.logger.info("Olieblind.Purple Create SCP")
+        self.logger.info("Olieblind.Brown Create SCP")
 
         grib = self.grib.select_by_surface('instant')
         ef = dg.get_timestamp(grib)
@@ -218,7 +218,7 @@ class PipelineConvectiveOutlookMaps:
 
     def create_shear(self):
         """Create bulk shear weather map"""
-        self.logger.info("Olieblind.Purple Create Shear")
+        self.logger.info("Olieblind.Brown Create Shear")
 
         grib500 = self.grib.select_by_isobar(500)
         ef = dg.get_timestamp(grib500)
@@ -242,7 +242,7 @@ class PipelineConvectiveOutlookMaps:
 
     def create_srh(self):
         """Create storm relative helicity weather map"""
-        self.logger.info("Olieblind.Purple Create SRH")
+        self.logger.info("Olieblind.Brown Create SRH")
 
         grib = self.grib.select_by_hagl(3000)
         ef = dg.get_timestamp(grib)
@@ -260,7 +260,7 @@ class PipelineConvectiveOutlookMaps:
 
     def create_rh_storm_motion(self):
         """Create a map representing right-handed storm motion"""
-        self.logger.info("Olieblind.Purple Create RH-Storm Motion")
+        self.logger.info("Olieblind.Brown Create RH-Storm Motion")
 
         grib10 = self.grib.select_by_hag(10)
         ef = dg.get_timestamp(grib10)
@@ -286,7 +286,7 @@ class PipelineConvectiveOutlookMaps:
 
     def create_stp(self):
         """Create a map using Olie's significant tornago algorithm"""
-        self.logger.info("Olieblind.Purple Create STP")
+        self.logger.info("Olieblind.Brown Create STP")
 
         grib = self.grib.select_by_surface('instant')
         ef = dg.get_timestamp(grib)
@@ -309,7 +309,7 @@ class PipelineConvectiveOutlookMaps:
 
     def create_surface_dewpoint(self):
         """Create a surface dewpoint map"""
-        self.logger.info("Olieblind.Purple Create Surface Dewpoint")
+        self.logger.info("Olieblind.Brown Create Surface Dewpoint")
 
         hag2_grib = self.grib.select_by_hag(2)
         ef = dg.get_timestamp(hag2_grib)
@@ -332,7 +332,7 @@ class PipelineConvectiveOutlookMaps:
 
     def create_surface_temp(self):
         """Create a surface temperature map"""
-        self.logger.info("Olieblind.Purple Create Surface Temperature")
+        self.logger.info("Olieblind.Brown Create Surface Temperature")
 
         hag2_grib = self.grib.select_by_hag(2)
         ef = dg.get_timestamp(hag2_grib)

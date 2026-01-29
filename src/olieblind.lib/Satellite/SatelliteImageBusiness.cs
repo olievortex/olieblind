@@ -114,6 +114,8 @@ public class SatelliteImageBusiness(IOlieWebService ows, IOlieImageService ois, 
     {
         const string pythonScript = "olievortex_purple_nc_2_png.py";
 
+        if (product.Path1080 is not null) return;
+
         var args = $"{pythonScript} {product.Id} {product.EffectiveDate}";
 
         await ows.Shell(config, config.PurpleCmdPath, args, ct);

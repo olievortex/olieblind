@@ -27,6 +27,7 @@ public class SatelliteMarqueeProcess(
 
             await business.DownloadProduct(product, source, bronzeClient, ct);
             await business.Make1080(product, config, ct);
+            if (product.Path1080 is null) continue; // The Make1080 process can't update product.
             await business.UpdateDailySummary1080(product, dailySummary, ct);
             await business.MakePoster(product, _finalSize, config.VideoPath, ct);
             await business.UpdateDailySummaryPoster(product, dailySummary, ct);
