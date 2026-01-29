@@ -18,11 +18,13 @@ public interface ISatelliteImageBusiness
 
     Task DownloadProduct(SatelliteProductEntity product, ASatelliteSource source, BlobContainerClient blobClient, CancellationToken ct);
 
-    Task<SatelliteProductEntity?> GetMarqueeProduct(string effectiveDate, DateTime eventTime, CancellationToken ct);
+    Task<SatelliteProductEntity?> GetMarqueeProduct(StormEventsDailySummaryEntity summary, CancellationToken ct);
 
-    Task MakePoster(SatelliteProductEntity product, IOlieConfig config, CancellationToken ct);
+    Task Make1080(SatelliteProductEntity product, IOlieConfig config, CancellationToken ct);
 
-    Task MakeThumbnail(SatelliteProductEntity product, Point finalSize, string goldPath, CancellationToken ct);
+    Task MakePoster(SatelliteProductEntity product, Point finalSize, string goldPath, CancellationToken ct);
 
-    Task UpdateDailySummary(SatelliteProductEntity product, StormEventsDailySummaryEntity summary, CancellationToken ct);
+    Task UpdateDailySummary1080(SatelliteProductEntity product, StormEventsDailySummaryEntity summary, CancellationToken ct);
+
+    Task UpdateDailySummaryPoster(SatelliteProductEntity product, StormEventsDailySummaryEntity summary, CancellationToken ct);
 }

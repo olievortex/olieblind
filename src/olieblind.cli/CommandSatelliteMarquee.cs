@@ -15,7 +15,6 @@ public class CommandSatelliteMarquee(ILogger<CommandSatelliteMarquee> logger, IS
     public async Task<int> Run(OlieArgs args, CancellationToken ct)
     {
         var year = args.IntArg1;
-        var goldPath = $"{config.VideoPath}";
 
         try
         {
@@ -25,7 +24,7 @@ public class CommandSatelliteMarquee(ILogger<CommandSatelliteMarquee> logger, IS
             using var awsClient = new AmazonS3Client(new AnonymousAWSCredentials(), RegionEndpoint.USEast1);
             var blobClient = new BlobContainerClient(new Uri(config.BlobBronzeContainerUri), config.Credential);
 
-            await process.Run(year, blobClient, goldPath, awsClient, ct);
+            await process.Run(year, blobClient, awsClient, ct);
 
             return 0;
         }

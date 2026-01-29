@@ -180,10 +180,45 @@ public class SatelliteImageBusinessTests
 
     #endregion
 
-    #region GetMarqueeSatelliteProduct
+    #region GetMarqueeProduct
 
     [Test]
-    public async Task GetMarqueeSatelliteProduct_CompletesAllSteps_ValidParameters()
+    public async Task GetMarqueeProduct_Null_NoHeadlineEvent()
+    {
+        // Arrange
+        var testable = new SatelliteImageBusiness(null!, null!, null!);
+        var ct = CancellationToken.None;
+        var summary = new StormEventsDailySummaryEntity();
+
+        // Act
+        var result = await testable.GetMarqueeProduct(summary, ct);
+
+        // Assert
+        Assert.That(result, Is.Null);
+    }
+
+    [Test]
+    public async Task GetMarqueeProduct_Null_IsComplete()
+    {
+        // Arrange
+        var testable = new SatelliteImageBusiness(null!, null!, null!);
+        var ct = CancellationToken.None;
+        var summary = new StormEventsDailySummaryEntity
+        {
+            HeadlineEventTime = new DateTime(2021, 7, 18),
+            SatellitePathPoster = "a",
+            SatellitePath1080 = "b"
+        };
+
+        // Act
+        var result = await testable.GetMarqueeProduct(summary, ct);
+
+        // Assert
+        Assert.That(result, Is.Null);
+    }
+
+    [Test]
+    public async Task GetMarqueeProduct_CompletesAllSteps_ValidParameters()
     {
         // Arrange
         var repo = new Mock<IMyRepository>();
@@ -194,9 +229,10 @@ public class SatelliteImageBusinessTests
         var expected = new SatelliteProductEntity();
         repo.Setup(s => s.SatelliteProductGetPoster(effectiveDate, eventTime, ct))
             .ReturnsAsync(expected);
+        var summary = new StormEventsDailySummaryEntity { Id = effectiveDate, HeadlineEventTime = eventTime };
 
         // Act
-        var result = await testable.GetMarqueeProduct(effectiveDate, eventTime, ct);
+        var result = await testable.GetMarqueeProduct(summary, ct);
 
         // Assert
         Assert.That(result, Is.EqualTo(expected));
@@ -204,10 +240,10 @@ public class SatelliteImageBusinessTests
 
     #endregion
 
-    #region MakePoster
+    #region Make1080
 
     [Test]
-    public async Task MakePoster_NoException_ValidData()
+    public async Task Make1080_NoException_ValidData()
     {
         // Arrange
         const string purpleCmdPath = "purple.sh";
@@ -219,7 +255,7 @@ public class SatelliteImageBusinessTests
         var product = new SatelliteProductEntity { Id = "a", EffectiveDate = "b" };
 
         // Act
-        await testable.MakePoster(product, config.Object, ct);
+        await testable.Make1080(product, config.Object, ct);
 
         // Assert
         ows.Verify(v => v.Shell(It.IsAny<IOlieConfig>(), purpleCmdPath, "olievortex_purple_nc_2_png.py a b", ct));
@@ -227,10 +263,10 @@ public class SatelliteImageBusinessTests
 
     #endregion
 
-    #region MakeThumbnail
+    #region MakePoster
 
     [Test]
-    public async Task MakeThumbnail_ShortCircuit_ExistingPoster()
+    public async Task MakePoster_ShortCircuit_ExistingPoster()
     {
         // Arrange
         var ct = CancellationToken.None;
@@ -242,14 +278,14 @@ public class SatelliteImageBusinessTests
         var finalSize = new Point(128, 128);
 
         // Act
-        await testable.MakeThumbnail(satellite, finalSize, null!, ct);
+        await testable.MakePoster(satellite, finalSize, null!, ct);
 
         // Assert
         Assert.That(satellite.Timestamp, Is.EqualTo(DateTime.MinValue));
     }
 
     [Test]
-    public void MakeThumbnail_ThrowsException_MissingSource()
+    public void MakePoster_ThrowsException_MissingSource()
     {
         // Arrange
         var ct = CancellationToken.None;
@@ -262,11 +298,11 @@ public class SatelliteImageBusinessTests
 
         // Act, Assert
         Assert.ThrowsAsync<NullReferenceException>(() =>
-            testable.MakeThumbnail(satellite, finalSize, null!, ct));
+            testable.MakePoster(satellite, finalSize, null!, ct));
     }
 
     [Test]
-    public async Task MakeThumbnail_CompletesAllSteps_ValidParameters()
+    public async Task MakePoster_CompletesAllSteps_ValidParameters()
     {
         // Arrange
         var ct = CancellationToken.None;
@@ -278,7 +314,7 @@ public class SatelliteImageBusinessTests
         var finalSize = new Point(128, 128);
 
         // Act
-        await testable.MakeThumbnail(satellite, finalSize, null!, ct);
+        await testable.MakePoster(satellite, finalSize, null!, ct);
 
         // Assert
         Assert.That(satellite.Timestamp, Is.Not.EqualTo(DateTime.MinValue));
@@ -286,10 +322,10 @@ public class SatelliteImageBusinessTests
 
     #endregion
 
-    #region UpdateDailySummary
+    #region UpdateDailySummary1080
 
     [Test]
-    public async Task UpdateDailySummary_DoesNothing_AlreadyUpdated()
+    public async Task UpdateDailySummary1080_DoesNothing_AlreadyUpdated()
     {
         // Arrange
         var repo = new Mock<IMyRepository>();
@@ -302,14 +338,14 @@ public class SatelliteImageBusinessTests
         var satellite = new SatelliteProductEntity();
 
         // Act
-        await testable.UpdateDailySummary(satellite, summary, ct);
+        await testable.UpdateDailySummary1080(satellite, summary, ct);
 
         // Assert
         repo.Verify(v => v.StormEventsDailySummaryUpdate(summary, ct), Times.Never);
     }
 
     [Test]
-    public async Task UpdateDailySummary_CompletesAllSteps_ValidParameters()
+    public async Task UpdateDailySummary1080_CompletesAllSteps_ValidParameters()
     {
         // Arrange
         var repo = new Mock<IMyRepository>();
@@ -322,11 +358,56 @@ public class SatelliteImageBusinessTests
         };
 
         // Act
-        await testable.UpdateDailySummary(satellite, summary, ct);
+        await testable.UpdateDailySummary1080(satellite, summary, ct);
 
         // Assert
         Assert.That(summary.SatellitePath1080, Is.EqualTo("a"));
     }
 
     #endregion
+
+    #region CreatePosterForDailySummary
+
+    [Test]
+    public async Task UpdateDailySummaryPoster_DoesNothing_AlreadyUpdated()
+    {
+        // Arrange
+        var repo = new Mock<IMyRepository>();
+        var testable = new SatelliteImageBusiness(null!, null!, repo.Object);
+        var ct = CancellationToken.None;
+        var summary = new StormEventsDailySummaryEntity()
+        {
+            SatellitePathPoster = "a"
+        };
+        var satellite = new SatelliteProductEntity();
+
+        // Act
+        await testable.UpdateDailySummaryPoster(satellite, summary, ct);
+
+        // Assert
+        repo.Verify(v => v.StormEventsDailySummaryUpdate(summary, ct), Times.Never);
+    }
+
+    [Test]
+    public async Task UpdateDailySummaryPoster_CompletesAllSteps_ValidParameters()
+    {
+        // Arrange
+        var repo = new Mock<IMyRepository>();
+        var testable = new SatelliteImageBusiness(null!, null!, repo.Object);
+        var ct = CancellationToken.None;
+        var summary = new StormEventsDailySummaryEntity();
+        var satellite = new SatelliteProductEntity
+        {
+            PathPoster = "a"
+        };
+
+        // Act
+        await testable.UpdateDailySummaryPoster(satellite, summary, ct);
+
+        // Assert
+        Assert.That(summary.SatellitePathPoster, Is.EqualTo("a"));
+    }
+
+    #endregion
+
 }

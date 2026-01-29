@@ -98,16 +98,19 @@ public class SatelliteImageBusiness(IOlieWebService ows, IOlieImageService ois, 
         await repo.SatelliteProductUpdate(product, ct);
     }
 
-    public async Task<SatelliteProductEntity?> GetMarqueeProduct(string effectiveDate, DateTime eventTime, CancellationToken ct)
+    public async Task<SatelliteProductEntity?> GetMarqueeProduct(StormEventsDailySummaryEntity summary, CancellationToken ct)
     {
+        if (summary.HeadlineEventTime is null) return null;
+        if (summary.SatellitePathPoster is not null && summary.SatellitePath1080 is not null) return null;
+
         var result =
-            await repo.SatelliteProductGetPoster(effectiveDate, eventTime, ct) ??
-            await repo.SatelliteProductGetLastPoster(effectiveDate, ct);
+            await repo.SatelliteProductGetPoster(summary.Id, summary.HeadlineEventTime.Value, ct) ??
+            await repo.SatelliteProductGetLastPoster(summary.Id, ct);
 
         return result;
     }
 
-    public async Task MakePoster(SatelliteProductEntity product, IOlieConfig config, CancellationToken ct)
+    public async Task Make1080(SatelliteProductEntity product, IOlieConfig config, CancellationToken ct)
     {
         const string pythonScript = "olievortex_purple_nc_2_png.py";
 
@@ -116,7 +119,7 @@ public class SatelliteImageBusiness(IOlieWebService ows, IOlieImageService ois, 
         await ows.Shell(config, config.PurpleCmdPath, args, ct);
     }
 
-    public async Task MakeThumbnail(SatelliteProductEntity product, Point finalSize, string goldPath, CancellationToken ct)
+    public async Task MakePoster(SatelliteProductEntity product, Point finalSize, string goldPath, CancellationToken ct)
     {
         var stopwatch = new Stopwatch();
         stopwatch.Start();
@@ -142,11 +145,21 @@ public class SatelliteImageBusiness(IOlieWebService ows, IOlieImageService ois, 
         await repo.SatelliteProductUpdate(product, ct);
     }
 
-    public async Task UpdateDailySummary(SatelliteProductEntity product, StormEventsDailySummaryEntity summary, CancellationToken ct)
+    public async Task UpdateDailySummary1080(SatelliteProductEntity product, StormEventsDailySummaryEntity summary, CancellationToken ct)
     {
         if (summary.SatellitePath1080 is null && product.Path1080 is not null)
         {
             summary.SatellitePath1080 = product.Path1080;
+            summary.Timestamp = DateTime.UtcNow;
+            await repo.StormEventsDailySummaryUpdate(summary, ct);
+        }
+    }
+
+    public async Task UpdateDailySummaryPoster(SatelliteProductEntity product, StormEventsDailySummaryEntity summary, CancellationToken ct)
+    {
+        if (summary.SatellitePathPoster is null && product.PathPoster is not null)
+        {
+            summary.SatellitePathPoster = product.PathPoster;
             summary.Timestamp = DateTime.UtcNow;
             await repo.StormEventsDailySummaryUpdate(summary, ct);
         }

@@ -9,43 +9,27 @@ using SixLabors.ImageSharp;
 namespace olieblind.lib.Processes;
 
 public class SatelliteMarqueeProcess(
-    ISatelliteImageProcess satelliteProcess,
     ISatelliteImageBusiness business,
     IOlieConfig config,
     IMyRepository repo) : ISatelliteMarqueeProcess
 {
     private readonly Point _finalSize = new(1246, 540);
 
-    public async Task Run(int year, BlobContainerClient bronzeClient, string goldPath, IAmazonS3 amazonS3Client, CancellationToken ct)
+    public async Task Run(int year, BlobContainerClient bronzeClient, IAmazonS3 amazonS3Client, CancellationToken ct)
     {
-        await AnnualProcess(year, bronzeClient, goldPath, amazonS3Client, ct);
-        await AdhocProcess(goldPath, ct);
-    }
-
-    private async Task AdhocProcess(string goldPath, CancellationToken ct)
-    {
-        var missingPosters = await repo.SatelliteProductListNoPoster(ct);
-
-        foreach (var missingPoster in missingPosters)
-        {
-            await business.MakeThumbnail(missingPoster, _finalSize, goldPath, ct);
-        }
-    }
-
-    public async Task AnnualProcess(int year, BlobContainerClient bronzeClient, string goldPath, IAmazonS3 amazonS3Client, CancellationToken ct)
-    {
-        var missingPosters = await repo.StormEventsDailySummaryListMissingPostersForYear(year, ct);
+        var dailySummaries = await repo.StormEventsDailySummaryListMissingPostersForYear(year, ct);
         var source = business.CreateSatelliteSource(year, amazonS3Client);
 
-        foreach (var missingPoster in missingPosters)
+        foreach (var dailySummary in dailySummaries)
         {
-            var satellite = await satelliteProcess.GetMarqueeProduct(missingPoster, ct);
-            if (satellite is null) continue;
+            var product = await business.GetMarqueeProduct(dailySummary, ct);
+            if (product is null) continue;
 
-            await business.DownloadProduct(satellite, source, bronzeClient, ct);
-            await business.MakePoster(satellite, config, ct);
-            await business.UpdateDailySummary(satellite, missingPoster, ct);
-            await satelliteProcess.CreateThumbnailAndUpdateDailySummary(satellite, missingPoster, _finalSize, goldPath, ct);
+            await business.DownloadProduct(product, source, bronzeClient, ct);
+            await business.Make1080(product, config, ct);
+            await business.UpdateDailySummary1080(product, dailySummary, ct);
+            await business.MakePoster(product, _finalSize, config.VideoPath, ct);
+            await business.UpdateDailySummaryPoster(product, dailySummary, ct);
         }
     }
 }
