@@ -1,10 +1,7 @@
-﻿using Azure.Messaging.ServiceBus.Administration;
-using Moq;
-using olieblind.data;
+﻿using Moq;
 using olieblind.lib.Models;
 using olieblind.lib.Satellite;
 using olieblind.lib.Satellite.Interfaces;
-using olieblind.lib.Services;
 
 namespace olieblind.test.SatelliteTests;
 

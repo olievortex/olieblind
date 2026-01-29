@@ -243,6 +243,25 @@ public class SatelliteImageBusinessTests
     #region Make1080
 
     [Test]
+    public async Task Make1080_ShortCircuit_AlreadyComplete()
+    {
+        // Arrange
+        const string purpleCmdPath = "purple.sh";
+        var ct = CancellationToken.None;
+        var config = new Mock<IOlieConfig>();
+        config.SetupGet(g => g.PurpleCmdPath).Returns(purpleCmdPath);
+        var ows = new Mock<IOlieWebService>();
+        var testable = new SatelliteImageBusiness(ows.Object, null!, null!);
+        var product = new SatelliteProductEntity { Id = "a", EffectiveDate = "b", Path1080 = "c" };
+
+        // Act
+        await testable.Make1080(product, config.Object, ct);
+
+        // Assert
+        ows.Verify(v => v.Shell(It.IsAny<IOlieConfig>(), It.IsAny<string>(), It.IsAny<string>(), ct), Times.Never());
+    }
+
+    [Test]
     public async Task Make1080_NoException_ValidData()
     {
         // Arrange
@@ -258,7 +277,7 @@ public class SatelliteImageBusinessTests
         await testable.Make1080(product, config.Object, ct);
 
         // Assert
-        ows.Verify(v => v.Shell(It.IsAny<IOlieConfig>(), purpleCmdPath, "olievortex_purple_nc_2_png.py a b", ct));
+        ows.Verify(v => v.Shell(It.IsAny<IOlieConfig>(), purpleCmdPath, "olievortex_purple_nc_2_png.py a b", ct), Times.Once());
     }
 
     #endregion
