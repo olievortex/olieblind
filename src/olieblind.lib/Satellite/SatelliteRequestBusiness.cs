@@ -5,7 +5,7 @@ using olieblind.lib.Satellite.Models;
 
 namespace olieblind.lib.Satellite;
 
-public class SatelliteRequestProcess(ISatelliteRequestSource business) : ISatelliteRequestProcess
+public class SatelliteRequestBusiness(ISatelliteRequestSource business) : ISatelliteRequestBusiness
 {
     public const string NothingToDoMessage = "There is nothing to process for the selected date.";
     public const string QuotaExceededMessage = "Quota exceeded. Please try again later.";

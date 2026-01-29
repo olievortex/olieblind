@@ -4,7 +4,7 @@ using olieblind.lib.Satellite.Models;
 
 namespace olieblind.lib.Satellite.Interfaces;
 
-public interface ISatelliteRequestProcess
+public interface ISatelliteRequestBusiness
 {
     Task<SatelliteRequestResultModel> RequestHourlySatellite(SatelliteRequestModel model, ServiceBusSender sender, CancellationToken ct);
 }

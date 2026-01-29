@@ -6,7 +6,7 @@ using olieblind.lib.Services;
 
 namespace olieblind.lib.Processes;
 
-public class SatelliteMarqueeRequestProcess(IOlieWebService ows)
+public class SatelliteRequestProcess(IOlieWebService ows)
 //: ISatelliteMarqueeProcess
 {
     //private readonly Point _finalSize = new(1246, 540);

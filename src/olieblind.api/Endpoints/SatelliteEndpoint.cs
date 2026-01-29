@@ -30,10 +30,10 @@ public static class SatelliteEndpoint
         return TypedResults.Ok(result);
     }
 
-    public static async Task<Ok<SatelliteRequestResultModel>> PostRequestHourlyPreview(SatelliteRequestModel model, ISatelliteRequestProcess process, IOlieConfig config, CancellationToken ct)
+    public static async Task<Ok<SatelliteRequestResultModel>> PostRequestHourlyPreview(SatelliteRequestModel model, ISatelliteRequestBusiness business, IOlieConfig config, CancellationToken ct)
     {
         var sender = config.ServiceBusSender();
-        var result = await process.RequestHourlySatellite(model, sender, ct);
+        var result = await business.RequestHourlySatellite(model, sender, ct);
         return TypedResults.Ok(result);
     }
 }
