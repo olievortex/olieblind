@@ -17,10 +17,10 @@ public static class SatelliteEndpoint
         app.MapPost("/api/satellite/requestHourlyPreview", PostRequestHourlyPreview);
     }
 
-    public static async Task<Ok<SatelliteRequestStatisticsModel>> GetRequestStatistics(string userId, ISatelliteRequestProcess process, IOlieConfig config, CancellationToken ct)
+    public static async Task<Ok<SatelliteRequestStatisticsModel>> GetRequestStatistics(string userId, ISatelliteRequestSource source, IOlieConfig config, CancellationToken ct)
     {
         var client = config.ServiceBusAdministrationClient();
-        var result = await process.GetStatistics(userId, client, ct);
+        var result = await source.GetRequestStatistics(userId, client, ct);
         return TypedResults.Ok(result);
     }
 

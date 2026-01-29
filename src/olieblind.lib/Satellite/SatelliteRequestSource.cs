@@ -1,16 +1,18 @@
 ﻿using Azure.Messaging.ServiceBus;
+using Azure.Messaging.ServiceBus.Administration;
 using olieblind.data;
 using olieblind.data.Entities;
 using olieblind.data.Enums;
 using olieblind.lib.Models;
 using olieblind.lib.Satellite.Interfaces;
+using olieblind.lib.Satellite.Models;
 using olieblind.lib.Services;
 
 namespace olieblind.lib.Satellite;
 
-public class SatelliteRequestBusiness(IMyRepository repo, IOlieWebService ows, IOlieConfig config) : ISatelliteRequestBusiness
+public class SatelliteRequestSource(IMyRepository repo, IOlieWebService ows, IOlieConfig config) : ISatelliteRequestSource
 {
-    public async Task CreateLog(string userId, string effectiveDate, bool isFree, CancellationToken ct)
+    public async Task CreateUserLog(string userId, string effectiveDate, bool isFree, CancellationToken ct)
     {
         var entity = new UserSatelliteAdHocLogEntity
         {
@@ -23,20 +25,6 @@ public class SatelliteRequestBusiness(IMyRepository repo, IOlieWebService ows, I
         };
 
         await repo.UserSatelliteAdHocLogCreate(entity, ct);
-    }
-
-    public async Task Enqueue(List<SatelliteProductEntity> products, ServiceBusSender sender, CancellationToken ct)
-    {
-        foreach (var product in products)
-        {
-            var message = new SatelliteRequestQueueModel
-            {
-                Id = product.Id,
-                EffectiveDate = product.EffectiveDate,
-            };
-
-            await ows.ServiceBusSendJson(sender, message, ct);
-        }
     }
 
     public async Task<List<SatelliteProductEntity>> GetHourlyProductList(string effectiveDate, CancellationToken ct)
@@ -56,7 +44,20 @@ public class SatelliteRequestBusiness(IMyRepository repo, IOlieWebService ows, I
         return products;
     }
 
-    public async Task<bool> IsFreeRequest(string effectiveDate, string sourceFk, CancellationToken ct)
+    public async Task<SatelliteRequestStatisticsModel> GetRequestStatistics(string userId, ServiceBusAdministrationClient client, CancellationToken ct)
+    {
+        var stats = await repo.UserSatelliteAdHocLogUserStatistics(config.SatelliteRequestLookbackHours, ct);
+        var queueLength = await ows.ServiceBusQueueLength(client, config.SatelliteRequestQueueName, ct);
+
+        return new SatelliteRequestStatisticsModel
+        {
+            GlobalRequests = stats.Sum(k => k.Value),
+            UserRequests = stats.Sum(k => k.Key.Equals(userId, StringComparison.OrdinalIgnoreCase) ? k.Value : 0),
+            QueueLength = queueLength,
+        };
+    }
+
+    public async Task<bool> IsFreeDay(string effectiveDate, string sourceFk, CancellationToken ct)
     {
         var year = int.Parse(effectiveDate[..4]);
         var dailySummary = await repo.StormEventsDailySummaryGet(effectiveDate, year, sourceFk, ct);
@@ -79,5 +80,19 @@ public class SatelliteRequestBusiness(IMyRepository repo, IOlieWebService ows, I
             return true;
 
         return false;
+    }
+
+    public async Task SendMessage(List<SatelliteProductEntity> products, ServiceBusSender sender, CancellationToken ct)
+    {
+        foreach (var product in products)
+        {
+            var message = new SatelliteRequestQueueModel
+            {
+                Id = product.Id,
+                EffectiveDate = product.EffectiveDate,
+            };
+
+            await ows.ServiceBusSendJson(sender, message, ct);
+        }
     }
 }

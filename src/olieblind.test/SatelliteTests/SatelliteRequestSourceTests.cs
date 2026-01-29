@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using Azure.Messaging.ServiceBus.Administration;
+using Moq;
 using olieblind.data;
 using olieblind.data.Entities;
 using olieblind.data.Enums;
@@ -7,23 +8,23 @@ using olieblind.lib.Services;
 
 namespace olieblind.test.SatelliteTests;
 
-public class SatelliteRequestProcessBusinessTests
+public class SatelliteRequestSourceTests
 {
-    #region CreateLog
+    #region CreateUserLog
 
     [Test]
-    public async Task CreateLog_CreatesRecord_ValidData()
+    public async Task CreateUserLog_CreatesRecord_ValidData()
     {
         // Arrange
         var ct = CancellationToken.None;
         var repo = new Mock<IMyRepository>();
-        var testable = new SatelliteRequestBusiness(repo.Object, null!, null!);
+        var testable = new SatelliteRequestSource(repo.Object, null!, null!);
         var userId = "testUser";
         var effectiveDate = "20240101";
         var isFree = true;
 
         // Act
-        await testable.CreateLog(userId, effectiveDate, isFree, ct);
+        await testable.CreateUserLog(userId, effectiveDate, isFree, ct);
 
         // Assert
         repo.Verify(v => v.UserSatelliteAdHocLogCreate(It.Is<UserSatelliteAdHocLogEntity>(e =>
@@ -34,31 +35,6 @@ public class SatelliteRequestProcessBusinessTests
             e.DayPart == DayPartsEnum.Afternoon &&
             e.Timestamp > DateTime.MinValue
         ), ct), Times.Once);
-    }
-
-    #endregion
-
-    #region Enqueue
-
-    [Test]
-    public async Task Enqueue_EnqueuesMessages_ValidProducts()
-    {
-        // Arrange
-        var ct = CancellationToken.None;
-        var ows = new Mock<IOlieWebService>();
-        var testable = new SatelliteRequestBusiness(null!, ows.Object, null!);
-        var sender = Mock.Of<Azure.Messaging.ServiceBus.ServiceBusSender>();
-        var products = new List<SatelliteProductEntity>
-        {
-            new() { Id = "prod1", EffectiveDate = "20240101" },
-            new() { Id = "prod2", EffectiveDate = "20240101" }
-        };
-
-        // Act
-        await testable.Enqueue(products, sender, ct);
-
-        // Assert
-        ows.Verify(v => v.ServiceBusSendJson(sender, It.IsAny<object>(), ct), Times.Exactly(products.Count));
     }
 
     #endregion
@@ -81,7 +57,7 @@ public class SatelliteRequestProcessBusinessTests
                 new() { Id = "4", ScanTime = new DateTime(2024, 1, 1, 11, 15, 0), Path1080 = null, PathPoster = "path" },
                 new() { Id = "5", ScanTime = new DateTime(2024, 1, 1, 12, 0, 0), Path1080 = "path", PathPoster = "path" }
             ]);
-        var testable = new SatelliteRequestBusiness(repo.Object, null!, null!);
+        var testable = new SatelliteRequestSource(repo.Object, null!, null!);
 
         // Act
         var result = await testable.GetHourlyProductList(effectiveDate, ct);
@@ -97,10 +73,74 @@ public class SatelliteRequestProcessBusinessTests
 
     #endregion
 
-    #region IsFreeRequest
+    #region GetRequestStatistics
 
     [Test]
-    public async Task IsFreeRequest_ReturnsTrue_WhenSubstantialTornado()
+    public async Task GetRequestStatistic_ReturnsModel_UserHasHistory()
+    {
+        // Arrange
+        var ct = CancellationToken.None;
+        var config = new Mock<IOlieConfig>();
+        var repo = new Mock<IMyRepository>();
+        repo.Setup(s => s.UserSatelliteAdHocLogUserStatistics(It.IsAny<int>(), ct))
+            .ReturnsAsync(new Dictionary<string, int>
+            {
+                { "testUser", 3 },
+                { "otherUser", 7 },
+            });
+        var ows = new Mock<IOlieWebService>();
+        ows.Setup(s => s.ServiceBusQueueLength(It.IsAny<ServiceBusAdministrationClient>(), It.IsAny<string>(), ct))
+            .ReturnsAsync(5);
+        var testable = new SatelliteRequestSource(repo.Object, ows.Object, config.Object);
+
+        // Act
+        var result = await testable.GetRequestStatistics("testUser", null!, ct);
+
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.GlobalRequests, Is.EqualTo(10));
+            Assert.That(result.UserRequests, Is.EqualTo(3));
+            Assert.That(result.QueueLength, Is.EqualTo(5));
+        }
+    }
+
+    [Test]
+    public async Task GetRequestStatistic_ReturnsModel_NoUserHistory()
+    {
+        // Arrange
+        var ct = CancellationToken.None;
+        var config = new Mock<IOlieConfig>();
+        var repo = new Mock<IMyRepository>();
+        repo.Setup(s => s.UserSatelliteAdHocLogUserStatistics(It.IsAny<int>(), ct))
+            .ReturnsAsync(new Dictionary<string, int>
+            {
+                { "otherUser2", 3 },
+                { "otherUser", 7 },
+            });
+        var ows = new Mock<IOlieWebService>();
+        ows.Setup(s => s.ServiceBusQueueLength(It.IsAny<ServiceBusAdministrationClient>(), It.IsAny<string>(), ct))
+            .ReturnsAsync(5);
+        var testable = new SatelliteRequestSource(repo.Object, ows.Object, config.Object);
+
+        // Act
+        var result = await testable.GetRequestStatistics("testUser", null!, ct);
+
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.GlobalRequests, Is.EqualTo(10));
+            Assert.That(result.UserRequests, Is.Zero);
+            Assert.That(result.QueueLength, Is.EqualTo(5));
+        }
+    }
+
+    #endregion
+
+    #region IsFreeDay
+
+    [Test]
+    public async Task IsFreeDay_ReturnsTrue_WhenSubstantialTornado()
     {
         // Arrange
         var ct = CancellationToken.None;
@@ -116,17 +156,17 @@ public class SatelliteRequestProcessBusinessTests
                 F3 = 3,
                 F2 = 4
             });
-        var testable = new SatelliteRequestBusiness(repo.Object, null!, null!);
+        var testable = new SatelliteRequestSource(repo.Object, null!, null!);
 
         // Act
-        var result = await testable.IsFreeRequest(effectiveDate, sourceFk, ct);
+        var result = await testable.IsFreeDay(effectiveDate, sourceFk, ct);
 
         // Assert
         Assert.That(result, Is.True);
     }
 
     [Test]
-    public async Task IsFreeRequest_ReturnsFalse_WhenNoSubstantialTornado()
+    public async Task IsFreeDay_ReturnsFalse_WhenNoSubstantialTornado()
     {
         // Arrange
         var ct = CancellationToken.None;
@@ -141,27 +181,27 @@ public class SatelliteRequestProcessBusinessTests
                 Hail = 2,
                 Wind = 3
             });
-        var testable = new SatelliteRequestBusiness(repo.Object, null!, null!);
+        var testable = new SatelliteRequestSource(repo.Object, null!, null!);
 
         // Act
-        var result = await testable.IsFreeRequest(effectiveDate, sourceFk, ct);
+        var result = await testable.IsFreeDay(effectiveDate, sourceFk, ct);
 
         // Assert
         Assert.That(result, Is.False);
     }
 
     [Test]
-    public async Task IsFreeRequest_ReturnsFalse_NoRecord()
+    public async Task IsFreeDay_ReturnsFalse_NoRecord()
     {
         // Arrange
         var ct = CancellationToken.None;
         const string effectiveDate = "20240101";
         const string sourceFk = "source1";
         var repo = new Mock<IMyRepository>();
-        var testable = new SatelliteRequestBusiness(repo.Object, null!, null!);
+        var testable = new SatelliteRequestSource(repo.Object, null!, null!);
 
         // Act
-        var result = await testable.IsFreeRequest(effectiveDate, sourceFk, ct);
+        var result = await testable.IsFreeDay(effectiveDate, sourceFk, ct);
 
         // Assert
         Assert.That(result, Is.False);
@@ -188,7 +228,7 @@ public class SatelliteRequestProcessBusinessTests
                 { "anyUser", 3 },
                 { "otherUser", 1 }
             });
-        var testable = new SatelliteRequestBusiness(repo.Object, null!, config.Object);
+        var testable = new SatelliteRequestSource(repo.Object, null!, config.Object);
 
         // Act
         var result = await testable.IsQuotaAvailable("anyUser", CancellationToken.None);
@@ -214,13 +254,38 @@ public class SatelliteRequestProcessBusinessTests
                 { "anyUser", 3 },
                 { "otherUser", 1 }
             });
-        var testable = new SatelliteRequestBusiness(repo.Object, null!, config.Object);
+        var testable = new SatelliteRequestSource(repo.Object, null!, config.Object);
 
         // Act
         var result = await testable.IsQuotaAvailable("anyUser", CancellationToken.None);
 
         // Assert
         Assert.That(result, Is.True);
+    }
+
+    #endregion
+
+    #region SendMessage
+
+    [Test]
+    public async Task SendMessage_EnqueuesMessages_ValidProducts()
+    {
+        // Arrange
+        var ct = CancellationToken.None;
+        var ows = new Mock<IOlieWebService>();
+        var testable = new SatelliteRequestSource(null!, ows.Object, null!);
+        var sender = Mock.Of<Azure.Messaging.ServiceBus.ServiceBusSender>();
+        var products = new List<SatelliteProductEntity>
+        {
+            new() { Id = "prod1", EffectiveDate = "20240101" },
+            new() { Id = "prod2", EffectiveDate = "20240101" }
+        };
+
+        // Act
+        await testable.SendMessage(products, sender, ct);
+
+        // Assert
+        ows.Verify(v => v.ServiceBusSendJson(sender, It.IsAny<object>(), ct), Times.Exactly(products.Count));
     }
 
     #endregion
