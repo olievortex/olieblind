@@ -3,14 +3,13 @@ using olieblind.data;
 using olieblind.data.Enums;
 using olieblind.lib.Processes.Interfaces;
 using olieblind.lib.Satellite.Interfaces;
+using olieblind.lib.Satellite.Sources;
 using olieblind.lib.StormEvents.Interfaces;
 
 namespace olieblind.lib.Processes;
 
-
 public class SatelliteInventoryProcess(
     IDailySummaryBusiness stormy,
-    ISatelliteImageProcess process,
     ISatelliteImageBusiness business,
     IMyRepository repo) : ISatelliteInventoryProcess
 {
@@ -25,9 +24,20 @@ public class SatelliteInventoryProcess(
 
         foreach (var missingDay in missingDays)
         {
-            var satellite = string.Compare(missingDay, Goes19, StringComparison.Ordinal) < 1 ? 16 : 19;
-            await process.DownloadInventory(missingDay, satellite, Channel, DayPart, source, ct);
+            var satellite = SelectSatellite(missingDay);
+            await DownloadInventory(missingDay, satellite, Channel, DayPart, source, ct);
         }
+    }
+
+    public static int SelectSatellite(string effectiveDate) => string.Compare(effectiveDate, Goes19, StringComparison.Ordinal) < 1 ? 16 : 19;
+
+    public async Task DownloadInventory(string effectiveDate, int satellite, int channel, DayPartsEnum dayPart, ASatelliteSource source, CancellationToken ct)
+    {
+        var result = await source.ListKeys(effectiveDate, satellite, channel, dayPart, ct);
+        if (result is null || result.Keys.Length == 0) return;
+
+        await business.AddProductsToDatabase(result.Keys, effectiveDate, result.Bucket, channel, dayPart, result.GetScanTimeFunc, ct);
+        await business.AddInventoryToDatabase(effectiveDate, result.Bucket, channel, dayPart, ct);
     }
 
     public async Task<List<string>> GetMissingDays(int year, CancellationToken ct)

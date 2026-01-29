@@ -6,8 +6,6 @@ using olieblind.lib.Processes;
 using olieblind.lib.Processes.Interfaces;
 using olieblind.lib.Radar;
 using olieblind.lib.Radar.Interfaces;
-using olieblind.lib.Satellite;
-using olieblind.lib.Satellite.Interfaces;
 using olieblind.lib.Services;
 using olieblind.lib.Services.Speech;
 using olieblind.lib.StormEvents;
@@ -122,7 +120,6 @@ public static class OlieCommon
         services.AddScoped<IRadarBusiness, RadarBusiness>();
         services.AddScoped<IRadarSource, RadarSource>();
         services.AddScoped<ISatelliteMarqueeProcess, SatelliteMarqueeProcess>();
-        services.AddScoped<ISatelliteImageProcess, SatelliteImageProcess>();
         services.AddScoped<ISpcBusiness, SpcBusiness>();
         services.AddScoped<ISpcProcess, SpcProcess>();
         services.AddScoped<ISpcSource, SpcSource>();
