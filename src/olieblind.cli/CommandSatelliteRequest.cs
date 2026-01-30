@@ -12,11 +12,15 @@ namespace olieblind.cli;
 public class CommandSatelliteRequest(ILogger<CommandSatelliteRequest> logger, ISatelliteRequestProcess process, IOlieConfig config)
 {
     private const string LoggerName = $"olieblind.cli {nameof(CommandSatelliteRequest)}";
+    public const string MutexName = "Global\\olieblind.cli.CommandSatelliteRequest";
 
     public async Task<int> Run(CancellationToken ct)
     {
         try
         {
+            using var mutex = new Mutex(true, MutexName, out bool createdNew);
+            if (!createdNew) return 0;
+
             Console.WriteLine($"{LoggerName} triggered");
             logger.LogInformation("{loggerName} triggered", LoggerName);
 

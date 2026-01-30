@@ -82,21 +82,6 @@ public class SatelliteRequestProcessTests
     }
 
     [Test]
-    public async Task Run_ShortCircuits_AlreadyRunning()
-    {
-        // Arrange
-        using var mutex = new Mutex(true, SatelliteRequestProcess.MutexName);
-        var ct = CancellationToken.None;
-        var testable = new SatelliteRequestProcess(null!, null!, null!, null!);
-
-        // Act
-        await testable.Run(null!, null!, null!, ct);
-
-        // Assert
-        Assert.Pass(); // Failure would cause exception in testable.Run
-    }
-
-    [Test]
     public async Task Run_Processes_Message()
     {
         // Arrange

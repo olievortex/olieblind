@@ -16,14 +16,10 @@ public class SatelliteRequestProcess(
     IOlieWebService ows) : ISatelliteRequestProcess
 {
     private const int MaxIterations = 50;
-    public const string MutexName = "Global/olieblind.lib.Processes.SatelliteRequestProcess";
 
     public async Task Run(ServiceBusReceiver receiver, IAmazonS3 awsClient, BlobContainerClient bronzeClient, CancellationToken ct)
     {
         var count = 0;
-
-        using var mutex = new Mutex(true, MutexName, out bool createdNew);
-        if (!createdNew) return;
 
         do
         {
