@@ -15,8 +15,16 @@ public class SatelliteRequestProcess(
     IOlieConfig config,
     IOlieWebService ows) : ISatelliteRequestProcess
 {
+    private const int MaxIterations = 50;
+    public const string MutexName = "Global/olieblind.lib.Processes.SatelliteRequestProcess";
+
     public async Task Run(ServiceBusReceiver receiver, IAmazonS3 awsClient, BlobContainerClient bronzeClient, CancellationToken ct)
     {
+        var count = 0;
+
+        using var mutex = new Mutex(true, MutexName, out bool createdNew);
+        if (!createdNew) return;
+
         do
         {
             var message = await ows.ServiceBusReceiveJson<SatelliteRequestQueueModel>(receiver, ct);
@@ -25,7 +33,7 @@ public class SatelliteRequestProcess(
             await Do(message.Body, bronzeClient, awsClient, ct);
 
             await ows.ServiceBusCompleteMessage(receiver, message, ct);
-        } while (!ct.IsCancellationRequested);
+        } while (!ct.IsCancellationRequested && ++count < MaxIterations);
     }
 
     public async Task Do(SatelliteRequestQueueModel model, BlobContainerClient bronzeClient, IAmazonS3 amazonS3Client, CancellationToken ct)

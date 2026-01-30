@@ -30,6 +30,73 @@ public class SatelliteRequestProcessTests
     }
 
     [Test]
+    public async Task Run_Exits_ExceedMaxIterations()
+    {
+        // Arrange
+        var ct = CancellationToken.None;
+        var ows = new Mock<IOlieWebService>();
+        ows.Setup(s => s.ServiceBusReceiveJson<SatelliteRequestQueueModel>(null!, ct))
+            .ReturnsAsync(new OlieServiceBusReceivedMessage<SatelliteRequestQueueModel>
+            {
+                ServiceBusReceivedMessage = null!,
+                Body = new SatelliteRequestQueueModel()
+            });
+        var repo = new Mock<IMyRepository>();
+        repo.Setup(s => s.SatelliteProductGet(It.IsAny<string>(), It.IsAny<string>(), ct))
+            .ReturnsAsync(new SatelliteProductEntity { EffectiveDate = "2021-05-18" });
+        var business = new Mock<ISatelliteImageBusiness>();
+        var config = new Mock<IOlieConfig>();
+        var testable = new SatelliteRequestProcess(business.Object, repo.Object, config.Object, ows.Object);
+
+        // Act
+        await testable.Run(null!, null!, null!, ct);
+
+        // Assert
+        ows.Verify(v => v.ServiceBusCompleteMessage(It.IsAny<ServiceBusReceiver>(), It.IsAny<OlieServiceBusReceivedMessage<SatelliteRequestQueueModel>>(), ct), Times.Exactly(50));
+    }
+
+    [Test]
+    public async Task Run_Exits_Cancelled()
+    {
+        // Arrange
+        var ct = new CancellationToken(true);
+        var ows = new Mock<IOlieWebService>();
+        ows.Setup(s => s.ServiceBusReceiveJson<SatelliteRequestQueueModel>(null!, ct))
+            .ReturnsAsync(new OlieServiceBusReceivedMessage<SatelliteRequestQueueModel>
+            {
+                ServiceBusReceivedMessage = null!,
+                Body = new SatelliteRequestQueueModel()
+            });
+        var repo = new Mock<IMyRepository>();
+        repo.Setup(s => s.SatelliteProductGet(It.IsAny<string>(), It.IsAny<string>(), ct))
+            .ReturnsAsync(new SatelliteProductEntity { EffectiveDate = "2021-05-18" });
+        var business = new Mock<ISatelliteImageBusiness>();
+        var config = new Mock<IOlieConfig>();
+        var testable = new SatelliteRequestProcess(business.Object, repo.Object, config.Object, ows.Object);
+
+        // Act
+        await testable.Run(null!, null!, null!, ct);
+
+        // Assert
+        ows.Verify(v => v.ServiceBusCompleteMessage(It.IsAny<ServiceBusReceiver>(), It.IsAny<OlieServiceBusReceivedMessage<SatelliteRequestQueueModel>>(), ct), Times.Once());
+    }
+
+    [Test]
+    public async Task Run_ShortCircuits_AlreadyRunning()
+    {
+        // Arrange
+        using var mutex = new Mutex(true, SatelliteRequestProcess.MutexName);
+        var ct = CancellationToken.None;
+        var testable = new SatelliteRequestProcess(null!, null!, null!, null!);
+
+        // Act
+        await testable.Run(null!, null!, null!, ct);
+
+        // Assert
+        Assert.Pass(); // Failure would cause exception in testable.Run
+    }
+
+    [Test]
     public async Task Run_Processes_Message()
     {
         // Arrange
