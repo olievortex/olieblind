@@ -19,11 +19,10 @@ public class SatelliteRequestProcess(
     {
         do
         {
-            var (message, model) = await ows.ServiceBusReceiveJson<SatelliteRequestQueueModel>(receiver, ct);
+            var message = await ows.ServiceBusReceiveJson<SatelliteRequestQueueModel>(receiver, ct);
             if (message is null) break;
-            if (model is null) throw new ApplicationException("Could not deserialize message from queue");
 
-            await Do(model, bronzeClient, awsClient, ct);
+            await Do(message.Body, bronzeClient, awsClient, ct);
 
             await ows.ServiceBusCompleteMessage(receiver, message, ct);
         } while (!ct.IsCancellationRequested);
@@ -33,11 +32,11 @@ public class SatelliteRequestProcess(
     {
         var product = await repo.SatelliteProductGet(model.Id, model.EffectiveDate, ct)
             ?? throw new ApplicationException($"Requested product doesn't exist ({model.Id},{model.EffectiveDate})");
-        var year = int.Parse(model.EffectiveDate[..4]);
+        var year = int.Parse(product.EffectiveDate[..4]);
         var source = business.CreateSatelliteSource(year, amazonS3Client);
 
         await business.DownloadProduct(product, source, bronzeClient, ct);
-        await business.Make1080(product, config, ct);
+        await business.Make1080(product, config.PurpleCmdPath, config.VideoPath, ct);
         await business.MakePoster(product, OlieCommon.SatelliteThumbnailSize, config.VideoPath, ct);
     }
 }

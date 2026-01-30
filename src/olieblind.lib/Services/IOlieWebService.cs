@@ -63,7 +63,7 @@ public interface IOlieWebService
 
     #region Shell
 
-    Task<string> Shell(IOlieConfig config, string fileName, string arguments, CancellationToken ct);
+    Task<string> Shell(string fileName, string arguments, CancellationToken ct);
 
     #endregion
 
@@ -71,9 +71,9 @@ public interface IOlieWebService
 
     Task ServiceBusSendJson(ServiceBusSender sender, object data, CancellationToken ct);
 
-    Task ServiceBusCompleteMessage(ServiceBusReceiver receiver, ServiceBusReceivedMessage message, CancellationToken ct);
+    Task ServiceBusCompleteMessage<T>(ServiceBusReceiver receiver, OlieServiceBusReceivedMessage<T> message, CancellationToken ct);
 
-    Task<(ServiceBusReceivedMessage?, T?)> ServiceBusReceiveJson<T>(ServiceBusReceiver receiver, CancellationToken ct);
+    Task<OlieServiceBusReceivedMessage<T>?> ServiceBusReceiveJson<T>(ServiceBusReceiver receiver, CancellationToken ct);
 
     Task<int> ServiceBusQueueLength(ServiceBusAdministrationClient adminClient, string queueName, CancellationToken ct);
 

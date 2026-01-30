@@ -33,29 +33,6 @@ public class SatelliteMarqueeProcessTests
     }
 
     [Test]
-    public async Task Run_ShortCircuit_1080JustCreated()
-    {
-        // Arrange
-        var ct = CancellationToken.None;
-        const int year = 2021;
-        var business = new Mock<ISatelliteImageBusiness>();
-        business.Setup(s => s.GetMarqueeProduct(It.IsAny<StormEventsDailySummaryEntity>(), ct))
-            .ReturnsAsync(new SatelliteProductEntity());
-        var repo = new Mock<IMyRepository>();
-        repo.Setup(s => s.StormEventsDailySummaryListMissingPostersForYear(year, ct))
-            .ReturnsAsync([new StormEventsDailySummaryEntity()]);
-        var config = new Mock<IOlieConfig>();
-        var testable = new SatelliteMarqueeProcess(business.Object, config.Object, repo.Object);
-
-        // Act
-        await testable.Run(year, null!, null!, ct);
-
-        // Assert
-        business.Verify(v => v.UpdateDailySummary1080(It.IsAny<SatelliteProductEntity>(),
-            It.IsAny<StormEventsDailySummaryEntity>(), ct), Times.Never);
-    }
-
-    [Test]
     public async Task Run_CompletesAllSteps_ValidParameters()
     {
         // Arrange

@@ -6,8 +6,8 @@ using olieblind.data.Enums;
 using olieblind.lib.Satellite.Interfaces;
 using olieblind.lib.Satellite.Sources;
 using olieblind.lib.Services;
-using SixLabors.ImageSharp;
 using System.Diagnostics;
+using System.Drawing;
 
 namespace olieblind.lib.Satellite;
 
@@ -110,12 +110,13 @@ public class SatelliteImageBusiness(IOlieWebService ows, IOlieImageService ois, 
         return result;
     }
 
-    public async Task Make1080(SatelliteProductEntity product, IOlieConfig config, CancellationToken ct)
+    public async Task Make1080(SatelliteProductEntity product, string purpleCmdPath, string goldPath, CancellationToken ct)
     {
         const string pythonScript = "olievortex_purple_nc_2_png.py";
 
         if (product.Path1080 is not null) return;
-        if (product.PathSource is null) throw new InvalidOperationException();
+        if (product.PathSource is null || product.PathLocal is null)
+            throw new ApplicationException($"Missing source/local info for ({product.Id},{product.EffectiveDate})");
 
         var stopwatch = new Stopwatch();
         stopwatch.Start();
@@ -125,12 +126,12 @@ public class SatelliteImageBusiness(IOlieWebService ows, IOlieImageService ois, 
             .Replace("bronze", "gold")
             .Replace(".nc", ".png")
             .Replace(".tif", ".png");
-        var pathDestination = $"{config.VideoPath}/{destination}";
+        var pathDestination = $"{goldPath}/{destination}";
 
         var args = $"{pythonScript} {product.Id} {product.PathLocal} {pathDestination}";
 
         // Shell out to olievortex_purple (Python)
-        await ows.Shell(config, config.PurpleCmdPath, args, ct);
+        await ows.Shell(purpleCmdPath, args, ct);
 
         // Update the product
         product.Path1080 = destination;
@@ -155,8 +156,7 @@ public class SatelliteImageBusiness(IOlieWebService ows, IOlieImageService ois, 
 
         // Convert to poster image
         var filenamePoster = filename1080.Replace(".png", "_poster.png");
-        var finalSizePoint = new System.Drawing.Point(finalSize.X, finalSize.Y);
-        var resizedBytes = await ois.Resize(bytes, finalSizePoint, ct);
+        var resizedBytes = await ois.Resize(bytes, finalSize, ct);
         await ows.FileWriteAllBytes(filenamePoster, resizedBytes, ct);
 
         // Update Product

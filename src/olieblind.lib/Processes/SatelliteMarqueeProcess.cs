@@ -23,7 +23,7 @@ public class SatelliteMarqueeProcess(
             if (product is null) continue;
 
             await business.DownloadProduct(product, source, bronzeClient, ct);
-            await business.Make1080(product, config, ct);
+            await business.Make1080(product, config.PurpleCmdPath, config.VideoPath, ct);
             await business.UpdateDailySummary1080(product, dailySummary, ct);
             await business.MakePoster(product, OlieCommon.SatelliteThumbnailSize, config.VideoPath, ct);
             await business.UpdateDailySummaryPoster(product, dailySummary, ct);

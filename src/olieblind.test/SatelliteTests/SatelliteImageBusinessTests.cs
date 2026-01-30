@@ -6,7 +6,7 @@ using olieblind.lib.Satellite;
 using olieblind.lib.Satellite.Sources;
 using olieblind.lib.Services;
 using olieblind.test.SatelliteTests.SourcesTests;
-using SixLabors.ImageSharp;
+using System.Drawing;
 
 namespace olieblind.test.SatelliteTests;
 
@@ -248,17 +248,43 @@ public class SatelliteImageBusinessTests
         // Arrange
         const string purpleCmdPath = "purple.sh";
         var ct = CancellationToken.None;
-        var config = new Mock<IOlieConfig>();
-        config.SetupGet(g => g.PurpleCmdPath).Returns(purpleCmdPath);
         var ows = new Mock<IOlieWebService>();
         var testable = new SatelliteImageBusiness(ows.Object, null!, null!);
         var product = new SatelliteProductEntity { Id = "a", EffectiveDate = "b", Path1080 = "c" };
 
         // Act
-        await testable.Make1080(product, config.Object, ct);
+        await testable.Make1080(product, purpleCmdPath, null!, ct);
 
         // Assert
-        ows.Verify(v => v.Shell(It.IsAny<IOlieConfig>(), It.IsAny<string>(), It.IsAny<string>(), ct), Times.Never());
+        ows.Verify(v => v.Shell(It.IsAny<string>(), It.IsAny<string>(), ct), Times.Never());
+    }
+
+    [Test]
+    public async Task Make1080_ApplicationException_NoLocalPath()
+    {
+        // Arrange
+        const string purpleCmdPath = "purple.sh";
+        var ct = CancellationToken.None;
+        var ows = new Mock<IOlieWebService>();
+        var testable = new SatelliteImageBusiness(ows.Object, null!, null!);
+        var product = new SatelliteProductEntity { Id = "a", EffectiveDate = "b", PathSource = "c" };
+
+        // Act, Assert
+        Assert.ThrowsAsync<ApplicationException>(() => testable.Make1080(product, purpleCmdPath, null!, ct));
+    }
+
+    [Test]
+    public async Task Make1080_ApplicationException_NoSourcePath()
+    {
+        // Arrange
+        const string purpleCmdPath = "purple.sh";
+        var ct = CancellationToken.None;
+        var ows = new Mock<IOlieWebService>();
+        var testable = new SatelliteImageBusiness(ows.Object, null!, null!);
+        var product = new SatelliteProductEntity { Id = "a", EffectiveDate = "b", PathLocal = "c" };
+
+        // Act, Assert
+        Assert.ThrowsAsync<ApplicationException>(() => testable.Make1080(product, purpleCmdPath, null!, ct));
     }
 
     [Test]
@@ -266,18 +292,18 @@ public class SatelliteImageBusinessTests
     {
         // Arrange
         const string purpleCmdPath = "purple.sh";
+        const string videoPath = "/var/www/videos";
         var ct = CancellationToken.None;
-        var config = new Mock<IOlieConfig>();
-        config.SetupGet(g => g.PurpleCmdPath).Returns(purpleCmdPath);
         var ows = new Mock<IOlieWebService>();
-        var testable = new SatelliteImageBusiness(ows.Object, null!, null!);
-        var product = new SatelliteProductEntity { Id = "a", EffectiveDate = "b" };
+        var repo = new Mock<IMyRepository>();
+        var testable = new SatelliteImageBusiness(ows.Object, null!, repo.Object);
+        var product = new SatelliteProductEntity { Id = "a", EffectiveDate = "b", PathSource = "c", PathLocal = "d" };
 
         // Act
-        await testable.Make1080(product, config.Object, ct);
+        await testable.Make1080(product, purpleCmdPath, videoPath, ct);
 
         // Assert
-        ows.Verify(v => v.Shell(It.IsAny<IOlieConfig>(), purpleCmdPath, "olievortex_purple_nc_2_png.py a b", ct), Times.Once());
+        ows.Verify(v => v.Shell(purpleCmdPath, "olievortex_purple_nc_2_png.py a d /var/www/videos/c", ct), Times.Once());
     }
 
     #endregion

@@ -17,7 +17,7 @@ using System.Text;
 namespace olieblind.lib.Services;
 
 [ExcludeFromCodeCoverage]
-public class OlieWebService(IHttpClientFactory httpClientFactory) : IOlieWebService
+public class OlieWebService(IHttpClientFactory httpClientFactory, IOlieConfig config) : IOlieWebService
 {
     #region Text/Speech
 
@@ -347,7 +347,7 @@ public class OlieWebService(IHttpClientFactory httpClientFactory) : IOlieWebServ
 
     #region Shell
 
-    public async Task<string> Shell(IOlieConfig config, string fileName, string arguments, CancellationToken ct)
+    public async Task<string> Shell(string fileName, string arguments, CancellationToken ct)
     {
         const string AppiKey = "APPLICATIONINSIGHTS_CONNECTION_STRING";
         var sbStdOut = new StringBuilder();
@@ -390,19 +390,24 @@ public class OlieWebService(IHttpClientFactory httpClientFactory) : IOlieWebServ
         await sender.SendMessageAsync(message, ct);
     }
 
-    public async Task ServiceBusCompleteMessage(ServiceBusReceiver receiver, ServiceBusReceivedMessage message, CancellationToken ct)
+    public async Task ServiceBusCompleteMessage<T>(ServiceBusReceiver receiver, OlieServiceBusReceivedMessage<T> message, CancellationToken ct)
     {
-        await receiver.CompleteMessageAsync(message, ct);
+        await receiver.CompleteMessageAsync(message.ServiceBusReceivedMessage, ct);
     }
 
-    public async Task<(ServiceBusReceivedMessage?, T?)> ServiceBusReceiveJson<T>(ServiceBusReceiver receiver, CancellationToken ct)
+    public async Task<OlieServiceBusReceivedMessage<T>?> ServiceBusReceiveJson<T>(ServiceBusReceiver receiver, CancellationToken ct)
     {
         var message = await receiver.ReceiveMessageAsync(TimeSpan.FromSeconds(5), ct);
-        if (message is null) return (null, default);
+        if (message is null) return null;
         var json = message.Body.ToString();
-        var data = JsonConvert.DeserializeObject<T>(json);
-        await receiver.CompleteMessageAsync(message, ct);
-        return (message, data);
+        var body = JsonConvert.DeserializeObject<T>(json)
+            ?? throw new InvalidCastException(json);
+
+        return new OlieServiceBusReceivedMessage<T>
+        {
+            ServiceBusReceivedMessage = message,
+            Body = body
+        };
     }
 
     public async Task<int> ServiceBusQueueLength(ServiceBusAdministrationClient adminClient, string queueName, CancellationToken ct)

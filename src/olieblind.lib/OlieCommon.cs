@@ -16,8 +16,8 @@ using olieblind.lib.StormPredictionCenter.Interfaces;
 using olieblind.lib.StormPredictionCenter.Mesos;
 using olieblind.lib.StormPredictionCenter.Outlooks;
 using olieblind.lib.Video;
-using SixLabors.ImageSharp;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Globalization;
 
 namespace olieblind.lib;
