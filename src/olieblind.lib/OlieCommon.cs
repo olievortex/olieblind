@@ -125,7 +125,6 @@ public static class OlieCommon
         services.AddScoped<IRadarBusiness, RadarBusiness>();
         services.AddScoped<IRadarSource, RadarSource>();
         services.AddScoped<ISatelliteImageBusiness, SatelliteImageBusiness>();
-        services.AddScoped<ISatelliteMarqueeProcess, SatelliteMarqueeProcess>();
         services.AddScoped<ISpcBusiness, SpcBusiness>();
         services.AddScoped<ISpcProcess, SpcProcess>();
         services.AddScoped<ISpcSource, SpcSource>();
@@ -141,6 +140,8 @@ public static class OlieCommon
         services.AddScoped<IImportStormEventsDatabaseProcess, ImportStormEventsDatabaseProcess>();
         services.AddScoped<IImportStormEventsSpcProcess, ImportStormEventsSpcProcess>();
         services.AddScoped<ISatelliteInventoryProcess, SatelliteInventoryProcess>();
+        services.AddScoped<ISatelliteMarqueeProcess, SatelliteMarqueeProcess>();
+        services.AddScoped<ISatelliteRequestProcess, SatelliteRequestProcess>();
         services.AddScoped<ISpcMesosProcess, SpcMesosProcess>();
 
         #endregion
