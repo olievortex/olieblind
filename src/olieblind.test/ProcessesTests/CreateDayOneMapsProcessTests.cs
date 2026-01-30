@@ -83,7 +83,7 @@ public class CreateDayOneMapsProcessTests
         await testable.Do(ct);
 
         // Assert
-        ows.Verify(v => v.BrownShell(It.IsAny<IOlieConfig>(), It.IsAny<string>(), ct), Times.Once);
+        ows.Verify(v => v.Shell(It.IsAny<IOlieConfig>(), It.IsAny<string>(), It.IsAny<string>(), ct), Times.Once);
     }
 
     #endregion

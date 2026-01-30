@@ -3,13 +3,14 @@ using olieblind.data;
 using olieblind.data.Enums;
 using olieblind.lib.Processes.Interfaces;
 using olieblind.lib.Satellite.Interfaces;
+using olieblind.lib.Satellite.Sources;
 using olieblind.lib.StormEvents.Interfaces;
 
 namespace olieblind.lib.Processes;
 
 public class SatelliteInventoryProcess(
     IDailySummaryBusiness stormy,
-    ISatelliteProcess process,
+    ISatelliteImageBusiness business,
     IMyRepository repo) : ISatelliteInventoryProcess
 {
     private const int Channel = 2;
@@ -19,12 +20,24 @@ public class SatelliteInventoryProcess(
     public async Task Run(int year, IAmazonS3 client, CancellationToken ct)
     {
         var missingDays = await GetMissingDays(year, ct);
+        var source = business.CreateSatelliteSource(year, client);
 
         foreach (var missingDay in missingDays)
         {
-            var satellite = string.Compare(missingDay, Goes19, StringComparison.Ordinal) < 1 ? 16 : 19;
-            await process.ProcessMissingDay(year, missingDay, satellite, Channel, DayPart, client, ct);
+            var satellite = SelectSatellite(missingDay);
+            await DownloadInventory(missingDay, satellite, Channel, DayPart, source, ct);
         }
+    }
+
+    public static int SelectSatellite(string effectiveDate) => string.Compare(effectiveDate, Goes19, StringComparison.Ordinal) < 1 ? 16 : 19;
+
+    public async Task DownloadInventory(string effectiveDate, int satellite, int channel, DayPartsEnum dayPart, ASatelliteSource source, CancellationToken ct)
+    {
+        var result = await source.ListKeys(effectiveDate, satellite, channel, dayPart, ct);
+        if (result is null || result.Keys.Length == 0) return;
+
+        await business.AddProductsToDatabase(result.Keys, effectiveDate, result.Bucket, channel, dayPart, result.GetScanTimeFunc, ct);
+        await business.AddInventoryToDatabase(effectiveDate, result.Bucket, channel, dayPart, ct);
     }
 
     public async Task<List<string>> GetMissingDays(int year, CancellationToken ct)
@@ -32,7 +45,7 @@ public class SatelliteInventoryProcess(
         var stormDays = (await stormy.GetSevereByYear(year, ct))
             .Select(s => s.Id)
             .ToList();
-        var inventoryDays = (await repo.SatelliteAwsInventoryListByYear(year, Channel, DayPart, ct))
+        var inventoryDays = (await repo.SatelliteInventoryListByYear(year, Channel, DayPart, ct))
             .Select(s => s.EffectiveDate)
             .ToList();
 

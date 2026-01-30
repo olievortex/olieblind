@@ -1,49 +1,36 @@
 using Amazon.S3;
-using Azure.Messaging.ServiceBus;
 using Azure.Storage.Blobs;
 using olieblind.data;
 using olieblind.lib.Processes.Interfaces;
 using olieblind.lib.Satellite.Interfaces;
+using olieblind.lib.Services;
 using SixLabors.ImageSharp;
 
 namespace olieblind.lib.Processes;
 
 public class SatelliteMarqueeProcess(
-    ISatelliteProcess satelliteProcess,
-    ISatelliteSource satelliteSource,
+    ISatelliteImageBusiness business,
+    IOlieConfig config,
     IMyRepository repo) : ISatelliteMarqueeProcess
 {
     private readonly Point _finalSize = new(1246, 540);
 
-    public async Task Run(int year, ServiceBusSender sender, Func<int, Task> delayFunc,
-        BlobContainerClient bronzeClient, string goldPath, IAmazonS3 awsClient,
-        CancellationToken ct)
+    public async Task Run(int year, BlobContainerClient bronzeClient, IAmazonS3 amazonS3Client, CancellationToken ct)
     {
-        await AnnualProcess(year, delayFunc, sender, bronzeClient, goldPath, awsClient, ct);
-        await AdhocProcess(goldPath, ct);
-    }
+        var dailySummaries = await repo.StormEventsDailySummaryListMissingPostersForYear(year, ct);
+        var source = business.CreateSatelliteSource(year, amazonS3Client);
 
-    private async Task AdhocProcess(string goldPath, CancellationToken ct)
-    {
-        var missingPosters = await repo.SatelliteAwsProductListNoPoster(ct);
-
-        foreach (var missingPoster in missingPosters)
-            await satelliteSource.MakeThumbnail(missingPoster, _finalSize, goldPath, ct);
-    }
-
-    public async Task AnnualProcess(int year, Func<int, Task> delayFunc, ServiceBusSender sender,
-        BlobContainerClient bronzeClient, string goldPath, IAmazonS3 awsClient, CancellationToken ct)
-    {
-        var missingPosters = await repo.StormEventsDailySummaryListMissingPostersForYear(year, ct);
-
-        foreach (var missingPoster in missingPosters)
+        foreach (var dailySummary in dailySummaries)
         {
-            var satellite = await satelliteProcess.GetMarqueeSatelliteProduct(missingPoster, ct);
-            if (satellite is null) continue;
+            var product = await business.GetMarqueeProduct(dailySummary, ct);
+            if (product is null) continue;
 
-            await satelliteProcess.DownloadSatelliteFile(year, satellite, delayFunc, sender, bronzeClient, awsClient, ct);
-            await satelliteProcess.UpdateDailySummary(satellite, missingPoster, ct);
-            await satelliteProcess.CreateThumbnailAndUpdateDailySummary(satellite, missingPoster, _finalSize, goldPath, ct);
+            await business.DownloadProduct(product, source, bronzeClient, ct);
+            await business.Make1080(product, config, ct);
+            if (product.Path1080 is null) continue; // The Make1080 process can't update product.
+            await business.UpdateDailySummary1080(product, dailySummary, ct);
+            await business.MakePoster(product, _finalSize, config.VideoPath, ct);
+            await business.UpdateDailySummaryPoster(product, dailySummary, ct);
         }
     }
 }

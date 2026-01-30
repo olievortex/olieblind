@@ -4,6 +4,6 @@ namespace olieblind.lib.StormEvents.Models;
 
 public class SatelliteListModel
 {
-    public List<SatelliteAwsProductEntity> IemList { get; init; } = [];
-    public List<SatelliteAwsProductEntity> AwsList { get; init; } = [];
+    public List<SatelliteProductEntity> IemList { get; init; } = [];
+    public List<SatelliteProductEntity> AwsList { get; init; } = [];
 }

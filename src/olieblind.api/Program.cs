@@ -54,8 +54,8 @@ public static class Program
         builder.Services.AddScoped<ICookieConsentBusiness, CookieConsentBusiness>();
         builder.Services.AddScoped<IStormEventsBusiness, StormEventsBusiness>();
         builder.Services.AddScoped<IStormEventsSource, StormEventsSource>();
-        builder.Services.AddScoped<ISatelliteRequestProcess, SatelliteRequestProcess>();
         builder.Services.AddScoped<ISatelliteRequestBusiness, SatelliteRequestBusiness>();
+        builder.Services.AddScoped<ISatelliteRequestSource, SatelliteRequestSource>();
     }
 
     private static void MapEndpoints(this WebApplication app)

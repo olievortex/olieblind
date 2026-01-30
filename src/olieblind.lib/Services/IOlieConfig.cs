@@ -34,6 +34,8 @@ public interface IOlieConfig
 
     string BrownCmdPath { get; }
 
+    string PurpleCmdPath { get; }
+
     string SpeechRegion { get; }
 
     string SpeechResourceId { get; }

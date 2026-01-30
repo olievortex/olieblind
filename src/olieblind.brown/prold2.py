@@ -9,13 +9,13 @@ from dataset_images import DatasetImages
 
 # Configure Logging
 logging.basicConfig(level=logging.INFO)
-configure_azure_monitor(logger_name='olieblind_purple')
-logger = logging.getLogger('olieblind_purple')
+configure_azure_monitor(logger_name='olieblind.brown')
+logger = logging.getLogger('olieblind.brown')
 
 
 def parse_command_line_arguments() -> tuple[str, str, str]:
     """Read and validate the command line arguments"""
-    logger.info("Olieblind.Purple: python prold2.py %s", str(sys.argv))
+    logger.info("Olieblind.Brown: python prold2.py %s", str(sys.argv))
 
     try:
         if len(sys.argv) != 4:
@@ -57,7 +57,7 @@ def main():
         pcom.create_scp()
         pcom.create_rh_storm_motion()
 
-        logger.info("Olieblind.Purple clean exit")
+        logger.info("Olieblind.Brown clean exit")
 
     except Exception as err:  # pylint: disable=broad-exception-caught
         logger.error(str(err))

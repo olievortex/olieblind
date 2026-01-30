@@ -158,18 +158,18 @@ public class MyRepository(MyContext context) : IMyRepository
 
     #endregion
 
-    #region SatelliteAwsInventory
+    #region SatelliteInventory
 
-    public async Task SatelliteAwsInventoryCreate(SatelliteAwsInventoryEntity entity, CancellationToken ct)
+    public async Task SatelliteInventoryCreate(SatelliteInventoryEntity entity, CancellationToken ct)
     {
-        await context.SatelliteAwsInventories.AddAsync(entity, ct);
+        await context.SatelliteInventories.AddAsync(entity, ct);
         await context.SaveChangesAsync(ct);
     }
 
-    public async Task<List<SatelliteAwsInventoryEntity>> SatelliteAwsInventoryListByYear(int year, int channel,
+    public async Task<List<SatelliteInventoryEntity>> SatelliteInventoryListByYear(int year, int channel,
         DayPartsEnum dayPart, CancellationToken ct)
     {
-        return await context.SatelliteAwsInventories
+        return await context.SatelliteInventories
             .Where(w =>
                 w.EffectiveDate.StartsWith($"{year}-") &&
                 w.Channel == channel &&
@@ -179,34 +179,34 @@ public class MyRepository(MyContext context) : IMyRepository
 
     #endregion
 
-    #region SatelliteAwsProduct
+    #region SatelliteProduct
 
-    public async Task SatelliteAwsProductCreate(List<SatelliteAwsProductEntity> entity, CancellationToken ct)
+    public async Task SatelliteProductCreate(List<SatelliteProductEntity> entity, CancellationToken ct)
     {
-        context.SatelliteAwsProducts.AddRange(entity);
+        context.SatelliteProducts.AddRange(entity);
         await context.SaveChangesAsync(ct);
     }
 
-    public async Task<SatelliteAwsProductEntity?> SatelliteAwsProductGetLastPoster(string effectiveDate, CancellationToken ct)
+    public async Task<SatelliteProductEntity?> SatelliteProductGetLastPoster(string effectiveDate, CancellationToken ct)
     {
-        return await context.SatelliteAwsProducts
+        return await context.SatelliteProducts
             .Where(w => w.EffectiveDate == effectiveDate)
             .OrderByDescending(o => o.ScanTime)
             .FirstOrDefaultAsync(ct);
     }
 
-    public async Task<SatelliteAwsProductEntity?> SatelliteAwsProductGetPoster(string effectiveDate, DateTime eventTime, CancellationToken ct)
+    public async Task<SatelliteProductEntity?> SatelliteProductGetPoster(string effectiveDate, DateTime eventTime, CancellationToken ct)
     {
-        return await context.SatelliteAwsProducts
+        return await context.SatelliteProducts
             .Where(w => w.EffectiveDate == effectiveDate &&
                         w.ScanTime >= eventTime)
             .OrderBy(o => o.ScanTime)
             .FirstOrDefaultAsync(ct);
     }
 
-    public async Task<List<SatelliteAwsProductEntity>> SatelliteAwsProductGetList(string effectiveDate, CancellationToken ct)
+    public async Task<List<SatelliteProductEntity>> SatelliteProductGetList(string effectiveDate, CancellationToken ct)
     {
-        return await context.SatelliteAwsProducts
+        return await context.SatelliteProducts
             .AsNoTracking()
             .Where(w =>
                 w.EffectiveDate == effectiveDate &&
@@ -216,9 +216,9 @@ public class MyRepository(MyContext context) : IMyRepository
             .ToListAsync(ct);
     }
 
-    public async Task<List<SatelliteAwsProductEntity>> SatelliteAwsProductListNoPoster(CancellationToken ct)
+    public async Task<List<SatelliteProductEntity>> SatelliteProductListNoPoster(CancellationToken ct)
     {
-        return await context.SatelliteAwsProducts
+        return await context.SatelliteProducts
             .Where(w =>
                 w.Path1080 != null &&
                 w.PathPoster == null)
@@ -226,9 +226,9 @@ public class MyRepository(MyContext context) : IMyRepository
             .ToListAsync(ct);
     }
 
-    public async Task SatelliteAwsProductUpdate(SatelliteAwsProductEntity entity, CancellationToken ct)
+    public async Task SatelliteProductUpdate(SatelliteProductEntity entity, CancellationToken ct)
     {
-        context.SatelliteAwsProducts.Update(entity);
+        context.SatelliteProducts.Update(entity);
         await context.SaveChangesAsync(ct);
     }
 

@@ -13,7 +13,7 @@ public interface IStormEventsSource
 
     Task<List<StormEventsDailySummaryEntity>> GetDailySummaryList(int year, CancellationToken ct);
 
-    List<SatelliteAwsProductEntity> GetIemSatelliteList();
+    List<SatelliteProductEntity> GetIemSatelliteList();
 
     Task<SpcMesoProductEntity?> GetMeso(int year, int id, CancellationToken ct);
 

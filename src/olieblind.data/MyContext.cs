@@ -12,8 +12,8 @@ public class MyContext(DbContextOptions<MyContext> options) : DbContext(options)
     public virtual DbSet<ProductVideoEntity> ProductVideos { get; set; }
     public virtual DbSet<RadarInventoryEntity> RadarInventories { get; set; }
     public virtual DbSet<RadarSiteEntity> RadarSites { get; set; }
-    public virtual DbSet<SatelliteAwsInventoryEntity> SatelliteAwsInventories { get; set; }
-    public virtual DbSet<SatelliteAwsProductEntity> SatelliteAwsProducts { get; set; }
+    public virtual DbSet<SatelliteInventoryEntity> SatelliteInventories { get; set; }
+    public virtual DbSet<SatelliteProductEntity> SatelliteProducts { get; set; }
     public virtual DbSet<SpcMesoProductEntity> SpcMesoProducts { get; set; }
     public virtual DbSet<StormEventsDailyDetailEntity> StormEventsDailyDetails { get; set; }
     public virtual DbSet<StormEventsDailySummaryEntity> StormEventsDailySummaries { get; set; }

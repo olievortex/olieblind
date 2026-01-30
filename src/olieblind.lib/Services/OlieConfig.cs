@@ -45,6 +45,8 @@ public class OlieConfig(IConfiguration config) : IOlieConfig
 
     public string BrownCmdPath => GetString("OlieBrownCmdPath");
 
+    public string PurpleCmdPath => GetString("OliePurpleCmdPath");
+
     public string VideoPath => GetString("OlieVideoPath");
 
     public string BlobBronzeContainerUri => GetString("OlieBlobBronzeContainerUri");

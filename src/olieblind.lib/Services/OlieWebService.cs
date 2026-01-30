@@ -145,16 +145,19 @@ public class OlieWebService(IHttpClientFactory httpClientFactory) : IOlieWebServ
     private async static Task<HttpResponseMessage> ApiGetResponseMessage(string url, HttpClient hc, int maxTries, CancellationToken ct)
     {
         var tries = -2;
+        var lastStatusCode = HttpStatusCode.OK;
 
         while (tries++ < (maxTries - 1))
         {
             if (tries >= 0) await Task.Delay(TimeSpan.FromSeconds(2 ^ tries), ct);
             var result = await hc.GetAsync(url, ct);
 
-            if (result.StatusCode == System.Net.HttpStatusCode.OK) return result;
+            if (result.StatusCode == HttpStatusCode.OK) return result;
+
+            lastStatusCode = result.StatusCode;
         }
 
-        throw new ApplicationException($"Failed to get {url} after {maxTries} tries");
+        throw new ApplicationException($"Failed to get {url} status code {lastStatusCode} after {maxTries} tries");
     }
 
     public async Task<byte[]> ApiGetBytes(string url, CancellationToken ct)
@@ -285,38 +288,6 @@ public class OlieWebService(IHttpClientFactory httpClientFactory) : IOlieWebServ
 
     #endregion
 
-    #region Brown
-
-    public async Task<string> BrownShell(IOlieConfig config, string arguments, CancellationToken ct)
-    {
-        const string AppiKey = "APPLICATIONINSIGHTS_CONNECTION_STRING";
-        var sbStdOut = new StringBuilder();
-        var sbErrOut = new StringBuilder();
-
-        using var p = new Process();
-        p.StartInfo.UseShellExecute = false;
-        p.StartInfo.CreateNoWindow = true;
-        p.StartInfo.FileName = config.BrownCmdPath;
-        p.StartInfo.RedirectStandardError = true;
-        if (!p.StartInfo.EnvironmentVariables.ContainsKey(AppiKey))
-            p.StartInfo.EnvironmentVariables.Add(AppiKey, config.ApplicationInsightsConnectionString);
-        p.ErrorDataReceived += (_, args) => sbErrOut.AppendLine(args.Data);
-        p.StartInfo.RedirectStandardOutput = true;
-        p.OutputDataReceived += (_, args) => sbStdOut.AppendLine(args.Data);
-        p.StartInfo.Arguments = arguments;
-        p.Start();
-        p.BeginOutputReadLine();
-        p.BeginErrorReadLine();
-        await p.WaitForExitAsync(ct);
-
-        if (p.ExitCode != 0) throw new ApplicationException($"purple exit code {p.ExitCode}: {sbStdOut}\n{sbErrOut}");
-        p.Close();
-
-        return sbStdOut.ToString();
-    }
-
-    #endregion
-
     #region File
 
     public void CompressGzip(string sourceFile, string destinationFile)
@@ -374,6 +345,38 @@ public class OlieWebService(IHttpClientFactory httpClientFactory) : IOlieWebServ
 
     #endregion
 
+    #region Shell
+
+    public async Task<string> Shell(IOlieConfig config, string fileName, string arguments, CancellationToken ct)
+    {
+        const string AppiKey = "APPLICATIONINSIGHTS_CONNECTION_STRING";
+        var sbStdOut = new StringBuilder();
+        var sbErrOut = new StringBuilder();
+
+        using var p = new Process();
+        p.StartInfo.UseShellExecute = false;
+        p.StartInfo.CreateNoWindow = true;
+        p.StartInfo.FileName = fileName;
+        p.StartInfo.RedirectStandardError = true;
+        if (!p.StartInfo.EnvironmentVariables.ContainsKey(AppiKey))
+            p.StartInfo.EnvironmentVariables.Add(AppiKey, config.ApplicationInsightsConnectionString);
+        p.ErrorDataReceived += (_, args) => sbErrOut.AppendLine(args.Data);
+        p.StartInfo.RedirectStandardOutput = true;
+        p.OutputDataReceived += (_, args) => sbStdOut.AppendLine(args.Data);
+        p.StartInfo.Arguments = arguments;
+        p.Start();
+        p.BeginOutputReadLine();
+        p.BeginErrorReadLine();
+        await p.WaitForExitAsync(ct);
+
+        if (p.ExitCode != 0) throw new ApplicationException($"shell exit code {p.ExitCode}: {sbStdOut}\n{sbErrOut}");
+        p.Close();
+
+        return sbStdOut.ToString();
+    }
+
+    #endregion
+
     #region ServiceBus
 
     public async Task ServiceBusSendJson(ServiceBusSender sender, object data, CancellationToken ct)
@@ -385,6 +388,21 @@ public class OlieWebService(IHttpClientFactory httpClientFactory) : IOlieWebServ
         };
 
         await sender.SendMessageAsync(message, ct);
+    }
+
+    public async Task ServiceBusCompleteMessage(ServiceBusReceiver receiver, ServiceBusReceivedMessage message, CancellationToken ct)
+    {
+        await receiver.CompleteMessageAsync(message, ct);
+    }
+
+    public async Task<(ServiceBusReceivedMessage?, T?)> ServiceBusReceiveJson<T>(ServiceBusReceiver receiver, CancellationToken ct)
+    {
+        var message = await receiver.ReceiveMessageAsync(TimeSpan.FromSeconds(5), ct);
+        if (message is null) return (null, default);
+        var json = message.Body.ToString();
+        var data = JsonConvert.DeserializeObject<T>(json);
+        await receiver.CompleteMessageAsync(message, ct);
+        return (message, data);
     }
 
     public async Task<int> ServiceBusQueueLength(ServiceBusAdministrationClient adminClient, string queueName, CancellationToken ct)

@@ -60,27 +60,27 @@ public interface IMyRepository
 
     #endregion
 
-    #region SatelliteAwsInventory
+    #region SatelliteInventory
 
-    Task SatelliteAwsInventoryCreate(SatelliteAwsInventoryEntity entity, CancellationToken ct);
+    Task SatelliteInventoryCreate(SatelliteInventoryEntity entity, CancellationToken ct);
 
-    Task<List<SatelliteAwsInventoryEntity>> SatelliteAwsInventoryListByYear(int year, int channel, DayPartsEnum dayPart, CancellationToken ct);
+    Task<List<SatelliteInventoryEntity>> SatelliteInventoryListByYear(int year, int channel, DayPartsEnum dayPart, CancellationToken ct);
 
     #endregion
 
-    #region SatelliteAwsProduct
+    #region SatelliteProduct
 
-    Task SatelliteAwsProductCreate(List<SatelliteAwsProductEntity> entity, CancellationToken ct);
+    Task SatelliteProductCreate(List<SatelliteProductEntity> entity, CancellationToken ct);
 
-    Task<SatelliteAwsProductEntity?> SatelliteAwsProductGetLastPoster(string effectiveDate, CancellationToken ct);
+    Task<SatelliteProductEntity?> SatelliteProductGetLastPoster(string effectiveDate, CancellationToken ct);
 
-    Task<SatelliteAwsProductEntity?> SatelliteAwsProductGetPoster(string effectiveDate, DateTime eventTime, CancellationToken ct);
+    Task<SatelliteProductEntity?> SatelliteProductGetPoster(string effectiveDate, DateTime eventTime, CancellationToken ct);
 
-    Task<List<SatelliteAwsProductEntity>> SatelliteAwsProductGetList(string effectiveDate, CancellationToken ct);
+    Task<List<SatelliteProductEntity>> SatelliteProductGetList(string effectiveDate, CancellationToken ct);
 
-    Task<List<SatelliteAwsProductEntity>> SatelliteAwsProductListNoPoster(CancellationToken ct);
+    Task<List<SatelliteProductEntity>> SatelliteProductListNoPoster(CancellationToken ct);
 
-    Task SatelliteAwsProductUpdate(SatelliteAwsProductEntity entity, CancellationToken ct);
+    Task SatelliteProductUpdate(SatelliteProductEntity entity, CancellationToken ct);
 
     #endregion
 
