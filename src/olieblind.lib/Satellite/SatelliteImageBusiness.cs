@@ -115,10 +115,29 @@ public class SatelliteImageBusiness(IOlieWebService ows, IOlieImageService ois, 
         const string pythonScript = "olievortex_purple_nc_2_png.py";
 
         if (product.Path1080 is not null) return;
+        if (product.PathSource is null) throw new InvalidOperationException();
 
-        var args = $"{pythonScript} {product.Id} {product.EffectiveDate}";
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
 
+        // Definitions
+        var destination = product.PathSource
+            .Replace("bronze", "gold")
+            .Replace(".nc", ".png")
+            .Replace(".tif", ".png");
+        var pathDestination = $"{config.VideoPath}/{destination}";
+
+        var args = $"{pythonScript} {product.Id} {product.PathLocal} {pathDestination}";
+
+        // Shell out to olievortex_purple (Python)
         await ows.Shell(config, config.PurpleCmdPath, args, ct);
+
+        // Update the product
+        product.Path1080 = destination;
+        product.PathLocal = null;
+        product.Timestamp = DateTime.UtcNow;
+        product.TimeTaken1080 = (int)stopwatch.Elapsed.TotalSeconds;
+        await repo.SatelliteProductUpdate(product, ct);
     }
 
     public async Task MakePoster(SatelliteProductEntity product, Point finalSize, string goldPath, CancellationToken ct)

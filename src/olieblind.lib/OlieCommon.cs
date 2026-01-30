@@ -16,6 +16,7 @@ using olieblind.lib.StormPredictionCenter.Interfaces;
 using olieblind.lib.StormPredictionCenter.Mesos;
 using olieblind.lib.StormPredictionCenter.Outlooks;
 using olieblind.lib.Video;
+using SixLabors.ImageSharp;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
@@ -23,6 +24,8 @@ namespace olieblind.lib;
 
 public static class OlieCommon
 {
+    public static readonly Point SatelliteThumbnailSize = new(1246, 540);
+
     public static string CreateLocalTmpPath(string extension)
     {
         var tmpPath = Path.GetTempPath();
