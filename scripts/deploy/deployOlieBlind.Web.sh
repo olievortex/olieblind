@@ -39,15 +39,15 @@ dotnet test --configuration Release --no-restore --no-build
 echo dotnet publish
 dotnet publish olieblind.web/olieblind.web.csproj --configuration Release --no-restore --no-build
 
+echo stop website
+~/olieblind/stopOlieBlind.Web.sh
+
 echo deploy
 cd ${basePath}/bin/Release/net10.0/publish
 tar -cf ../publish.tar *
 cd ${pubPath}
 rm -rf *
 tar -xf ${basePath}/bin/Release/net10.0/publish.tar
-
-echo stop website
-~/olieblind/stopOlieBlind.Web.sh
 
 echo start website
 ~/olieblind/startOlieBlind.Web.sh
