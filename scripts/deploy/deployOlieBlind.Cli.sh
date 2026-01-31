@@ -5,7 +5,6 @@ sourceFile=~/olieblind/sourceOlieBlind.sh
 logPath=/var/log/olieblind
 set -e
 
-echo create folders
 if [ ! -d ${logPath} ]; then
     echo "The directory ${logPath} doesn't exist"
     exit 1
@@ -19,29 +18,26 @@ if [ ! -x ${sourceFile} ]; then
     exit 1
 fi
 
-echo git pull
+echo olieblind.cli - dotnet clean
 cd ${basePath}
-git pull
-
-echo dotnet clean
 rm -rf ${basePath}/bin
 rm -rf ${basePath}/obj
 cd ${basePath}/..
 dotnet clean
 
-echo dotnet build
+echo olieblind.cli - dotnet build
 dotnet build --configuration Release
 
-echo dotnet test
+echo olieblind.cli - dotnet test
 dotnet test --configuration Release --no-restore --no-build
 
-echo dotnet publish
+echo olieblind.cli - dotnet publish
 dotnet publish olieblind.cli/olieblind.cli.csproj --no-restore --no-build
 
-echo stop satelliterequest process
+echo olieblind.cli - stop satelliterequest process
 ~/olieblind/stopOlieBlind.Cli.sh
 
-echo deploy
+echo olieblind.cli - deploy
 cd ${basePath}/bin/Release/net10.0/publish
 tar -cf ../publish.tar *
 cd ${pubPath}

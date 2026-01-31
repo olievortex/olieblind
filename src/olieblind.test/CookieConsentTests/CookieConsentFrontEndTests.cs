@@ -14,17 +14,18 @@ public class CookieConsentFrontEndTests
         // Arrange
         var config = new Mock<IOlieConfig>();
         config.SetupGet(s => s.CookieConsentVersion).Returns(23);
+        config.SetupGet(s => s.CookieConsentCookieName).Returns("OlieCookieConsent");
         var testable = new CookieConsentFrontEnd(config.Object);
 
         // Act
         var result = testable.CreateBaseCookie(CookieConsentStatusEnum.Essential);
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result, Does.Contain("OlieCookieConsent=status=Essential&id="));
             Assert.That(result, Does.Contain("&v=23;"));
-        });
+        }
     }
 
     #endregion
