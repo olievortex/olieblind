@@ -187,6 +187,14 @@ public class MyRepository(MyContext context) : IMyRepository
         await context.SaveChangesAsync(ct);
     }
 
+    public async Task<SatelliteProductEntity?> SatelliteProductGet(string id, string effectiveDate, CancellationToken ct)
+    {
+        return await context.SatelliteProducts
+            .Where(w => w.Id == id &&
+                        w.EffectiveDate == effectiveDate)
+            .SingleOrDefaultAsync(ct);
+    }
+
     public async Task<SatelliteProductEntity?> SatelliteProductGetLastPoster(string effectiveDate, CancellationToken ct)
     {
         return await context.SatelliteProducts
@@ -212,16 +220,6 @@ public class MyRepository(MyContext context) : IMyRepository
                 w.EffectiveDate == effectiveDate &&
                 w.Channel == VisibleSat &&
                 w.DayPart == DayPartsEnum.Afternoon)
-            .OrderBy(o => o.ScanTime)
-            .ToListAsync(ct);
-    }
-
-    public async Task<List<SatelliteProductEntity>> SatelliteProductListNoPoster(CancellationToken ct)
-    {
-        return await context.SatelliteProducts
-            .Where(w =>
-                w.Path1080 != null &&
-                w.PathPoster == null)
             .OrderBy(o => o.ScanTime)
             .ToListAsync(ct);
     }

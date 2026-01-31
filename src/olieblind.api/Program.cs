@@ -124,7 +124,7 @@ public static class Program
 
     public static ServiceBusSender ServiceBusSender(this IOlieConfig config)
     {
-        var client = new Azure.Messaging.ServiceBus.ServiceBusClient(config.AwsServiceBus, config.Credential);
+        var client = new ServiceBusClient(config.AwsServiceBus, config.Credential);
         return client.CreateSender(config.SatelliteRequestQueueName);
     }
 }

@@ -39,6 +39,8 @@
 15 1 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh eventsspc 2026
 20 1 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh spcmesos 2026
 25 1 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh satelliteinventory 2026
+30 1 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh satellitemarquee 2026
+* * * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh satelliterequest
 
 #### Startup
 @reboot sleep 10; /home/olievortex/olieblind/startOlieBlind.Api.sh

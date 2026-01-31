@@ -15,13 +15,13 @@ public class SatelliteProductEntity
     [MaxLength(50)] public string BucketName { get; init; } = string.Empty;
     public int Channel { get; init; } // 2 = Red Visible (HiRes)
     public DayPartsEnum DayPart { get; init; } // 3 = Afternoon
-    [MaxLength(320)] public string? Path1080 { get; init; }
+    [MaxLength(320)] public string? Path1080 { get; set; }
     [MaxLength(320)] public string? PathPoster { get; set; }
     [MaxLength(320)] public string? PathSource { get; set; }
     [MaxLength(320)] public string? PathLocal { get; set; }
     public DateTime ScanTime { get; init; }
     public DateTime Timestamp { get; set; }
-    public int TimeTaken1080 { get; init; }
+    public int TimeTaken1080 { get; set; }
     public int TimeTakenDownload { get; set; }
     public int TimeTakenPoster { get; set; }
 }

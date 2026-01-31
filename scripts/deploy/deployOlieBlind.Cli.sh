@@ -38,6 +38,9 @@ dotnet test --configuration Release --no-restore --no-build
 echo dotnet publish
 dotnet publish olieblind.cli/olieblind.cli.csproj --no-restore --no-build
 
+echo stop satelliterequest process
+~/olieblind/stopOlieBlind.Cli.sh
+
 echo deploy
 cd ${basePath}/bin/Release/net10.0/publish
 tar -cf ../publish.tar *

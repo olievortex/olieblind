@@ -3,8 +3,7 @@ using Azure.Storage.Blobs;
 using olieblind.data.Entities;
 using olieblind.data.Enums;
 using olieblind.lib.Satellite.Sources;
-using olieblind.lib.Services;
-using SixLabors.ImageSharp;
+using System.Drawing;
 
 namespace olieblind.lib.Satellite.Interfaces;
 
@@ -20,7 +19,7 @@ public interface ISatelliteImageBusiness
 
     Task<SatelliteProductEntity?> GetMarqueeProduct(StormEventsDailySummaryEntity summary, CancellationToken ct);
 
-    Task Make1080(SatelliteProductEntity product, IOlieConfig config, CancellationToken ct);
+    Task Make1080(SatelliteProductEntity product, string purpleCmdPath, string goldPath, CancellationToken ct);
 
     Task MakePoster(SatelliteProductEntity product, Point finalSize, string goldPath, CancellationToken ct);
 

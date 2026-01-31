@@ -40,4 +40,5 @@ export OlieMySqlBackupContainer=https://stolieblinda3dd.blob.core.windows.net/my
 export OlieMySqlBackupPath=C:/workspace/backup/mysql
 export OlieBlobBronzeContainerUri=https://stolieblinda3dd.blob.core.windows.net/bronze
 export OlieAwsServiceBus=xxxx.servicebus.windows.net
+export OlieSatelliteRequestQueueName=satellite_adhoc
 export Authentication__Schemes__OpenIdConnect__ClientSecret=xxxx

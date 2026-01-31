@@ -8,11 +8,13 @@ The following evironment variables are required to run locally. Replace the dumm
   "OlieFfmpegCodec": "libx264",
   "OlieFontPath": "/Users/oliev/OneDrive/Documents/fonts/Spicy_Rice/SpicyRice-Regular.ttf",
   "OlieModelForecastPath": "C:/workspace/images",
-  "OliePurpleCmdPath": "C:/Users/oliev/source/repos/hop/olieblind/olieblind.purple/shell_win_dev.bat",
+  "OlieBrownCmdPath": "C:/Users/oliev/source/repos/olieblind/src/olieblind.brown/shell_win_dev.bat",
+  "OliePurpleCmdPath": "C:/Users/oliev/source/repos/olievortex_purple/src/shell_win_dev.bat",
   "OlieVideoPath": "C:/workspace/video",
   "OlieBaseVideoUrl": "https://www.olievortex.com/videos",
   "OlieSpeechVoiceName": "en-US-Standard-C",
   "APPLICATIONINSIGHTS_CONNECTION_STRING": "xxxx"
   "OlieBlobBronzeContainerUri": "https://xxxx.blob.core.windows.net/bronze",
-  "OlieOlieAwsServiceBus": "xxxx.servicebus.windows.net"
+  "OlieAwsServiceBus": "xxxx.servicebus.windows.net",
+  "OlieSatelliteRequestQueueName": "satellite_adhoc"
 }

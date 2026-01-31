@@ -72,13 +72,13 @@ public interface IMyRepository
 
     Task SatelliteProductCreate(List<SatelliteProductEntity> entity, CancellationToken ct);
 
+    Task<SatelliteProductEntity?> SatelliteProductGet(string id, string effectiveDate, CancellationToken ct);
+
     Task<SatelliteProductEntity?> SatelliteProductGetLastPoster(string effectiveDate, CancellationToken ct);
 
     Task<SatelliteProductEntity?> SatelliteProductGetPoster(string effectiveDate, DateTime eventTime, CancellationToken ct);
 
     Task<List<SatelliteProductEntity>> SatelliteProductGetList(string effectiveDate, CancellationToken ct);
-
-    Task<List<SatelliteProductEntity>> SatelliteProductListNoPoster(CancellationToken ct);
 
     Task SatelliteProductUpdate(SatelliteProductEntity entity, CancellationToken ct);
 

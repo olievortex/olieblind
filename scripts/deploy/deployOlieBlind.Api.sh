@@ -39,15 +39,15 @@ dotnet test --configuration Release --no-restore --no-build
 echo dotnet publish
 dotnet publish olieblind.api/olieblind.api.csproj --configuration Release --no-restore --no-build
 
+echo stop API
+~/olieblind/stopOlieBlind.Api.sh
+
 echo deploy
 cd ${basePath}/bin/Release/net10.0/publish
 tar -cf ../publish.tar *
 cd ${pubPath}
 rm -rf *
 tar -xf ${basePath}/bin/Release/net10.0/publish.tar
-
-echo stop API
-~/olieblind/stopOlieBlind.Api.sh
 
 echo start API
 ~/olieblind/startOlieBlind.Api.sh

@@ -12,3 +12,4 @@ ln --symbolic --force ~/source/repos/olieblind/scripts/start/startOlieBlind.Api.
 ln --symbolic --force ~/source/repos/olieblind/scripts/start/stopOlieBlind.Api.sh
 ln --symbolic --force ~/source/repos/olieblind/scripts/start/stopOlieBlind.Web.sh
 ln --symbolic --force ~/source/repos/olieblind/scripts/start/startOlieBlind.Web.sh
+ln --symbolic --force ~/source/repos/olieblind/scripts/start/stopOlieBlind.Cli.sh

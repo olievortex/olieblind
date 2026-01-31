@@ -84,6 +84,7 @@ az servicebus queue create \
         --subscription ${subscription_id} \
         --resource-group ${resource_group} \
         --namespace-name sb-olieblind \
+        --lock-duration PT5M \
         --name satellite_adhoc
 
 MSYS_NO_PATHCONV=1 az role assignment create --assignee ${group_id} \

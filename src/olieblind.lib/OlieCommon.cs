@@ -17,12 +17,15 @@ using olieblind.lib.StormPredictionCenter.Mesos;
 using olieblind.lib.StormPredictionCenter.Outlooks;
 using olieblind.lib.Video;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Globalization;
 
 namespace olieblind.lib;
 
 public static class OlieCommon
 {
+    public static readonly Point SatelliteThumbnailSize = new(1246, 540);
+
     public static string CreateLocalTmpPath(string extension)
     {
         var tmpPath = Path.GetTempPath();
@@ -122,7 +125,6 @@ public static class OlieCommon
         services.AddScoped<IRadarBusiness, RadarBusiness>();
         services.AddScoped<IRadarSource, RadarSource>();
         services.AddScoped<ISatelliteImageBusiness, SatelliteImageBusiness>();
-        services.AddScoped<ISatelliteMarqueeProcess, SatelliteMarqueeProcess>();
         services.AddScoped<ISpcBusiness, SpcBusiness>();
         services.AddScoped<ISpcProcess, SpcProcess>();
         services.AddScoped<ISpcSource, SpcSource>();
@@ -138,6 +140,8 @@ public static class OlieCommon
         services.AddScoped<IImportStormEventsDatabaseProcess, ImportStormEventsDatabaseProcess>();
         services.AddScoped<IImportStormEventsSpcProcess, ImportStormEventsSpcProcess>();
         services.AddScoped<ISatelliteInventoryProcess, SatelliteInventoryProcess>();
+        services.AddScoped<ISatelliteMarqueeProcess, SatelliteMarqueeProcess>();
+        services.AddScoped<ISatelliteRequestProcess, SatelliteRequestProcess>();
         services.AddScoped<ISpcMesosProcess, SpcMesosProcess>();
 
         #endregion

@@ -1,53 +1,46 @@
 using Amazon.S3;
 using Azure.Messaging.ServiceBus;
 using Azure.Storage.Blobs;
+using olieblind.data;
 using olieblind.lib.Models;
+using olieblind.lib.Processes.Interfaces;
+using olieblind.lib.Satellite.Interfaces;
 using olieblind.lib.Services;
 
 namespace olieblind.lib.Processes;
 
-public class SatelliteRequestProcess(IOlieWebService ows)
-//: ISatelliteMarqueeProcess
+public class SatelliteRequestProcess(
+    ISatelliteImageBusiness business,
+    IMyRepository repo,
+    IOlieConfig config,
+    IOlieWebService ows) : ISatelliteRequestProcess
 {
-    //private readonly Point _finalSize = new(1246, 540);
+    private const int MaxIterations = 50;
 
-    public async Task Run(ServiceBusReceiver receiver, string goldPath, IAmazonS3 awsClient,
-        BlobContainerClient bronzeClient, Func<int, Task> delayFunc, CancellationToken ct)
+    public async Task Run(ServiceBusReceiver receiver, IAmazonS3 awsClient, BlobContainerClient bronzeClient, CancellationToken ct)
     {
+        var count = 0;
+
         do
         {
-            var (message, model) = await ows.ServiceBusReceiveJson<SatelliteRequestQueueModel>(receiver, ct);
+            var message = await ows.ServiceBusReceiveJson<SatelliteRequestQueueModel>(receiver, ct);
             if (message is null) break;
 
-            //var product = await repo.SatelliteAwsProductGet(model.Id, ct);
-
-            //await process.DownloadSatelliteFile(year, satellite, delayFunc, sender, bronzeClient, awsClient, ct);
+            await Do(message.Body, bronzeClient, awsClient, ct);
 
             await ows.ServiceBusCompleteMessage(receiver, message, ct);
-        } while (!ct.IsCancellationRequested);
+        } while (!ct.IsCancellationRequested && ++count < MaxIterations);
     }
 
-    //private async Task AdhocProcess(string goldPath, CancellationToken ct)
-    //{
-    //    var missingPosters = await repo.SatelliteAwsProductListNoPoster(ct);
+    public async Task Do(SatelliteRequestQueueModel model, BlobContainerClient bronzeClient, IAmazonS3 amazonS3Client, CancellationToken ct)
+    {
+        var product = await repo.SatelliteProductGet(model.Id, model.EffectiveDate, ct)
+            ?? throw new ApplicationException($"Requested product doesn't exist ({model.Id},{model.EffectiveDate})");
+        var year = int.Parse(product.EffectiveDate[..4]);
+        var source = business.CreateSatelliteSource(year, amazonS3Client);
 
-    //    foreach (var missingPoster in missingPosters)
-    //        await satelliteSource.MakeThumbnail(missingPoster, _finalSize, goldPath, ct);
-    //}
-
-    //public async Task AnnualProcess(int year, Func<int, Task> delayFunc, ServiceBusSender sender,
-    //    BlobContainerClient bronzeClient, string goldPath, IAmazonS3 awsClient, CancellationToken ct)
-    //{
-    //    var missingPosters = await repo.StormEventsDailySummaryListMissingPostersForYear(year, ct);
-
-    //    foreach (var missingPoster in missingPosters)
-    //    {
-    //        var satellite = await satelliteProcess.GetMarqueeSatelliteProduct(missingPoster, ct);
-    //        if (satellite is null) continue;
-
-    //        await satelliteProcess.DownloadSatelliteFile(year, satellite, delayFunc, sender, bronzeClient, awsClient, ct);
-    //        await satelliteProcess.UpdateDailySummary(satellite, missingPoster, ct);
-    //        await satelliteProcess.CreateThumbnailAndUpdateDailySummary(satellite, missingPoster, _finalSize, goldPath, ct);
-    //    }
-    //}
+        await business.DownloadProduct(product, source, bronzeClient, ct);
+        await business.Make1080(product, config.PurpleCmdPath, config.VideoPath, ct);
+        await business.MakePoster(product, OlieCommon.SatelliteThumbnailSize, config.VideoPath, ct);
+    }
 }
