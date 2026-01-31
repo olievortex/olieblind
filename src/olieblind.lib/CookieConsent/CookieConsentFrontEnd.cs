@@ -4,7 +4,6 @@ namespace olieblind.lib.CookieConsent;
 
 public class CookieConsentFrontEnd(IOlieConfig config) : ICookieConsentFrontEnd
 {
-    private const string OlieCookieConsentKey = "OlieCookieConsent";
     private readonly int _version = config.CookieConsentVersion;
 
     public string CreateBaseCookie(CookieConsentStatusEnum status)
@@ -15,7 +14,7 @@ public class CookieConsentFrontEnd(IOlieConfig config) : ICookieConsentFrontEnd
         var expires = now.AddDays(180).ToString("ddd, dd MMM yyyy HH:mm:ss");
 
         return
-            $"{OlieCookieConsentKey}=status={status}&id={guid}&created={created}&v={_version}; Expires={expires} GMT; Path=/; SameSite=Lax; Secure";
+            $"{config.CookieConsentCookieName}=status={status}&id={guid}&created={created}&v={_version}; Expires={expires} GMT; Path=/; SameSite=Lax; Secure";
     }
 
     public string GetBlueApiUrl()

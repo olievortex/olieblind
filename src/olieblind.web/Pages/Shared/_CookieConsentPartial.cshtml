@@ -1,9 +1,9 @@
 @using olieblind.lib.CookieConsent
+@using olieblind.lib.Services
 @inject ICookieConsentFrontEnd CookieConsent
+@inject IOlieConfig Config
 @{
-    const string olieCookieConsentKey = "OlieCookieConsent";
-
-    var consentCookie = Context.Request.Cookies[olieCookieConsentKey];
+    var consentCookie = Context.Request.Cookies[Config.CookieConsentCookieName];
     var status = CookieConsent.GetCookieConsentStatus(consentCookie);
     var blueUrl = CookieConsent.GetBlueApiUrl();
     var pageName = Context.Request.Path.Value ?? string.Empty;
@@ -12,7 +12,7 @@
 
     if (status == CookieConsentStatusEnum.Unknown)
     {
-        Context.Response.Cookies.Delete(olieCookieConsentKey);
+        Context.Response.Cookies.Delete(Config.CookieConsentCookieName);
     }
 }
 
