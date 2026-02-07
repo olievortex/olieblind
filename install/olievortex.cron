@@ -24,24 +24,24 @@
 #### Housekeeping
 0 1 * * * /home/olievortex/olieblind/olieblind_dev_backup.sh
 5 1 * * * /home/olievortex/olieblind/olieblind_backup.sh
-10 1 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh deleteoldcontent
+10 1 * * * /home/olievortex/olieblind/start_cli.sh deleteoldcontent
 
 #### Severe Weather Maps
-0 3 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh dayonemaps
+0 3 * * * /home/olievortex/olieblind/start_cli.sh dayonemaps
 
 #### Videos
-0 2,7,14,17,21 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh spcdayonevideo
-0 7,18 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh spcdaytwovideo
-0 8,20 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh spcdaythreevideo
-0 21 * * 4 /home/olievortex/olieblind/startOlieBlind.Cli.sh droughtmonitorvideo
+0 2,7,14,17,21 * * * /home/olievortex/olieblind/start_cli.sh spcdayonevideo
+0 7,18 * * * /home/olievortex/olieblind/start_cli.sh spcdaytwovideo
+0 8,20 * * * /home/olievortex/olieblind/start_cli.sh spcdaythreevideo
+0 21 * * 4 /home/olievortex/olieblind/start_cli.sh droughtmonitorvideo
 
 #### OlieHistorian
-15 1 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh eventsspc 2026
-20 1 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh spcmesos 2026
-25 1 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh satelliteinventory 2026
-30 1 * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh satellitemarquee 2026
-* * * * * /home/olievortex/olieblind/startOlieBlind.Cli.sh satelliterequest
+15 1 * * * /home/olievortex/olieblind/start_cli.sh eventsspc 2026
+20 1 * * * /home/olievortex/olieblind/start_cli.sh spcmesos 2026
+25 1 * * * /home/olievortex/olieblind/start_cli.sh satelliteinventory 2026
+30 1 * * * /home/olievortex/olieblind/start_cli.sh satellitemarquee 2026
+* * * * * /home/olievortex/olieblind/start_cli.sh satelliterequest
 
 #### Startup
-@reboot sleep 10; /home/olievortex/olieblind/startOlieBlind.Api.sh
-@reboot /home/olievortex/olieblind/startOlieBlind.Web.sh
+@reboot sleep 10; /home/olievortex/olieblind/start_api.sh
+@reboot /home/olievortex/olieblind/start_web.sh

@@ -36,7 +36,7 @@ echo olieblind.web - dotnet publish
 dotnet publish olieblind.web/olieblind.web.csproj --configuration Release --no-restore --no-build
 
 echo olieblind.web - stop website
-~/olieblind/stopOlieBlind.Web.sh
+~/olieblind/stop_web.sh
 
 echo olieblind.web - deploy
 cd ${basePath}/bin/Release/net10.0/publish
@@ -46,4 +46,4 @@ rm -rf *
 tar -xf ${basePath}/bin/Release/net10.0/publish.tar
 
 echo solieblind.web - tart website
-~/olieblind/startOlieBlind.Web.sh
+~/olieblind/start_web.sh

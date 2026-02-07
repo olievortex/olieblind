@@ -36,7 +36,7 @@ echo olieblind.api - dotnet publish
 dotnet publish olieblind.api/olieblind.api.csproj --configuration Release --no-restore --no-build
 
 echo olieblind.api - stop website
-~/olieblind/stopOlieBlind.Api.sh
+~/olieblind/stop_api.sh
 
 echo olieblind.api - deploy
 cd ${basePath}/bin/Release/net10.0/publish
@@ -46,4 +46,4 @@ rm -rf *
 tar -xf ${basePath}/bin/Release/net10.0/publish.tar
 
 echo olieblind.api - start website
-~/olieblind/startOlieBlind.Api.sh
+~/olieblind/start_api.sh

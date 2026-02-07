@@ -35,7 +35,7 @@ echo olieblind.cli - dotnet publish
 dotnet publish olieblind.cli/olieblind.cli.csproj --no-restore --no-build
 
 echo olieblind.cli - stop satelliterequest process
-~/olieblind/stopOlieBlind.Cli.sh
+~/olieblind/stop_cli.sh
 
 echo olieblind.cli - deploy
 cd ${basePath}/bin/Release/net10.0/publish
