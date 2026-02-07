@@ -1,16 +1,7 @@
 #!/bin/sh
-#### Replace __cosmos_endpoint__ with the appropriate CosmosDB endpoint from the Azure Portal.
-#### It should be in the format https://server.documents.azure.com:443/
-export OlieMySqlConnection='server=[::1];port=3306;uid=olieblind_user;pwd=********;database=olieblind'
-# export OlieCosmosEndpoint=__cosmos_endpoint__
-# export OlieCosmosDatabase=olieblind
-#### Replace __language_endpoint__ with the appropriate language endpoint from the Azure Portal.
-#### It should be in the format https://server.cognitiveservices.azure.com/
-# export OlieLanguageEndpoint=__language_endpoint__
-# export OlieSpeechRegion=centralus
-#### Replace __speech_resource_id__ with the identifier of the speech service. May need to obtain from the Azure CLI.
-#### It should be in the format /subscriptions/guid/resourceGroups/resourceGroup/providers/Microsoft.CognitiveServices/accounts/accountName
-# export OlieSpeechResourceId=__speech_resource_id__
+#### Remove the brackets from the IPv6 address on Linux or it won't resolve
+#### It must be wrapped in single quotes
+export OlieMySqlConnection='server=[::1];port=3306;uid=olieblind_user;pwd=********;database=olieblind;;SslMode=Required;'
 export OlieSpeechVoiceName=en-US-Standard-C
 export OlieFfmpegPath=/usr/bin/ffmpeg
 export OlieFfmpegCodec=libopenh264
@@ -34,11 +25,12 @@ export AZURE_TENANT_ID=__tenent_id__
 export AZURE_CLIENT_ID=__application_id__
 export AZURE_CLIENT_SECRET=__secret__
 #### From the Azure portal, copy the connection string from the appropriate application insights instance.
+#### The connection string must be wrapped in single quotes
 export APPLICATIONINSIGHTS_CONNECTION_STRING='__applicationinsights_connection_string__'
-export GOOGLE_APPLICATION_CREDENTIALS=/home/olievortex/environments/virtualstormchasing-de884bb5018e.json
-export OlieMySqlBackupContainer=https://stolieblinda3dd.blob.core.windows.net/mysql-backups
+export GOOGLE_APPLICATION_CREDENTIALS=/home/olievortex/olieblind/xxxx.json
+export OlieMySqlBackupContainer=https://xxxx.blob.core.windows.net/mysql-backups
 export OlieMySqlBackupPath=C:/workspace/backup/mysql
-export OlieBlobBronzeContainerUri=https://stolieblinda3dd.blob.core.windows.net/bronze
+export OlieBlobBronzeContainerUri=https://xxxx.blob.core.windows.net/bronze
 export OlieAwsServiceBus=xxxx.servicebus.windows.net
 export OlieSatelliteRequestQueueName=satellite_adhoc
 export Authentication__Schemes__OpenIdConnect__ClientSecret=xxxx

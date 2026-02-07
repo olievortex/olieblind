@@ -59,19 +59,19 @@ Secure the file and prevent alterations.
     # chmod u-w virtualstormchasing-*.json
 
 ## Create and parameterize the environment sourcing script
-The sourceOlieBlind_template.sh script is copied into the olieblind folder. This script is called by other scripts to load the proper environment variables.
+The source_template.sh script is copied into the olieblind folder. This script is called by other scripts to load the proper environment variables.
 
-    # cp ~/source/repos/olieblind/install/sourceOlieBlind_template.sh ~/olieblind
-    # cat ~/olieblind/sourceOlieBlind_template.sh
+    # cp ~/source/repos/olieblind/install/source_template.sh ~/olieblind
+    # cat ~/olieblind/source_template.sh
 
-Replace the placeholder values within the file and then rename it from **sourceOlieBlind_template.sh** to **sourceOlieBlind.sh**. There are instructions within the file on what to do.
+Replace the placeholder values within the file and then rename it from **source_template.sh** to **source.sh**. There are instructions within the file on what to do.
 
-    # mv sourceOlieBlind_template.sh sourceOlieBlind.sh
+    # mv source_template.sh source.sh
 
 Secure the file to prevent inadvertant revelations or alterations.
 
-    # chmod go-rx sourceOlieBlind.sh
-    # chmod u-w sourceOlieBlind.sh
+    # chmod go-rx source.sh
+    # chmod u-w source.sh
 
 ## MySQL
 We will copy some MySQL scripts out of the repository and customize them.

@@ -1,7 +1,7 @@
 #!/bin/sh
 basePath=~/source/repos/olievortex_purple/src
 pubPath=/opt/olievortex_purple
-sourceFile=~/olieblind/sourceOlieBlind.sh
+sourceFile=~/olieblind/source.sh
 logPath=/var/log/olieblind
 set -e
 
