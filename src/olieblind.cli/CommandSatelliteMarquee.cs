@@ -1,6 +1,7 @@
 ﻿using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
+using Azure.Identity;
 using Azure.Storage.Blobs;
 using Microsoft.Extensions.Logging;
 using olieblind.lib.Processes.Interfaces;
@@ -22,7 +23,7 @@ public class CommandSatelliteMarquee(ILogger<CommandSatelliteMarquee> logger, IS
             logger.LogInformation("{loggerName} triggered for year {year}", LoggerName, year);
 
             using var awsClient = new AmazonS3Client(new AnonymousAWSCredentials(), RegionEndpoint.USEast1);
-            var blobClient = new BlobContainerClient(new Uri(config.BlobBronzeContainerUri), config.Credential);
+            var blobClient = new BlobContainerClient(new Uri(config.BlobBronzeContainerUri), new DefaultAzureCredential());
 
             await process.Run(year, blobClient, awsClient, ct);
 

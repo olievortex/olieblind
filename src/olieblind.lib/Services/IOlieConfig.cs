@@ -4,8 +4,6 @@ namespace olieblind.lib.Services;
 
 public interface IOlieConfig
 {
-    public DefaultAzureCredential Credential { get; }
-
     string ApplicationInsightsConnectionString { get; }
 
     string BaseVideoUrl { get; }
@@ -46,7 +44,7 @@ public interface IOlieConfig
 
     string BlobBronzeContainerUri { get; }
 
-    string AwsServiceBus { get; }
+    string ServiceBus { get; }
 
     int SatelliteRequestGlobalLimit { get; }
 
