@@ -1,3 +1,4 @@
+using Azure.Identity;
 using Azure.Messaging.ServiceBus;
 using Azure.Messaging.ServiceBus.Administration;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
@@ -24,13 +25,13 @@ public static class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        var config = builder.AddConfiguration();
-        builder.AddResponseMiddleware();
-        builder.AddCors(config);
+        var config = builder.AddOlieConfiguration();
+        builder.AddOlieResponseMiddleware();
+        builder.AddOlieCors(config);
         builder.Services.AddAuthorization();
         builder.Services.AddHttpClient();
-        builder.AddDependencyInjection();
-        builder.AddEntityFramework(config);
+        builder.AddOlieDependencyInjection();
+        builder.AddOlieEntityFramework(config);
         builder.Services.AddOpenTelemetry().UseAzureMonitor().WithTracing(builder =>
         {
             builder.AddSqlClientInstrumentation();
@@ -41,11 +42,11 @@ public static class Program
         app.UseOutputCache();
         app.UseAuthorization();
         app.UseResponseCompression();
-        app.MapEndpoints();
+        app.UseOlieEndpoints();
         app.Run();
     }
 
-    private static void AddDependencyInjection(this WebApplicationBuilder builder)
+    private static void AddOlieDependencyInjection(this WebApplicationBuilder builder)
     {
         builder.Services.AddScoped<IOlieConfig, OlieConfig>();
         builder.Services.AddScoped<IOlieWebService, OlieWebService>();
@@ -58,7 +59,7 @@ public static class Program
         builder.Services.AddScoped<ISatelliteRequestSource, SatelliteRequestSource>();
     }
 
-    private static void MapEndpoints(this WebApplication app)
+    private static void UseOlieEndpoints(this WebApplication app)
     {
         app.MapVideoEndpoints();
         app.MapUserEndpoints();
@@ -67,7 +68,7 @@ public static class Program
         app.MapSatelliteEndpoints();
     }
 
-    private static void AddEntityFramework(this WebApplicationBuilder builder, IOlieConfig config)
+    private static void AddOlieEntityFramework(this WebApplicationBuilder builder, OlieConfig config)
     {
         var serverVersion = ServerVersion.AutoDetect(config.MySqlConnection);
         void mySqlOptions(DbContextOptionsBuilder options)
@@ -79,7 +80,7 @@ public static class Program
         builder.Services.AddScoped<IMyRepository, MyRepository>();
     }
 
-    private static OlieConfig AddConfiguration(this WebApplicationBuilder builder)
+    private static OlieConfig AddOlieConfiguration(this WebApplicationBuilder builder)
     {
         builder.Configuration
             .AddEnvironmentVariables()
@@ -89,7 +90,7 @@ public static class Program
         return new OlieConfig(builder.Configuration);
     }
 
-    private static void AddResponseMiddleware(this WebApplicationBuilder builder)
+    private static void AddOlieResponseMiddleware(this WebApplicationBuilder builder)
     {
         builder.Services.AddResponseCompression(options =>
         {
@@ -103,7 +104,7 @@ public static class Program
         });
     }
 
-    private static void AddCors(this WebApplicationBuilder builder, IOlieConfig config)
+    private static void AddOlieCors(this WebApplicationBuilder builder, OlieConfig config)
     {
         builder.Services.AddCors(options =>
         {
@@ -119,12 +120,12 @@ public static class Program
 
     public static ServiceBusAdministrationClient ServiceBusAdministrationClient(this IOlieConfig config)
     {
-        return new ServiceBusAdministrationClient(config.AwsServiceBus, config.Credential);
+        return new ServiceBusAdministrationClient(config.ServiceBus, new DefaultAzureCredential());
     }
 
     public static ServiceBusSender ServiceBusSender(this IOlieConfig config)
     {
-        var client = new ServiceBusClient(config.AwsServiceBus, config.Credential);
+        var client = new ServiceBusClient(config.ServiceBus, new DefaultAzureCredential());
         return client.CreateSender(config.SatelliteRequestQueueName);
     }
 }

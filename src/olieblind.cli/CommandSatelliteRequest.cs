@@ -1,6 +1,7 @@
 ﻿using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
+using Azure.Identity;
 using Azure.Messaging.ServiceBus;
 using Azure.Storage.Blobs;
 using Microsoft.Extensions.Logging;
@@ -25,8 +26,8 @@ public class CommandSatelliteRequest(ILogger<CommandSatelliteRequest> logger, IS
             logger.LogInformation("{loggerName} triggered", LoggerName);
 
             using var awsClient = new AmazonS3Client(new AnonymousAWSCredentials(), RegionEndpoint.USEast1);
-            var blobClient = new BlobContainerClient(new Uri(config.BlobBronzeContainerUri), config.Credential);
-            await using var sbClient = new ServiceBusClient(config.AwsServiceBus, config.Credential);
+            var blobClient = new BlobContainerClient(new Uri(config.BlobBronzeContainerUri), new DefaultAzureCredential());
+            await using var sbClient = new ServiceBusClient(config.ServiceBus, new DefaultAzureCredential());
             await using var receiver = sbClient.CreateReceiver(config.SatelliteRequestQueueName);
 
             await process.Run(receiver, awsClient, blobClient, ct);

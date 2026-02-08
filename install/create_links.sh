@@ -6,10 +6,10 @@ ln --symbolic --force ~/source/repos/olieblind/src/olieblind.cli/Resources/Mount
 mkdir -p ~/olieblind
 cd ~/olieblind
 chmod go-rx .
-ln --symbolic --force ~/source/repos/olieblind/scripts/deploy/deployOlieBlind.sh
-ln --symbolic --force ~/source/repos/olieblind/scripts/start/startOlieBlind.Cli.sh
-ln --symbolic --force ~/source/repos/olieblind/scripts/start/startOlieBlind.Api.sh
-ln --symbolic --force ~/source/repos/olieblind/scripts/start/stopOlieBlind.Api.sh
-ln --symbolic --force ~/source/repos/olieblind/scripts/start/stopOlieBlind.Web.sh
-ln --symbolic --force ~/source/repos/olieblind/scripts/start/startOlieBlind.Web.sh
-ln --symbolic --force ~/source/repos/olieblind/scripts/start/stopOlieBlind.Cli.sh
+ln --symbolic --force ~/source/repos/olieblind/scripts/deploy/deploy.sh
+ln --symbolic --force ~/source/repos/olieblind/scripts/start/start_api.sh
+ln --symbolic --force ~/source/repos/olieblind/scripts/start/start_cli.sh
+ln --symbolic --force ~/source/repos/olieblind/scripts/start/start_web.sh
+ln --symbolic --force ~/source/repos/olieblind/scripts/start/stop_api.sh
+ln --symbolic --force ~/source/repos/olieblind/scripts/start/stop_cli.sh
+ln --symbolic --force ~/source/repos/olieblind/scripts/start/stop_web.sh

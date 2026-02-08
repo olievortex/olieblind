@@ -1,6 +1,7 @@
 ﻿using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
+using Azure.Identity;
 using Azure.Storage.Blobs;
 using Microsoft.Extensions.Logging;
 using olieblind.lib.Processes.Interfaces;
@@ -23,7 +24,7 @@ public class CommandEventsDatabase(IImportStormEventsDatabaseProcess process, IO
             logger.LogInformation("{loggerName} triggered for year {year}", LoggerName, year);
 
             var awsClient = new AmazonS3Client(new AnonymousAWSCredentials(), RegionEndpoint.USEast1);
-            var blobClient = new BlobContainerClient(new Uri(config.BlobBronzeContainerUri), config.Credential);
+            var blobClient = new BlobContainerClient(new Uri(config.BlobBronzeContainerUri), new DefaultAzureCredential());
 
             // Run
             await process.Run(year, update, blobClient, awsClient, ct);

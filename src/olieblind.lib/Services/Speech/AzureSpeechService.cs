@@ -1,4 +1,5 @@
-﻿using Microsoft.CognitiveServices.Speech;
+﻿using Azure.Identity;
+using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
 using System.Diagnostics.CodeAnalysis;
 
@@ -7,7 +8,7 @@ namespace olieblind.lib.Services.Speech;
 [ExcludeFromCodeCoverage]
 public class AzureSpeechService(IOlieConfig config) : IOlieSpeechService
 {
-    public async Task<TimeSpan> SpeechGenerateAsync(string voiceName, string script, string fileName, CancellationToken _)
+    public async Task<TimeSpan> SpeechGenerateAsync(string voiceName, string script, string fileName, CancellationToken ct)
     {
         const int delay = 30;
         const int maxTries = 5;
@@ -21,7 +22,7 @@ public class AzureSpeechService(IOlieConfig config) : IOlieSpeechService
             catch (Exception)
             {
                 if (!retry || i >= maxTries) throw;
-                await Task.Delay(TimeSpan.FromSeconds(delay * i));
+                await Task.Delay(TimeSpan.FromSeconds(delay * i), ct);
             }
 
         async Task<TimeSpan> Meow()
@@ -63,7 +64,7 @@ public class AzureSpeechService(IOlieConfig config) : IOlieSpeechService
 
         // Speech Config
         var context = new Azure.Core.TokenRequestContext([SpeechScope]);
-        var defaultToken = config.Credential.GetToken(context);
+        var defaultToken = new DefaultAzureCredential().GetToken(context);
         var aadToken = defaultToken.Token;
         var authorizationToken = $"aad#{config.SpeechResourceId}#{aadToken}";
         var speechConfig = SpeechConfig.FromAuthorizationToken(authorizationToken, config.SpeechRegion);

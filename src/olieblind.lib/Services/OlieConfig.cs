@@ -7,9 +7,6 @@ namespace olieblind.lib.Services;
 [ExcludeFromCodeCoverage]
 public class OlieConfig(IConfiguration config) : IOlieConfig
 {
-    private readonly IConfiguration _config = config;
-
-    public DefaultAzureCredential Credential { get; } = new DefaultAzureCredential();
 
     public string ApplicationInsightsConnectionString => GetString("APPLICATIONINSIGHTS_CONNECTION_STRING");
 
@@ -51,7 +48,7 @@ public class OlieConfig(IConfiguration config) : IOlieConfig
 
     public string BlobBronzeContainerUri => GetString("OlieBlobBronzeContainerUri");
 
-    public string AwsServiceBus => GetString("OlieAwsServiceBus");
+    public string ServiceBus => GetString("OlieAwsServiceBus");
 
     public int SatelliteRequestGlobalLimit => GetInt("OlieSatelliteRequestGlobalLimit");
 
@@ -63,7 +60,7 @@ public class OlieConfig(IConfiguration config) : IOlieConfig
 
     private string GetString(string key)
     {
-        return _config[key] ?? throw new ApplicationException($"{key} setting missing from configuration");
+        return config[key] ?? throw new ApplicationException($"{key} setting missing from configuration");
     }
 
     private string[] GetArray(string key)
