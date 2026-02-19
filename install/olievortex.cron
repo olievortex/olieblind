@@ -40,8 +40,8 @@
 20 1 * * * /home/olievortex/olieblind/start_cli.sh spcmesos 2026
 25 1 * * * /home/olievortex/olieblind/start_cli.sh satelliteinventory 2026
 30 1 * * * /home/olievortex/olieblind/start_cli.sh satellitemarquee 2026
-* * * * * /home/olievortex/olieblind/start_cli.sh satelliterequest
 
 #### Startup
+@reboot sleep 40; /home/olievortex/olieblind/start_satelliterequest.sh
 @reboot sleep 10; /home/olievortex/olieblind/start_api.sh
 @reboot /home/olievortex/olieblind/start_web.sh

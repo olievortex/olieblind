@@ -90,7 +90,7 @@ dotnet publish ${base_blind_web}/olieblind.web.csproj --configuration Release --
 
 echo
 echo olieblind.cli - stop satelliterequest process
-~/olieblind/stop_cli.sh
+~/olieblind/stop_satelliterequest.sh
 
 echo olieblind.cli - deploy
 cd ${base_blind_cli}/bin/Release/net10.0/publish
@@ -98,6 +98,10 @@ tar -cf ../publish.tar *
 cd ${pub_cli}
 rm -rf *
 tar -xf ${base_blind_cli}/bin/Release/net10.0/publish.tar
+
+echo
+echo olieblind.cli - start satelliterequest process
+~/olieblind/start_satelliterequest.sh
 
 echo
 echo olieblind.api - stop website

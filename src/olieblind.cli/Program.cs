@@ -107,7 +107,8 @@ public class Program
         var config = new OlieConfig(configuration);
         var host = new OlieHost
         {
-            ServiceScopeFactory = CreateHostServices(config).Services.GetRequiredService<IServiceScopeFactory>()
+            ServiceScopeFactory = CreateHostServices(configuration).Services
+                .GetRequiredService<IServiceScopeFactory>()
         };
 
         services.AddLogging(builder =>
@@ -121,7 +122,7 @@ public class Program
             );
         });
         services.Configure<TelemetryConfiguration>(config => config.TelemetryChannel = _channel);
-        services.AddScoped(_ => (IConfiguration)configuration);
+        services.AddSingleton(_ => (IConfiguration)configuration);
         services.AddSingleton(_ => host);
         services.AddSingleton<IOlieConfig, OlieConfig>();
         services.AddHttpClient();
@@ -149,8 +150,10 @@ public class Program
         _serviceProvider = services.BuildServiceProvider();
     }
 
-    private static IHost CreateHostServices(OlieConfig config)
+    private static IHost CreateHostServices(IConfiguration config)
     {
+        var olieConfig = new OlieConfig(config);
+
         var host = Host.CreateDefaultBuilder()
             .ConfigureServices((context, services) =>
             {
@@ -158,7 +161,7 @@ public class Program
 
                 services.AddDbContext<MyContext>(options =>
                 {
-                    var connectionString = config.MySqlConnection;
+                    var connectionString = olieConfig.MySqlConnection;
 
                     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
                 }, ServiceLifetime.Scoped);
@@ -167,9 +170,9 @@ public class Program
 
                 #region Miscellaneous
 
+                services.AddSingleton(_ => config);
                 services.AddHttpClient();
                 services.AddOlieLibScopes();
-                services.AddScoped<IMyRepository, MyRepository>();
 
                 #endregion
             })

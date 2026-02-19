@@ -13,8 +13,6 @@ public class SatelliteRequestProcess(
     IMyRepository repo,
     IOlieConfig config) : ISatelliteRequestProcess
 {
-    private const int MaxIterations = 50;
-
     public async Task Run(SatelliteRequestQueueModel model, BlobContainerClient bronzeClient, IAmazonS3 amazonS3Client, CancellationToken ct)
     {
         var product = await repo.SatelliteProductGet(model.Id, model.EffectiveDate, ct)
