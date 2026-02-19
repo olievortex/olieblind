@@ -15,7 +15,6 @@ namespace olieblind.cli;
 public class CommandSatelliteRequest(ILogger<CommandSatelliteRequest> logger, IOlieConfig config, IOlieWebService ows, OlieHost host)
 {
     private const string LoggerName = $"olieblind.cli {nameof(CommandSatelliteRequest)}";
-    public const string MutexName = "Global\\olieblind.cli.CommandSatelliteRequest";
 
     public async Task<int> Run(CancellationToken ct)
     {
@@ -33,10 +32,6 @@ public class CommandSatelliteRequest(ILogger<CommandSatelliteRequest> logger, IO
 
             do
             {
-                // Be a respectful little background worker
-                Console.WriteLine("Hi dillon!");
-                GC.Collect();
-
                 var message = await ows.ServiceBusReceiveJson<SatelliteRequestQueueModel>(receiver, timeout, ct);
                 if (message is null) continue;
 
@@ -46,6 +41,9 @@ public class CommandSatelliteRequest(ILogger<CommandSatelliteRequest> logger, IO
                 await process.Run(message.Body, blobClient, awsClient, CancellationToken.None);
 
                 await ows.ServiceBusCompleteMessage(receiver, message, ct);
+
+                // Be a respectful little background worker
+                GC.Collect();
             } while (!ct.IsCancellationRequested);
 
             return 0;
