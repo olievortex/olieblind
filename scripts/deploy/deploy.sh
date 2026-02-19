@@ -53,16 +53,19 @@ if [ ! -x ${sourceFile} ]; then
     exit 1
 fi
 
+echo
 echo olievortex_purple - deploy
 cd ${base_purple}
 rm -rf ${pub_purple}/__pycache__
 cp -r . ${pub_purple}
 
+echo
 echo olieblind.brown - deploy
 cd ${base_blind_brown}
 rm -rf ${pub_brown}/__pycache__
 cp -r * ${pub_brown}
 
+echo
 echo olieblind - dotnet clean
 cd ${base_blind}
 dotnet clean
@@ -121,6 +124,7 @@ echo
 echo olieblind.web - stop website
 ~/olieblind/stop_web.sh
 
+echo
 echo olieblind.web - deploy
 cd ${base_blind_web}/bin/Release/net10.0/publish
 tar -cf ../publish.tar *
@@ -128,6 +132,7 @@ cd ${pub_web}
 rm -rf *
 tar -xf ${base_blind_web}/bin/Release/net10.0/publish.tar
 
+echo
 echo solieblind.web - start website
 ~/olieblind/start_web.sh
 
