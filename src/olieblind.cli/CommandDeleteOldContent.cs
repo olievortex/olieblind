@@ -1,12 +1,13 @@
 ﻿using Azure.Identity;
 using Azure.Storage.Blobs;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using olieblind.lib.Processes.Interfaces;
 using olieblind.lib.Services;
 
 namespace olieblind.cli;
 
-public class CommandDeleteOldContent(IDeleteOldContentProcess process, IOlieConfig config, ILogger<CommandDeleteOldContent> logger)
+public class CommandDeleteOldContent(ILogger<CommandDeleteOldContent> logger, IOlieConfig config, OlieHost host)
 {
     private const string LoggerName = $"olieblind.cli {nameof(CommandDeleteOldContent)}";
 
@@ -16,6 +17,9 @@ public class CommandDeleteOldContent(IDeleteOldContentProcess process, IOlieConf
         {
             Console.WriteLine($"{LoggerName} triggered");
             logger.LogInformation("{loggerName} triggered", LoggerName);
+
+            using var scope = host.ServiceScopeFactory.CreateScope();
+            var process = scope.ServiceProvider.GetRequiredService<IDeleteOldContentProcess>();
 
             var bcc = new BlobContainerClient(config.MySqlBackupContainer, new DefaultAzureCredential());
 

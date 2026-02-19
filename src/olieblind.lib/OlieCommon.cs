@@ -95,7 +95,7 @@ public static class OlieCommon
     }
 
     [ExcludeFromCodeCoverage]
-    public static void AddOlieLibScopes(this ServiceCollection services)
+    public static void AddOlieLibScopes(this IServiceCollection services)
     {
         #region Services
 

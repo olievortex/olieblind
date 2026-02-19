@@ -3,10 +3,12 @@ using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using olieblind.data;
 using olieblind.lib;
 using olieblind.lib.Services;
+using System.Runtime.InteropServices;
 
 namespace olieblind.cli;
 
@@ -15,23 +17,34 @@ public class Program
     private static readonly InMemoryChannel _channel = new();
     private static ServiceProvider _serviceProvider = new ServiceCollection().BuildServiceProvider();
 
-    private static int Main(string[] args)
+    private static async Task<int> Main(string[] args)
     {
-        var olieConfig = AddConfiguration();
-        CreateService(olieConfig);
+        AddServices();
 
         var exitCode = 0;
         var logger = CreateLogger<Program>();
-        var ct = CancellationToken.None;
+        var cts = new CancellationTokenSource();
+
+        PosixSignalRegistration.Create(PosixSignal.SIGINT, signalContext =>
+        {
+            cts.Cancel();
+            Console.WriteLine($"{DateTime.UtcNow:u} olieblind.cli - SIGINT detected.");
+            signalContext.Cancel = true;
+        });
+
+        PosixSignalRegistration.Create(PosixSignal.SIGTERM, signalContext =>
+        {
+            cts.Cancel();
+            Console.WriteLine($"{DateTime.UtcNow:u} olieblind.cli - SIGTERM detected.");
+            signalContext.Cancel = true;
+        });
 
         try
         {
             Console.WriteLine($"{DateTime.UtcNow:u} olieblind.cli");
             logger.LogInformation("{timeStamp} olieblind.cli", DateTime.UtcNow.ToString("u"));
 
-            var t = MainAsync(args, ct);
-            t.Wait();
-            exitCode = t.Result;
+            exitCode = await MainAsync(args, cts.Token);
         }
         catch (Exception ex)
         {
@@ -84,24 +97,22 @@ public class Program
         return _serviceProvider.GetRequiredService<T>();
     }
 
-    private static IConfigurationRoot AddConfiguration()
+    private static void AddServices()
     {
-        return new ConfigurationBuilder()
-            .AddEnvironmentVariables()
-            .AddUserSecrets<Program>()
-            .Build();
-    }
-
-    private static void CreateService(IConfiguration configuration)
-    {
-        var olieConfig = new OlieConfig(configuration);
         var services = new ServiceCollection();
-
-        #region Logging
+        var configuration = new ConfigurationBuilder()
+           .AddEnvironmentVariables()
+           .AddUserSecrets<Program>()
+           .Build();
+        var config = new OlieConfig(configuration);
+        var host = new OlieHost
+        {
+            ServiceScopeFactory = CreateHostServices(config).Services.GetRequiredService<IServiceScopeFactory>()
+        };
 
         services.AddLogging(builder =>
         {
-            var connectionString = olieConfig.ApplicationInsightsConnectionString;
+            var connectionString = config.ApplicationInsightsConnectionString;
 
             // Only Application Insights is registered as a logger provider
             builder.AddApplicationInsights(
@@ -109,29 +120,11 @@ public class Program
                 configureApplicationInsightsLoggerOptions: (options) => { }
             );
         });
-
-        #endregion
-
-        #region Entity Framework
-
-        services.AddDbContext<MyContext>(options =>
-        {
-            var connectionString = olieConfig.MySqlConnection;
-
-            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
-        }, ServiceLifetime.Scoped);
-
-        #endregion
-
-        #region Miscellaneous
-
         services.Configure<TelemetryConfiguration>(config => config.TelemetryChannel = _channel);
-        services.AddScoped(_ => configuration);
-        services.AddHttpClient();
-        services.AddOlieLibScopes();
-        services.AddScoped<IMyRepository, MyRepository>();
-
-        #endregion
+        services.AddScoped(_ => (IConfiguration)configuration);
+        services.AddSingleton(_ => host);
+        services.AddSingleton<IOlieConfig, OlieConfig>();
+        services.AddScoped<IOlieWebService, OlieWebService>();
 
         #region Commands
 
@@ -153,6 +146,35 @@ public class Program
         #endregion
 
         _serviceProvider = services.BuildServiceProvider();
+    }
+
+    private static IHost CreateHostServices(IOlieConfig config)
+    {
+        var host = Host.CreateDefaultBuilder()
+            .ConfigureServices((context, services) =>
+            {
+                #region Entity Framework
+
+                services.AddDbContext<MyContext>(options =>
+                {
+                    var connectionString = config.MySqlConnection;
+
+                    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+                }, ServiceLifetime.Scoped);
+
+                #endregion
+
+                #region Miscellaneous
+
+                services.AddHttpClient();
+                services.AddOlieLibScopes();
+                services.AddScoped<IMyRepository, MyRepository>();
+
+                #endregion
+            })
+            .Build();
+
+        return host;
     }
 
     private static void FlushChannel()

@@ -1,9 +1,10 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using olieblind.lib.Processes.Interfaces;
 
 namespace olieblind.cli;
 
-public class CommandDayOneMaps(ICreateDayOneMapsProcess process, ILogger<CommandDayOneMaps> logger)
+public class CommandDayOneMaps(ILogger<CommandDayOneMaps> logger, OlieHost host)
 {
     private const string LoggerName = $"olieblind.cli {nameof(CommandDayOneMaps)}";
     private const int EffectiveHour = 0;
@@ -16,7 +17,11 @@ public class CommandDayOneMaps(ICreateDayOneMapsProcess process, ILogger<Command
             Console.WriteLine($"{LoggerName} triggered");
             logger.LogInformation("{loggerName} triggered", LoggerName);
 
+            using var scope = host.ServiceScopeFactory.CreateScope();
+            var process = scope.ServiceProvider.GetRequiredService<ICreateDayOneMapsProcess>();
+
             await process.Run(DateOnly.FromDateTime(DateTime.UtcNow), EffectiveHour, ForecastHour, ct);
+
             return 0;
         }
         catch (Exception ex)
