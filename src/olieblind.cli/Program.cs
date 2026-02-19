@@ -25,14 +25,14 @@ public class Program
         var logger = CreateLogger<Program>();
         var cts = new CancellationTokenSource();
 
-        PosixSignalRegistration.Create(PosixSignal.SIGINT, signalContext =>
+        using var sigint = PosixSignalRegistration.Create(PosixSignal.SIGINT, signalContext =>
         {
             cts.Cancel();
             Console.WriteLine($"{DateTime.UtcNow:u} olieblind.cli - SIGINT detected.");
             signalContext.Cancel = true;
         });
 
-        PosixSignalRegistration.Create(PosixSignal.SIGTERM, signalContext =>
+        using var sigterm = PosixSignalRegistration.Create(PosixSignal.SIGTERM, signalContext =>
         {
             cts.Cancel();
             Console.WriteLine($"{DateTime.UtcNow:u} olieblind.cli - SIGTERM detected.");
@@ -124,6 +124,7 @@ public class Program
         services.AddScoped(_ => (IConfiguration)configuration);
         services.AddSingleton(_ => host);
         services.AddSingleton<IOlieConfig, OlieConfig>();
+        services.AddHttpClient();
         services.AddScoped<IOlieWebService, OlieWebService>();
 
         #region Commands
@@ -148,7 +149,7 @@ public class Program
         _serviceProvider = services.BuildServiceProvider();
     }
 
-    private static IHost CreateHostServices(IOlieConfig config)
+    private static IHost CreateHostServices(OlieConfig config)
     {
         var host = Host.CreateDefaultBuilder()
             .ConfigureServices((context, services) =>

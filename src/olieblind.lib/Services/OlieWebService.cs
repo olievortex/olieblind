@@ -395,11 +395,11 @@ public class OlieWebService(IHttpClientFactory httpClientFactory, IOlieConfig co
         await receiver.CompleteMessageAsync(message.ServiceBusReceivedMessage, ct);
     }
 
-    public async Task<OlieServiceBusReceivedMessage<T>?> ServiceBusReceiveJson<T>(ServiceBusReceiver receiver, CancellationToken ct)
+    public async Task<OlieServiceBusReceivedMessage<T>?> ServiceBusReceiveJson<T>(ServiceBusReceiver receiver, TimeSpan timeout, CancellationToken ct)
     {
         try
         {
-            var message = await receiver.ReceiveMessageAsync(TimeSpan.FromMinutes(60), ct);
+            var message = await receiver.ReceiveMessageAsync(timeout, ct);
             if (message is null) return null;
             var json = message.Body.ToString();
             var body = JsonConvert.DeserializeObject<T>(json)

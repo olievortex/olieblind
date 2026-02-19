@@ -1,10 +1,10 @@
 ﻿using Amazon.S3;
-using Azure.Messaging.ServiceBus;
 using Azure.Storage.Blobs;
+using olieblind.lib.Models;
 
 namespace olieblind.lib.Processes.Interfaces;
 
 public interface ISatelliteRequestProcess
 {
-    Task Run(ServiceBusReceiver receiver, IAmazonS3 awsClient, BlobContainerClient bronzeClient, CancellationToken ct);
+    Task Run(SatelliteRequestQueueModel model, BlobContainerClient bronzeClient, IAmazonS3 awsClient, CancellationToken ct);
 }
