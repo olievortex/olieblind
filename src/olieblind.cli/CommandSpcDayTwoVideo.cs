@@ -1,10 +1,11 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using olieblind.lib.Processes.Interfaces;
 using olieblind.lib.Services;
 
 namespace olieblind.cli;
 
-public class CommandSpcDayTwoVideo(ICreateSpcOutlookVideoProcess process, IOlieConfig config, ILogger<CommandSpcDayTwoVideo> logger)
+public class CommandSpcDayTwoVideo(ILogger<CommandSpcDayTwoVideo> logger, IOlieConfig config, OlieHost host)
 {
     private const int DayNumber = 2;
     private const string FontName = "Spicy Rice";
@@ -16,6 +17,9 @@ public class CommandSpcDayTwoVideo(ICreateSpcOutlookVideoProcess process, IOlieC
         {
             Console.WriteLine($"{LoggerName} triggered");
             logger.LogInformation("{loggerName} triggered", LoggerName);
+
+            using var scope = host.ServiceScopeFactory.CreateScope();
+            var process = scope.ServiceProvider.GetRequiredService<ICreateSpcOutlookVideoProcess>();
 
             await process.Run(
                 config.VideoPath,

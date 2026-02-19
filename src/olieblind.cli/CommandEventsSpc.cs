@@ -1,12 +1,13 @@
 ﻿using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using olieblind.lib.Processes.Interfaces;
 
 namespace olieblind.cli;
 
-public class CommandEventsSpc(ILogger<CommandEventsSpc> logger, IImportStormEventsSpcProcess process)
+public class CommandEventsSpc(ILogger<CommandEventsSpc> logger, OlieHost host)
 {
     private const string LoggerName = $"olieblind.cli {nameof(CommandEventsSpc)}";
 
@@ -20,6 +21,10 @@ public class CommandEventsSpc(ILogger<CommandEventsSpc> logger, IImportStormEven
             logger.LogInformation("{loggerName} triggered for year {year}", LoggerName, year);
 
             var awsClient = new AmazonS3Client(new AnonymousAWSCredentials(), RegionEndpoint.USEast1);
+
+            using var scope = host.ServiceScopeFactory.CreateScope();
+            var process = scope.ServiceProvider.GetRequiredService<IImportStormEventsSpcProcess>();
+
             await process.Run(year, awsClient, ct);
 
             return 0;

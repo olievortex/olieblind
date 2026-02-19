@@ -3,13 +3,14 @@ using Amazon.Runtime;
 using Amazon.S3;
 using Azure.Identity;
 using Azure.Storage.Blobs;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using olieblind.lib.Processes.Interfaces;
 using olieblind.lib.Services;
 
 namespace olieblind.cli;
 
-public class CommandEventsDatabase(IImportStormEventsDatabaseProcess process, IOlieConfig config, ILogger<CommandEventsDatabase> logger)
+public class CommandEventsDatabase(IOlieConfig config, ILogger<CommandEventsDatabase> logger, OlieHost host)
 {
     private const string LoggerName = $"olieblind.cli {nameof(CommandEventsDatabase)}";
 
@@ -25,6 +26,9 @@ public class CommandEventsDatabase(IImportStormEventsDatabaseProcess process, IO
 
             var awsClient = new AmazonS3Client(new AnonymousAWSCredentials(), RegionEndpoint.USEast1);
             var blobClient = new BlobContainerClient(new Uri(config.BlobBronzeContainerUri), new DefaultAzureCredential());
+
+            using var scope = host.ServiceScopeFactory.CreateScope();
+            var process = scope.ServiceProvider.GetRequiredService<IImportStormEventsDatabaseProcess>();
 
             // Run
             await process.Run(year, update, blobClient, awsClient, ct);

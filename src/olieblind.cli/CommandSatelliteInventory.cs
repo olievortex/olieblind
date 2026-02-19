@@ -1,12 +1,13 @@
 ﻿using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using olieblind.lib.Processes.Interfaces;
 
 namespace olieblind.cli;
 
-public class CommandSatelliteInventory(ILogger<CommandSatelliteInventory> logger, ISatelliteInventoryProcess process)
+public class CommandSatelliteInventory(ILogger<CommandSatelliteInventory> logger, OlieHost host)
 {
     private const string LoggerName = $"olieblind.cli {nameof(CommandSatelliteInventory)}";
 
@@ -20,6 +21,10 @@ public class CommandSatelliteInventory(ILogger<CommandSatelliteInventory> logger
             logger.LogInformation("{loggerName} triggered", LoggerName);
 
             using var client = new AmazonS3Client(new AnonymousAWSCredentials(), RegionEndpoint.USEast1);
+
+            using var scope = host.ServiceScopeFactory.CreateScope();
+            var process = scope.ServiceProvider.GetRequiredService<ISatelliteInventoryProcess>();
+
             await process.Run(year, client, ct);
 
             return 0;

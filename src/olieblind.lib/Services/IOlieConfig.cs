@@ -1,6 +1,4 @@
-﻿using Azure.Identity;
-
-namespace olieblind.lib.Services;
+﻿namespace olieblind.lib.Services;
 
 public interface IOlieConfig
 {

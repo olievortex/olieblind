@@ -1,4 +1,3 @@
-using Azure.Identity;
 using Microsoft.Extensions.Configuration;
 using System.Diagnostics.CodeAnalysis;
 
