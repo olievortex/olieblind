@@ -1,35 +1,34 @@
 @page
 @model CookiePolicy
 @{
-    ViewData["Title"] = "Cookie Settings";
+    ViewData["Title"] = "Cookie Policy";
 }
 <h1>@ViewData["Title"]</h1>
 
 <p>
-    Cookies are small text files stored on your device when visiting a website. Cookies are used to remember your
-    preferences and improve your browsing experience. Our website uses these types of cookies:
+    This website uses cookies and similar technologies to provide core functionality, to remember your preferences,
+    to provide analytics and to enable authentication. This Cookie Policy explains the types of cookies we use, why
+    we use them, and how you can control cookie settings.
 </p>
 
-<p>1. Essential cookies.</p>
+<h2>What are cookies?</h2>
 <p>
-    These cookies allow you to move around the site and use essential features like secured areas. Without these
-    cookies, we cannot provide the requested services. We use these cookies to identify you as being logged in to our
-    site, to authenticate you, and for security purposes.
+    Cookies are small text files stored on your device by your web browser. They can be "session" cookies (deleted when
+    you close your browser) or "persistent" cookies (remain on your device for a fixed period). Cookies may be set by
+    this site (first-party cookies) or by third-parties (third-party cookies).
 </p>
 
-<p>2. Cookies for personalization.</p>
-<p>
-    These are used to remembering settings you've applied, like your cookie consent setting, and if you closed the
-    cookie consent banner.
-</p>
+<h2>Why we use cookies</h2>
+<ul>
+    <li>Essential cookies: required for security, sign-in and basic site functionality.</li>
+    <li>Preference cookies: remember choices you make (language, cookie consent, UI settings).</li>
+    <li>Analytics cookies: help us understand how the site is used so we can improve performance and user experience.</li>
+    <li>Authentication cookies: used by identity providers to sign you in and keep you signed in securely.</li>
+</ul>
 
-<p>3. Cookies for tracking.</p>
-<p>
-    These cookies are used by tools that helps developers monitor and improve the performance and usage of their
-    applications.
-</p>
-
-<p>List of cookies used on this website:</p>
+<h2>Cookies used on this site</h2>
+<p>The following table lists common cookies that may be set when you visit this website. Exact cookie names and
+expiration periods may vary depending on configuration and third-party services in use.</p>
 
 <table class="table table-striped">
     <thead>
@@ -38,120 +37,86 @@
             <th scope="col">Service</th>
             <th scope="col">Category</th>
             <th scope="col">Purpose</th>
-            <th scope="col">Description</th>
+            <th scope="col">Typical retention</th>
         </tr>
     </thead>
     <tbody>
         <tr>
             <td>.AspNetCore.Antiforgery.*</td>
-            <td>.olievortex.com</td>
+            <td>This site</td>
             <td>Essential</td>
-            <td>Security</td>
-            <td>Proves data you send to our site came from you</td>
+            <td>CSRF protection for form posts and secure requests</td>
+            <td>Session</td>
         </tr>
         <tr>
             <td>.AspNetCore.Cookies</td>
-            <td>.olievortex.com</td>
-            <td>Essential</td>
-            <td>Security</td>
-            <td>Tells us you are logged into the site</td>
+            <td>This site</td>
+            <td>Essential / Authentication</td>
+            <td>Sign-in session and authentication state</td>
+            <td>Session or persistent (configurable)</td>
         </tr>
         <tr>
             <td>.AspNetCore.Session</td>
-            <td>.olievortex.com</td>
+            <td>This site</td>
             <td>Essential</td>
+            <td>Server-side session identifier used for site functionality</td>
             <td>Session</td>
-            <td>Allows us to provide functional continuity from one page to the next</td>
         </tr>
         <tr>
-            <td>OlieCookieConsent</td>
-            <td>.olievortex.com</td>
-            <td>Essential</td>
-            <td>Personal Setting</td>
-            <td>Record of your cookie consent choice</td>
+            <td>OlieCookieConsent (or similar)</td>
+            <td>This site</td>
+            <td>Preference</td>
+            <td>Records your cookie consent and preferences</td>
+            <td>1 year (typical)</td>
         </tr>
         <tr>
-            <td>.AspNetCore.OpenIdConnect.Nonce.*</td>
-            <td>.olievortex.com</td>
-            <td>Essential</td>
-            <td>Authentication</td>
-            <td>Used to authentice you with our identity provider</td>
-        </tr>
-        <tr>
-            <td>.AspNetCore.Correlation.*</td>
-            <td>.olievortex.com</td>
-            <td>Essential</td>
-            <td>Authentication</td>
-            <td>Used to authentice you with our identity provider</td>
-        </tr>
-        <tr>
-            <td>x-ms-cpim-cache|*</td>
-            <td>.olievortex.b2clogin.com</td>
-            <td>Essential</td>
-            <td>Authentication</td>
-            <td>Used by our identity provider to authenticate you</td>
-        </tr>
-        <tr>
-            <td>x-ms-cpim-csrf</td>
-            <td>.olievortex.b2clogin.com</td>
-            <td>Essential</td>
-            <td>Authentication</td>
-            <td>Used by our identity provider to authenticate you</td>
-        </tr>
-        <tr>
-            <td>x-ms-cpim-sso:olievortex.onmicrosoft.com_0</td>
-            <td>.olievortex.b2clogin.com</td>
-            <td>Essential</td>
-            <td>Authentication</td>
-            <td>Used by our identity provider to authenticate you</td>
-        </tr>
-        <tr>
-            <td>x-ms-cpim-trans</td>
-            <td>.olievortex.b2clogin.com</td>
-            <td>Essential</td>
-            <td>Authentication</td>
-            <td>Used by our identity provider to authenticate you</td>
-        </tr>
-        <tr>
-            <td>ai_session</td>
-            <td>.olievortex.com</td>
-            <td>Tracking</td>
-            <td>Application Insights</td>
+            <td>kinde_* (e.g. kinde_session, kinde_csrf, kinde_refresh)</td>
+            <td>Kinde (identity provider)</td>
+            <td>Essential / Authentication</td>
             <td>
-                Application Insights is a tool that helps developers monitor and improve the performance and usage of their
-                applications
+                Used to authenticate users, maintain sign-in state, and protect authentication flows. These cookies
+                are set by the Kinde authentication service when you sign in.
             </td>
+            <td>Session or persistent depending on configuration</td>
         </tr>
         <tr>
-            <td>ai_user</td>
-            <td>.olievortex.com</td>
-            <td>Tracking</td>
-            <td>Application Insights</td>
-            <td>
-                Application Insights is a tool that helps developers monitor and improve the performance and usage of their
-                applications
-            </td>
+            <td>ai_session, ai_user</td>
+            <td>Application Insights (Microsoft / Azure)</td>
+            <td>Analytics / Tracking</td>
+            <td>Collects telemetry about usage, errors and performance to help improve the site</td>
+            <td>Session / 1 year</td>
         </tr>
         <tr>
-            <td>_clck</td>
-            <td>.azure.com</td>
-            <td>Tracking</td>
-            <td>Application Insights</td>
-            <td>
-                Application Insights is a tool that helps developers monitor and improve the performance and usage of their
-                applications
-            </td>
-        </tr>
-        <tr>
-            <td>_clsk</td>
-            <td>.azure.com</td>
-            <td>Tracking</td>
-            <td>Application Insights</td>
-            <td>
-                Application Insights is a tool that helps developers monitor and improve the performance and usage of their
-                applications
-            </td>
+            <td>_clck, _clsk (and other Clarity / Azure cookies)</td>
+            <td>Microsoft / Azure services</td>
+            <td>Analytics</td>
+            <td>Helps measure usage and performance of the website (may be set by Azure services)</td>
+            <td>Session / persistent</td>
         </tr>
     </tbody>
 </table>
+
+<h2>Third-party cookies</h2>
+<p>
+    Some cookies are set by third-party services used on this site, such as the identity provider (Kinde) and
+    Microsoft Application Insights. These third parties have their own cookie and privacy policies. We recommend
+    reviewing their documentation for more details about how they use cookies.
+</p>
+
+<h2>Legal basis and consent</h2>
+<p>
+    Where required by law, we rely on your consent for non-essential cookies (analytics, marketing). Essential
+    cookies necessary for site operation and security do not require consent.
+</p>
+
+<h2>How to control cookies</h2>
+<p>
+    You can change your cookie preferences using the cookie settings control on the site (if available) or by
+    disabling cookies in your browser. Note that blocking or deleting cookies may break functionality, including
+    sign-in, personalization and some site features.
+</p>
+
+<h2>Contact</h2>
+<p>If you have questions about this Cookie Policy, contact the site administrator.</p>
+
 &nbsp;
