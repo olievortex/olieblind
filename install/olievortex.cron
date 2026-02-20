@@ -22,8 +22,7 @@
 #
 # m h  dom mon dow   command
 #### Housekeeping
-0 1 * * * /home/olievortex/olieblind/olieblind_dev_backup.sh
-5 1 * * * /home/olievortex/olieblind/olieblind_backup.sh
+0 1 * * * /home/olievortex/olieblind/olieblind_backup.sh
 10 1 * * * /home/olievortex/olieblind/start_cli.sh deleteoldcontent
 
 #### Severe Weather Maps
