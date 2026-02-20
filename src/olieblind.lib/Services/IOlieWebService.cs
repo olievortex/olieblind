@@ -73,7 +73,7 @@ public interface IOlieWebService
 
     Task ServiceBusCompleteMessage<T>(ServiceBusReceiver receiver, OlieServiceBusReceivedMessage<T> message, CancellationToken ct);
 
-    Task<OlieServiceBusReceivedMessage<T>?> ServiceBusReceiveJson<T>(ServiceBusReceiver receiver, CancellationToken ct);
+    Task<OlieServiceBusReceivedMessage<T>?> ServiceBusReceiveJson<T>(ServiceBusReceiver receiver, TimeSpan timeout, CancellationToken ct);
 
     Task<int> ServiceBusQueueLength(ServiceBusAdministrationClient adminClient, string queueName, CancellationToken ct);
 

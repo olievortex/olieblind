@@ -1,9 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using olieblind.lib.Radar.Interfaces;
 
 namespace olieblind.cli;
 
-public class CommandLoadRadars(IRadarBusiness business, ILogger<CommandLoadRadars> logger)
+public class CommandLoadRadars(ILogger<CommandLoadRadars> logger, OlieHost host)
 {
     private const string LoggerName = $"olieblind.cli {nameof(CommandLoadRadars)}";
 
@@ -16,7 +17,10 @@ public class CommandLoadRadars(IRadarBusiness business, ILogger<CommandLoadRadar
 
             var value = await File.ReadAllTextAsync("./Resources/nexrad-stations.txt", ct);
 
-            await business.PopulateRadarSitesFromCsv(value, ct);
+            using var scope = host.ServiceScopeFactory.CreateScope();
+            var process = scope.ServiceProvider.GetRequiredService<IRadarBusiness>();
+
+            await process.PopulateRadarSitesFromCsv(value, ct);
 
             return 0;
         }

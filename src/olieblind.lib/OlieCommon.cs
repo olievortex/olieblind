@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using olieblind.data;
 using olieblind.lib.DroughtMonitor;
 using olieblind.lib.ForecastModels;
 using olieblind.lib.Maintenance;
@@ -95,7 +96,7 @@ public static class OlieCommon
     }
 
     [ExcludeFromCodeCoverage]
-    public static void AddOlieLibScopes(this ServiceCollection services)
+    public static void AddOlieLibScopes(this IServiceCollection services)
     {
         #region Services
 
@@ -104,6 +105,7 @@ public static class OlieCommon
         services.AddScoped<IOlieImageService, OlieImageService>();
         services.AddScoped<IOlieSpeechService, GoogleSpeechService>();
         services.AddScoped<ICommonProcess, CommonProcess>();
+        services.AddScoped<IMyRepository, MyRepository>();
 
         #endregion
 

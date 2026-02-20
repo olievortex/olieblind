@@ -4,23 +4,23 @@ using Amazon.S3;
 using Azure.Identity;
 using Azure.Messaging.ServiceBus;
 using Azure.Storage.Blobs;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using olieblind.lib.Models;
 using olieblind.lib.Processes.Interfaces;
 using olieblind.lib.Services;
 
 namespace olieblind.cli;
 
-public class CommandSatelliteRequest(ILogger<CommandSatelliteRequest> logger, ISatelliteRequestProcess process, IOlieConfig config)
+public class CommandSatelliteRequest(ILogger<CommandSatelliteRequest> logger, IOlieConfig config, IOlieWebService ows, OlieHost host)
 {
     private const string LoggerName = $"olieblind.cli {nameof(CommandSatelliteRequest)}";
-    public const string MutexName = "Global\\olieblind.cli.CommandSatelliteRequest";
 
     public async Task<int> Run(CancellationToken ct)
     {
         try
         {
-            using var mutex = new Mutex(true, MutexName, out bool createdNew);
-            if (!createdNew) return 0;
+            var timeout = TimeSpan.FromSeconds(60);
 
             Console.WriteLine($"{LoggerName} triggered");
             logger.LogInformation("{loggerName} triggered", LoggerName);
@@ -30,7 +30,21 @@ public class CommandSatelliteRequest(ILogger<CommandSatelliteRequest> logger, IS
             await using var sbClient = new ServiceBusClient(config.ServiceBus, new DefaultAzureCredential());
             await using var receiver = sbClient.CreateReceiver(config.SatelliteRequestQueueName);
 
-            await process.Run(receiver, awsClient, blobClient, ct);
+            do
+            {
+                var message = await ows.ServiceBusReceiveJson<SatelliteRequestQueueModel>(receiver, timeout, ct);
+                if (message is null) continue;
+
+                using var scope = host.ServiceScopeFactory.CreateScope();
+                var process = scope.ServiceProvider.GetRequiredService<ISatelliteRequestProcess>();
+
+                await process.Run(message.Body, blobClient, awsClient, CancellationToken.None);
+
+                await ows.ServiceBusCompleteMessage(receiver, message, ct);
+
+                // Be a respectful little background worker
+                GC.Collect();
+            } while (!ct.IsCancellationRequested);
 
             return 0;
         }

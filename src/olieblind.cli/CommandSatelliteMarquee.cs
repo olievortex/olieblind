@@ -3,13 +3,14 @@ using Amazon.Runtime;
 using Amazon.S3;
 using Azure.Identity;
 using Azure.Storage.Blobs;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using olieblind.lib.Processes.Interfaces;
 using olieblind.lib.Services;
 
 namespace olieblind.cli;
 
-public class CommandSatelliteMarquee(ILogger<CommandSatelliteMarquee> logger, ISatelliteMarqueeProcess process, IOlieConfig config)
+public class CommandSatelliteMarquee(ILogger<CommandSatelliteMarquee> logger, IOlieConfig config, OlieHost host)
 {
     private const string LoggerName = $"olieblind.cli {nameof(CommandSatelliteMarquee)}";
 
@@ -24,6 +25,9 @@ public class CommandSatelliteMarquee(ILogger<CommandSatelliteMarquee> logger, IS
 
             using var awsClient = new AmazonS3Client(new AnonymousAWSCredentials(), RegionEndpoint.USEast1);
             var blobClient = new BlobContainerClient(new Uri(config.BlobBronzeContainerUri), new DefaultAzureCredential());
+
+            using var scope = host.ServiceScopeFactory.CreateScope();
+            var process = scope.ServiceProvider.GetRequiredService<ISatelliteMarqueeProcess>();
 
             await process.Run(year, blobClient, awsClient, ct);
 

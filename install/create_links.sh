@@ -9,7 +9,8 @@ chmod go-rx .
 ln --symbolic --force ~/source/repos/olieblind/scripts/deploy/deploy.sh
 ln --symbolic --force ~/source/repos/olieblind/scripts/start/start_api.sh
 ln --symbolic --force ~/source/repos/olieblind/scripts/start/start_cli.sh
+ln --symbolic --force ~/source/repos/olieblind/scripts/start/start_satelliterequest.sh
 ln --symbolic --force ~/source/repos/olieblind/scripts/start/start_web.sh
 ln --symbolic --force ~/source/repos/olieblind/scripts/start/stop_api.sh
-ln --symbolic --force ~/source/repos/olieblind/scripts/start/stop_cli.sh
+ln --symbolic --force ~/source/repos/olieblind/scripts/start/stop_satelliterequest.sh
 ln --symbolic --force ~/source/repos/olieblind/scripts/start/stop_web.sh

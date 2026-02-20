@@ -3,13 +3,14 @@ using Amazon.Runtime;
 using Amazon.S3;
 using Azure.Identity;
 using Azure.Storage.Blobs;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using olieblind.lib.Processes.Interfaces;
 using olieblind.lib.Services;
 
 namespace olieblind.cli;
 
-public class CommandSpcMesos(ILogger<CommandSpcMesos> logger, IOlieConfig config, ISpcMesosProcess spcMesosProcess)
+public class CommandSpcMesos(ILogger<CommandSpcMesos> logger, IOlieConfig config, OlieHost host)
 {
     private const string LoggerName = $"olieblind.cli {nameof(CommandSpcMesos)}";
 
@@ -26,7 +27,10 @@ public class CommandSpcMesos(ILogger<CommandSpcMesos> logger, IOlieConfig config
             var awsClient = new AmazonS3Client(new AnonymousAWSCredentials(), RegionEndpoint.USEast1);
             var blobClient = new BlobContainerClient(new Uri(config.BlobBronzeContainerUri), new DefaultAzureCredential());
 
-            await spcMesosProcess.Run(year, goldPath, blobClient, ct);
+            using var scope = host.ServiceScopeFactory.CreateScope();
+            var process = scope.ServiceProvider.GetRequiredService<ISpcMesosProcess>();
+
+            await process.Run(year, goldPath, blobClient, ct);
 
             return 0;
         }

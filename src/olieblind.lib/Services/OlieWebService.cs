@@ -395,19 +395,26 @@ public class OlieWebService(IHttpClientFactory httpClientFactory, IOlieConfig co
         await receiver.CompleteMessageAsync(message.ServiceBusReceivedMessage, ct);
     }
 
-    public async Task<OlieServiceBusReceivedMessage<T>?> ServiceBusReceiveJson<T>(ServiceBusReceiver receiver, CancellationToken ct)
+    public async Task<OlieServiceBusReceivedMessage<T>?> ServiceBusReceiveJson<T>(ServiceBusReceiver receiver, TimeSpan timeout, CancellationToken ct)
     {
-        var message = await receiver.ReceiveMessageAsync(TimeSpan.FromMinutes(60), ct);
-        if (message is null) return null;
-        var json = message.Body.ToString();
-        var body = JsonConvert.DeserializeObject<T>(json)
-            ?? throw new InvalidCastException(json);
-
-        return new OlieServiceBusReceivedMessage<T>
+        try
         {
-            ServiceBusReceivedMessage = message,
-            Body = body
-        };
+            var message = await receiver.ReceiveMessageAsync(timeout, ct);
+            if (message is null) return null;
+            var json = message.Body.ToString();
+            var body = JsonConvert.DeserializeObject<T>(json)
+                ?? throw new InvalidCastException(json);
+
+            return new OlieServiceBusReceivedMessage<T>
+            {
+                ServiceBusReceivedMessage = message,
+                Body = body
+            };
+        }
+        catch (TaskCanceledException)
+        {
+            return null;
+        }
     }
 
     public async Task<int> ServiceBusQueueLength(ServiceBusAdministrationClient adminClient, string queueName, CancellationToken ct)
