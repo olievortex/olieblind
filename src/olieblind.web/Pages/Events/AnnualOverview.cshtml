@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Analysis";
 }
+
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item">
@@ -14,98 +15,242 @@
     </ol>
 </nav>
 
-<form method="post">
-    <div class="input-group mb-3">
-        <span id="JumpToDate" class="input-group-text">Jump to Date</span>
-        <input class="form-control" type="date" asp-for="SelectedDate"
-               aria-label="Jump to specific date" aria-describedby="JumpToDate"/>
-        <button class="btn btn-outline-secondary" type="submit" id="JumpTpDateGo">Go</button>
-    </div>
-    <span asp-validation-for="SelectedDate" class="text-danger"></span>
-</form>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h4 mb-0">Severe Weather — @Model.Year Overview</h1>
+    <form method="post" class="d-flex align-items-center">
+        <div class="input-group">
+            <span id="JumpToDate" class="input-group-text">Jump to Date</span>
+            <input class="form-control" type="date" asp-for="SelectedDate"
+                   aria-label="Jump to specific date" aria-describedby="JumpToDate" />
+            <button class="btn btn-primary" type="submit" id="JumpTpDateGo">Go</button>
+        </div>
+        <span asp-validation-for="SelectedDate" class="text-danger ms-2"></span>
+    </form>
+</div>
 
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card shadow-sm">
+            <div class="card-body p-2 text-center">
+                <div class="text-muted small">Recent severe days</div>
+                <div class="fs-4 fw-bold">@Model.Overview.Recent10.Count</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card shadow-sm">
+            <div class="card-body p-2 text-center">
+                <div class="text-muted small">Extreme tornado days</div>
+                <div class="fs-4 fw-bold">@Model.Overview.ExtremeTornadoes.Count</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card shadow-sm">
+            <div class="card-body p-2 text-center">
+                <div class="text-muted small">Violent tornado days</div>
+                <div class="fs-4 fw-bold">@Model.Overview.StrongTornadoes.Count</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card shadow-sm">
+            <div class="card-body p-2 text-center">
+                <div class="text-muted small">Top tornado days</div>
+                <div class="fs-4 fw-bold">@Model.Overview.TornadoTop10.Count</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card shadow-sm">
+            <div class="card-body p-2 text-center">
+                <div class="text-muted small">Top hail days</div>
+                <div class="fs-4 fw-bold">@Model.Overview.HailTop10.Count</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card shadow-sm">
+            <div class="card-body p-2 text-center">
+                <div class="text-muted small">Top wind days</div>
+                <div class="fs-4 fw-bold">@Model.Overview.WindTop10.Count</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Recent severe days (only show for current year) *@
 @if (Model.Overview.Recent10.Count > 0 && Model.Year == DateTime.UtcNow.Year)
 {
-    <p>Most recent severe days</p>
-    <p>
-        @foreach (var recent in Model.Overview.Recent10)
-        {
-            <a asp-page="/Events/DailyOverview"
-               asp-route-year="@Model.Year"
-               asp-route-effectiveDate="@recent.Id"
-               asp-route-sourceFk="@recent.SourceFk">@recent.Id</a>
-        }
-    </p>
+    <section class="mb-4">
+        <h2 class="h5">Most recent severe days</h2>
+        <div class="d-flex flex-wrap gap-2 mt-2">
+            @foreach (var recent in Model.Overview.Recent10)
+            {
+                <a class="btn btn-outline-secondary btn-sm" asp-page="/Events/DailyOverview"
+                   asp-route-year="@Model.Year"
+                   asp-route-effectiveDate="@recent.Id"
+                   asp-route-sourceFk="@recent.SourceFk">@recent.Id</a>
+            }
+        </div>
+    </section>
 }
 
-@if (Model.Overview.ExtremeTornadoes.Count > 0)
-{
-    <p>Extreme Tornado Days (EF4, EF5)</p>
-    <p>
-        @foreach (var extreme in Model.Overview.ExtremeTornadoes)
-        {
-            <a asp-page="/Events/DailyOverview"
-               asp-route-year="@Model.Year"
-               asp-route-effectiveDate="@extreme.Id"
-               asp-route-sourceFk="@extreme.SourceFk">@extreme.Id</a>
-        }
-    </p>
-}
-@if (Model.Overview.StrongTornadoes.Count > 0)
-{
-    <p>Violent Tornado Days (EF2, EF3)</p>
-    <p>
-        @foreach (var strong in Model.Overview.StrongTornadoes)
-        {
-            <a asp-page="/Events/DailyOverview"
-               asp-route-year="@Model.Year"
-               asp-route-effectiveDate="@strong.Id"
-               asp-route-sourceFk="@strong.SourceFk">@strong.Id</a>
-        }
-    </p>
-}
-@if (Model.Overview.TornadoTop10.Count > 0)
-{
-    <p>Top 10 Tornado Report Days</p>
-    <ul>
-        @foreach (var tornado in Model.Overview.TornadoTop10)
-        {
-            <li>
-                @tornado.TornadoCount Reports - <a asp-page="/Events/DailyOverview"
-                                                   asp-route-year="@Model.Year"
-                                                   asp-route-effectiveDate="@tornado.Id"
-                                                   asp-route-sourceFk="@tornado.SourceFk">@tornado.Id</a>
-            </li>
-        }
-    </ul>
-}
-@if (Model.Overview.HailTop10.Count > 0)
-{
-    <p>Top 10 Hail Report Days</p>
-    <ul>
-        @foreach (var hail in Model.Overview.HailTop10)
-        {
-            <li>
-                @hail.HailCount Reports - <a asp-page="/Events/DailyOverview"
-                                             asp-route-year="@Model.Year"
-                                             asp-route-effectiveDate="@hail.Id"
-                                             asp-route-sourceFk="@hail.SourceFk">@hail.Id</a>
-            </li>
-        }
-    </ul>
-}
-@if (Model.Overview.WindTop10.Count > 0)
-{
-    <p>Top 10 Severe Wind Report Days</p>
-    <ul>
-        @foreach (var wind in Model.Overview.WindTop10)
-        {
-            <li>
-                @wind.WindCount Reports - <a asp-page="/Events/DailyOverview"
-                                             asp-route-year="@Model.Year"
-                                             asp-route-effectiveDate="@wind.Id"
-                                             asp-route-sourceFk="@wind.SourceFk">@wind.Id</a>
-            </li>
-        }
-    </ul>
-}
+@* Extreme and Strong Tornado days *@
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">Extreme Tornado Days (EF4, EF5)</div>
+            <div class="card-body">
+                @if (Model.Overview.ExtremeTornadoes.Count == 0)
+                {
+                    <div class="text-muted">No extreme tornado days recorded.</div>
+                }
+                else
+                {
+                    <div class="list-group">
+                        @foreach (var extreme in Model.Overview.ExtremeTornadoes)
+                        {
+                            <a class="list-group-item list-group-item-action" asp-page="/Events/DailyOverview"
+                               asp-route-year="@Model.Year"
+                               asp-route-effectiveDate="@extreme.Id"
+                               asp-route-sourceFk="@extreme.SourceFk">@extreme.Id</a>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">Violent Tornado Days (EF2, EF3)</div>
+            <div class="card-body">
+                @if (Model.Overview.StrongTornadoes.Count == 0)
+                {
+                    <div class="text-muted">No violent tornado days recorded.</div>
+                }
+                else
+                {
+                    <div class="overflow-auto" style="max-height:320px;">
+                        <div class="list-group list-group-flush">
+                            @foreach (var strong in Model.Overview.StrongTornadoes)
+                            {
+                                <a class="list-group-item list-group-item-action py-1" asp-page="/Events/DailyOverview"
+                                   asp-route-year="@Model.Year"
+                                   asp-route-effectiveDate="@strong.Id"
+                                   asp-route-sourceFk="@strong.SourceFk">@strong.Id</a>
+                            }
+                        </div>
+                    </div>
+                    <div class="small text-muted mt-2">Showing up to 10 records; scroll to see more.</div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Top 10 lists in a compact table layout *@
+<div class="row">
+    <div class="col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header">Top 10 Tornado Report Days</div>
+            <div class="card-body p-0">
+                @if (Model.Overview.TornadoTop10.Count == 0)
+                {
+                    <div class="p-3 text-muted">No tornado report days found.</div>
+                }
+                else
+                {
+                    <table class="table table-sm mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Reports</th>
+                                <th scope="col">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var tornado in Model.Overview.TornadoTop10)
+                        {
+                            <tr>
+                                <td class="align-middle">@tornado.TornadoCount</td>
+                                <td class="align-middle">
+                                    <a asp-page="/Events/DailyOverview" asp-route-year="@Model.Year"
+                                       asp-route-effectiveDate="@tornado.Id" asp-route-sourceFk="@tornado.SourceFk">@tornado.Id</a>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header">Top 10 Hail Report Days</div>
+            <div class="card-body p-0">
+                @if (Model.Overview.HailTop10.Count == 0)
+                {
+                    <div class="p-3 text-muted">No hail report days found.</div>
+                }
+                else
+                {
+                    <table class="table table-sm mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Reports</th>
+                                <th scope="col">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var hail in Model.Overview.HailTop10)
+                        {
+                            <tr>
+                                <td class="align-middle">@hail.HailCount</td>
+                                <td class="align-middle">
+                                    <a asp-page="/Events/DailyOverview" asp-route-year="@Model.Year"
+                                       asp-route-effectiveDate="@hail.Id" asp-route-sourceFk="@hail.SourceFk">@hail.Id</a>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header">Top 10 Severe Wind Report Days</div>
+            <div class="card-body p-0">
+                @if (Model.Overview.WindTop10.Count == 0)
+                {
+                    <div class="p-3 text-muted">No wind report days found.</div>
+                }
+                else
+                {
+                    <table class="table table-sm mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Reports</th>
+                                <th scope="col">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var wind in Model.Overview.WindTop10)
+                        {
+                            <tr>
+                                <td class="align-middle">@wind.WindCount</td>
+                                <td class="align-middle">
+                                    <a asp-page="/Events/DailyOverview" asp-route-year="@Model.Year"
+                                       asp-route-effectiveDate="@wind.Id" asp-route-sourceFk="@wind.SourceFk">@wind.Id</a>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+</div>
