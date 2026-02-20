@@ -76,14 +76,14 @@ Secure the file to prevent inadvertant revelations or alterations.
 ## MySQL
 We will copy some MySQL scripts out of the repository and customize them.
 
-    # cp ~/source/repos/olieblind/scripts/mysql/*.sh ~/olieblind
+    # cp ~/source/repos/olieblind/scripts/mysql/olieblind_backup.sh ~/olieblind
 
 Replace the asterisks with the appropriate host, port, username, and password for both scripts. Don't wrap the IPv6 adress in brackets. Run both scripts and confirm the sql dump files were created in /var/backup/mysql.
 
 Secure the files to prevent inadvertant revelations or alterations.
 
-    # chmod go-rx olieblind_*backup.sh
-    # chmod u-w olieblind_*backup.sh
+    # chmod go-rx olieblind_backup.sh
+    # chmod u-w olieblind_backup.sh
 
 ## Install olieblind
     # ~/olieblind/deployOlieBlind.sh

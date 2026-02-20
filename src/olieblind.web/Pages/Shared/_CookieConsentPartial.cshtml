@@ -18,23 +18,34 @@
 
 @if (showBanner)
 {
-    <!-- End of Cookie Banner -->
+    <!-- Cookie Consent Banner -->
     <div id="CookieConsent" class="alert alert-info fade show border border-primary" role="alert">
-        <h4>We value your privacy</h4>
-        We use cookies to enhance your browsing experience, serve personalized content,
-        and analyze our traffic. By clicking "Accept All", you consent to our use of cookies.
-        Update your settings by clicking the Cookies link at the bottom of this page.
-        <a asp-page="/About/CookiePolicy" class="alert-link">Learn More</a>.
+        <h4>Cookie Consent</h4>
+        <p>
+            We use cookies and similar technologies to provide essential site functionality and, 
+            with your consent, to analyze site usage and performance. You can choose to accept all cookies 
+            or only essential cookies necessary for the site to function properly.
+        </p>
+        <p>
+            <strong>Essential cookies:</strong> Required for basic site functionality, security, and to remember your cookie preferences.<br />
+            <strong>Analytics cookies:</strong> Help us understand how visitors interact with our website by collecting and reporting information anonymously.
+        </p>
+        <p>
+            You can change your preferences at any time by accessing the cookie settings through the Cookies link 
+            at the bottom of this page. For more information about how we use cookies and process your data, 
+            please read our <a asp-page="/About/CookiePolicy" class="alert-link">Cookie Policy</a>.
+        </p>
         <div class="d-grid text-center">
             <div class="row">
                 <div class="col-sm">
                     <button id="EssentialCookieConsent" type="button" class="btn btn-outline-primary"
-                            data-bs-dismiss="alert">
+                            data-bs-dismiss="alert" aria-label="Accept essential cookies only">
                         Essential Only
                     </button>
                 </div>
                 <div class="col-sm">
-                    <button id="AcceptCookieConsent" type="button" class="btn btn-primary" data-bs-dismiss="alert">
+                    <button id="AcceptCookieConsent" type="button" class="btn btn-primary" 
+                            data-bs-dismiss="alert" aria-label="Accept all cookies">
                         Accept All
                     </button>
                 </div>
