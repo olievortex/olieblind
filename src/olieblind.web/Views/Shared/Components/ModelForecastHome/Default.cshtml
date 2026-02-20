@@ -2,6 +2,7 @@
 @model ModelForecastIndexModel
 @{
     var cape = Model?.GetItemByParameterId(9) ?? new ModelForecastIndexModel.ItemModel();
+    var mb500 = Model?.GetItemByParameterId(5) ?? new ModelForecastIndexModel.ItemModel();
     var header = Model?.Header ?? new ModelForecastIndexModel.HeaderModel();
 }
 <div class="container">
@@ -20,6 +21,20 @@
                     <a class="btn btn-secondary" href="/ModelForecast/ProductList">Older Maps</a>
                 </div>
             </div>
+            <div class="card" style="width: 322px">
+                <div class="card-header">
+                    NAM @header.Effective.ToString("M/dd") @(header.ForecastHour)Z Forecast (@header.Effective.ToString("HH")Z Run)
+                </div>
+                <a href="/ModelForecast/list?id=@(header.Id)" target="_blank">
+                    <img width="320" height="180" src="@mb500.Url" alt="@mb500.Title" />
+                </a>
+                <div class="card-body">
+                    <p class="card-text">@mb500.Title</p>
+                    <a class="btn btn-secondary" href="/ModelForecast/list?id=@(header.Id)">More Maps</a>
+                    <a class="btn btn-secondary" href="/ModelForecast/ProductList">Older Maps</a>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

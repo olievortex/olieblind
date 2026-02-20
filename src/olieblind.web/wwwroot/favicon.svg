@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="Olieblind favicon: cloud, lightning and speaker for accessible severe weather">
+  <title>Olieblind - Accessible Severe Weather</title>
+  <!-- Background circle -->
+  <rect width="64" height="64" rx="12" fill="#0b3d91" />
+
+  <!-- Cloud (color-blind friendly: high contrast) -->
+  <g transform="translate(6,12)">
+    <ellipse cx="26" cy="18" rx="22" ry="12" fill="#ffffff" />
+    <ellipse cx="14" cy="22" rx="12" ry="9" fill="#ffffff" />
+    <ellipse cx="36" cy="22" rx="12" ry="9" fill="#ffffff" />
+  </g>
+
+  <!-- Lightning bolt (yellow-orange) -->
+  <polygon points="34,34 28,46 34,46 30,58 44,40 36,40  " fill="#f3c623" />
+
+  <!-- Speaker / accessibility waves (white) -->
+  <g transform="translate(6,6) scale(0.6)">
+    <rect x="42" y="28" width="8" height="10" rx="1" fill="#ffffff" />
+    <polygon points="42,24 50,24 58,16 58,48 50,40 42,40" fill="#ffffff" opacity="0.95" />
+    <path d="M60 20 C66 26, 66 38, 60 44" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M64 16 C72 24, 72 40, 64 48" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </g>
+</svg>
